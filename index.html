@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#050507" />
+  <title>MAXI ($MAXI) — Welcome to the Maxiverse</title>
+  <link rel="icon" type="image/png" href="maxi Background Removed.png" />
+
+  <!-- Clean Editorial & Technical Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+
+  <!-- Three.js r128 (3D WebGL Planet Maxi Engine) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" crossorigin="anonymous"></script>
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="intro-locked">
+
+  <!-- =======================================================================
+       TOP NAVIGATION BAR (ARCHITECTURAL DARK GLASS)
+       ======================================================================= -->
+  <header class="navbar nav-hidden" id="mainNavbar">
+    <div class="nav-inner">
+      <a href="#hero" class="brand-logo" id="navBrandReset">
+        <div class="brand-icon-wrap">
+          <img src="maxi Background Removed.png" alt="Maxi" class="brand-icon" />
+        </div>
+        <div class="brand-text">
+          <span class="brand-title">MAXIVERSE</span>
+          <span class="brand-coords">36 CITIZENS · PRIME: OG MAXI</span>
+        </div>
+      </a>
+
+      <!-- Center Feature Navigation -->
+      <nav class="nav-links">
+        <button type="button" class="nav-link active" id="focusOgBtn">01 / PLANET</button>
+        <button type="button" class="nav-link" id="openVaultModalBtn">02 / 36 VAULT</button>
+        <button type="button" class="nav-link" id="openPfpModalBtn">03 / PFP STUDIO</button>
+        <button type="button" class="nav-link" id="openVideoModalBtn">04 / VIDEO RECORDER</button>
+        <button type="button" class="nav-link" id="openChartModalBtn">05 / LIVE TERMINAL</button>
+      </nav>
+
+      <!-- Right Live Market Ticker & Controls -->
+      <div class="nav-actions">
+        <button type="button" class="hud-btn market-ticker-btn" id="navMarketBtn" title="Open Live DexScreener Terminal">
+          <span class="status-dot"></span>
+          <span class="ticker-symbol">$MAXI</span>
+          <span class="ticker-mcap" id="navLiveMcap">LIVE CHART</span>
+        </button>
+        <a
+          href="https://x.com/maxiworldorder"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="hud-btn"
+          title="Official X — @maxiworldorder"
+        >
+          <span>𝕏 @MAXIWORLDORDER</span>
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>
+        </a>
+        <a
+          href="https://t.me/maxicollective"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="hud-btn"
+          title="Official Telegram — t.me/maxicollective"
+        >
+          <span>TG COLLECTIVE</span>
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>
+        </a>
+        <a
+          href="https://pump.fun/coin/EBCpGdXuS34WZuX13thrku2KmuLSe3Tf2gMtMKndpump"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="hud-btn pump-cta"
+        >
+          <span>PUMP.FUN</span>
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>
+        </a>
+        <button class="hud-btn" id="cycleBiomeBtn" title="Switch Planet Biome">
+          <span>SURFACE: SAPPHIRE</span>
+        </button>
+        <button class="hud-btn" id="audioToggleBtn" title="Toggle Audio">
+          <span class="status-dot" id="audioDot"></span>
+          <span id="audioLabel">AUDIO</span>
+        </button>
+        <button id="replay-intro-btn" class="hud-btn" type="button" title="Return to Opening Gate">
+          <span>INTRO</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- =======================================================================
+       UNIFIED HERO & INTRO GATE VIEWPORT
+       ======================================================================= -->
+  <section class="hero-viewport" id="hero">
+    <div class="stage-container" id="stageContainer">
+      <!-- 1. Deep Space Starfield Canvas -->
+      <canvas id="intro-canvas" class="intro-canvas"></canvas>
+
+      <!-- 2. True 3D WebGL Planet Maxi + 36-Citizen 3D Pins Overlay -->
+      <div id="planetWebGLContainer"></div>
+      <div id="planetPinsOverlay" class="planet-pins-overlay">
+        <!-- Populated dynamically by script.js -->
+      </div>
+
+      <!-- 3. Atmospheric Cloud Dive FX Canvas -->
+      <canvas id="diveFxCanvas"></canvas>
+
+      <!-- ===================================================================
+           LAYER A: OPENING GATE ("WELCOME TO THE MAXIVERSE")
+           =================================================================== -->
+      <div id="intro-screen" class="intro-gate-overlay" aria-label="Maxiverse Intro Gate">
+        <div class="floodlights" aria-hidden="true">
+          <div class="floodlight-beam beam-left"></div>
+          <div class="floodlight-beam beam-right"></div>
+        </div>
+        <div class="cyber-grid-floor" aria-hidden="true"></div>
+        <div class="radial-vignette" aria-hidden="true"></div>
+
+        <!-- Top Telemetry Bar -->
+        <header class="hud-top">
+          <div class="hud-corner">
+            <span class="hud-dot"></span>
+            <span class="hud-mono">PLANET MAXI // <strong>$MAXI</strong></span>
+          </div>
+
+          <div class="hud-center-status">
+            <span class="hud-mono" id="hud-status-text">ORBITAL LOCK — 36 CITIZENS ON SURFACE</span>
+          </div>
+
+          <div class="hud-corner">
+            <span class="hud-mono" id="hud-telemetry">00:00:00.00 UTC</span>
+          </div>
+        </header>
+
+        <!-- Centerpiece: 3D Planet Maxi inside Precision Orbital Rings -->
+        <div class="intro-centerpiece">
+          <div class="logo-stage" id="logo-stage">
+            <div class="plasma-core"></div>
+            <div class="holo-ring ring-outer"></div>
+            <div class="holo-ring ring-middle"></div>
+            <div class="holo-ring ring-inner"></div>
+
+            <!-- Floating OG Maxi Cutout Crest -->
+            <div class="earth-crest-floating" id="logo-spinner">
+              <img
+                id="intro-logo-front"
+                src="maxi Background Removed.png"
+                alt="OG Maxi"
+                class="earth-badge-img"
+                draggable="false"
+              />
+            </div>
+          </div>
+
+          <!-- Welcome Headline, Enter CTA & Live Contract Address -->
+          <div class="enter-cta-wrapper">
+            <div class="tagline-pill">
+              <span class="tagline-line"></span>
+              <span class="tagline-text">GENESIS SECTOR 00 · 36 CITIZENS · RULED BY OG MAXI</span>
+              <span class="tagline-line"></span>
+            </div>
+
+            <h1 class="welcome-headline">
+              <span class="wh-top">WELCOME TO THE</span>
+              <span class="wh-main">MAXIVERSE</span>
+            </h1>
+
+            <button id="enter-btn" class="enter-btn" type="button">
+              <span class="btn-label">ENTER PLANET MAXI</span>
+              <svg class="btn-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M5 12h14M13 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+
+            <!-- Live CA Box -->
+            <div class="intro-ca-box">
+              <span class="intro-ca-badge">CA</span>
+              <code id="intro-ca-value" class="intro-ca-code">EBCpGdXuS34WZuX13thrku2KmuLSe3Tf2gMtMKndpump</code>
+              <button id="intro-copy-ca-btn" class="intro-copy-btn" type="button">
+                <span id="intro-copy-ca-text">COPY</span>
+              </button>
+              <a
+                href="https://x.com/maxiworldorder"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="intro-pump-link"
+              >
+                𝕏 @MAXIWORLDORDER ↗
+              </a>
+              <a
+                href="https://t.me/maxicollective"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="intro-pump-link"
+              >
+                TELEGRAM ↗
+              </a>
+              <a
+                href="https://pump.fun/coin/EBCpGdXuS34WZuX13thrku2KmuLSe3Tf2gMtMKndpump"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="intro-pump-link"
+              >
+                PUMP.FUN ↗
+              </a>
+              <a
+                href="https://dexscreener.com/solana/EBCpGdXuS34WZuX13thrku2KmuLSe3Tf2gMtMKndpump"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="intro-pump-link"
+              >
+                DEXSCREENER ↗
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bottom Bar -->
+        <footer class="hud-bottom">
+          <div class="hud-corner">
+            <span class="hud-mono">CAPITAL // <strong>00.000° N, 00.000° E (OG MAXI)</strong></span>
+          </div>
+
+          <div class="spin-controls" role="group" aria-label="Orbit Modes">
+            <button type="button" class="hud-chip active" data-spin="3d">ORBIT</button>
+            <button type="button" class="hud-chip" data-spin="gyro">GYRO</button>
+            <button type="button" class="hud-chip" data-spin="lock">LOCK OG</button>
+          </div>
+
+          <div class="hud-corner">
+            <button type="button" id="intro-sfx-btn" class="intro-sfx-toggle">
+              AUDIO : ON
+            </button>
+          </div>
+        </footer>
+      </div>
+
+      <!-- ===================================================================
+           LAYER B: PLANET SURFACE HUD & CITIZEN INSPECTOR (AFTER DIVE)
+           =================================================================== -->
+      <div class="dive-hud-layer hud-hidden" id="diveHudLayer">
+        <!-- Minimal Precision Target Reticle during Dive -->
+        <div class="reticle-hud" id="reticleHud">
+          <div class="reticle-ring ring-outer"></div>
+          <div class="reticle-ring ring-mid"></div>
+          <div class="reticle-crosshair ch-h"></div>
+          <div class="reticle-crosshair ch-v"></div>
+          <div class="reticle-Readout" id="reticleReadout">LOCKING // OG MAXI #001</div>
+        </div>
+
+        <!-- Top Left Telemetry Readout -->
+        <div class="hud-panel hud-tl">
+          <div class="hud-tag">PLANET TELEMETRY</div>
+          <div class="hud-metric-row">
+            <span class="hud-label">PRIME</span>
+            <span class="hud-val" id="hudRuler">OG MAXI (#001)</span>
+          </div>
+          <div class="hud-metric-row">
+            <span class="hud-label">CITIZENS</span>
+            <span class="hud-val highlight" id="hudPop">36 / 36 ACTIVE</span>
+          </div>
+          <div class="hud-metric-row">
+            <span class="hud-label">SELECTED</span>
+            <span class="hud-val" id="hudActiveTarget">#001 OG MAXI</span>
+          </div>
+        </div>
+
+        <!-- Top Right Altitude & Zoom Gauge -->
+        <div class="hud-panel hud-tr">
+          <div class="hud-tag">CAMERA VECTOR</div>
+          <div class="hud-metric-row">
+            <span class="hud-label">ALTITUDE</span>
+            <span class="hud-val" id="hudAltitude">42,000 KM</span>
+          </div>
+          <div class="hud-metric-row">
+            <span class="hud-label">OPTICAL</span>
+            <span class="hud-val highlight" id="hudZoom">z=1.5</span>
+          </div>
+          <div class="zoom-progress-track">
+            <div class="zoom-progress-fill" id="hudZoomBar" style="width: 8%"></div>
+          </div>
+          <div class="hud-phase-badge" id="hudPhaseBadge">SCROLL TO ZOOM · DRAG TO ROTATE</div>
+        </div>
+
+        <!-- Bottom Left Mini Radar -->
+        <div class="hud-panel hud-bl" id="hudMiniInset">
+          <div class="inset-header">
+            <span class="inset-dot"></span>
+            <span>SURFACE RADAR</span>
+          </div>
+          <div class="inset-img-wrap" id="quickJumpToMaxi" title="Center on OG Maxi (#001)">
+            <canvas id="miniRadarCanvas" width="200" height="116"></canvas>
+            <div class="inset-pin-badge">CENTER ON OG MAXI</div>
+          </div>
+        </div>
+
+        <!-- Bottom Right Quick Camera & Suite Controls -->
+        <div class="hud-panel hud-br">
+          <div class="stage-controls">
+            <button class="stage-ctrl-btn primary" id="snapOgBtn">
+              <span>OG MAXI</span>
+            </button>
+            <button class="stage-ctrl-btn" id="quickOpenPfpBtn" title="Customize this Citizen in PFP Studio">
+              <span>PFP STUDIO</span>
+            </button>
+            <button class="stage-ctrl-btn" id="triggerZoomBtn">
+              <span id="triggerZoomLabel">REPLAY DIVE</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Sleek Editorial Citizen Inspector Dock -->
+        <div class="arrived-card" id="arrivedCard">
+          <div class="arrived-card-header">
+            <div class="arrived-avatar-wrap" id="cardAvatarWrap">
+              <img src="maxi Background Removed.png" alt="Active Maxi" class="arrived-logo" id="cardMaxiSprite" />
+            </div>
+            <div class="arrived-title-group">
+              <div class="arrived-kicker" id="cardKicker">PRIME ANCHOR · CITIZEN #001</div>
+              <h2 class="arrived-title" id="cardTitle">OG MAXI</h2>
+            </div>
+            <div class="arrived-header-actions">
+              <button class="arrived-nav-btn" id="btnCustomizeActive" title="Open in PFP Studio">STUDIO</button>
+              <button class="arrived-nav-btn" id="btnPrevCitizen" title="Previous Citizen">←</button>
+              <button class="arrived-nav-btn" id="btnTourSectors" title="Next Citizen">→</button>
+              <button class="arrived-replay-btn" id="cardReturnOgBtn" title="Return to OG Maxi">OG #001</button>
+            </div>
+          </div>
+
+          <p class="arrived-desc" id="maxiLiveQuote">
+            The Prime inhabitant of Planet Maxi. 240 lbs lean on the Genesis Citadel while all 35 variants orbit the surrounding continents.
+          </p>
+
+          <!-- Clean Scrollbar-Free Horizontal Citizen Roster Strip -->
+          <div class="citizen-roster-strip" id="citizenRosterStrip">
+            <!-- Populated by script.js -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom Contract Address Command Bar -->
+    <div class="ca-command-bar hud-hidden" id="bottomCaBar">
+      <div class="ca-bar-inner">
+        <div class="ca-status">
+          <span class="live-beacon"></span>
+          <span class="ca-tag">$MAXI CONTRACT</span>
+        </div>
+
+        <div class="ca-box" id="copyCaBtn" title="Click to copy Contract Address">
+          <code id="caText">EBCpGdXuS34WZuX13thrku2KmuLSe3Tf2gMtMKndpump</code>
+          <span class="copy-chip" id="copyBadge">COPY CA</span>
+        </div>
+
+        <div class="social-pills">
+          <a
+            href="https://x.com/maxiworldorder"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="social-pill"
+          >
+            <span>𝕏 @MAXIWORLDORDER ↗</span>
+          </a>
+          <a
+            href="https://t.me/maxicollective"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="social-pill"
+          >
+            <span>TELEGRAM ↗</span>
+          </a>
+          <a
+            href="https://pump.fun/coin/EBCpGdXuS34WZuX13thrku2KmuLSe3Tf2gMtMKndpump"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="social-pill active-pill"
+          >
+            <span>PUMP.FUN ↗</span>
+          </a>
+          <a
+            href="https://dexscreener.com/solana/EBCpGdXuS34WZuX13thrku2KmuLSe3Tf2gMtMKndpump"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="social-pill"
+          >
+            <span>DEXSCREENER ↗</span>
+          </a>
+          <button type="button" class="social-pill" id="bottomOpenVaultBtn">
+            <span>36 VAULT</span>
+          </button>
+          <button type="button" class="social-pill" id="bottomOpenChartBtn">
+            <span>LIVE CHART</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =======================================================================
+       MODAL 1: 36-CITIZEN VAULT GRID & RAID DOWNLOAD PACK
+       ======================================================================= -->
+  <div class="suite-modal hidden" id="vaultModal" aria-hidden="true">
+    <div class="suite-backdrop" data-close-modal="vaultModal"></div>
+    <div class="suite-dialog suite-xl">
+      <div class="suite-header">
+        <div class="suite-title-block">
+          <span class="suite-kicker">02 // COMPLETE CITIZEN INDEX</span>
+          <h2 class="suite-title">THE 36 MAXIVERSE VAULT</h2>
+        </div>
+
+        <div class="suite-header-controls">
+          <div class="filter-group" id="vaultFilterGroup">
+            <button type="button" class="suite-tab active" data-filter="ALL">ALL (36)</button>
+            <button type="button" class="suite-tab" data-filter="MYTHIC">1-OF-1 MASTERS (6)</button>
+            <button type="button" class="suite-tab" data-filter="CITIZEN">PLANET CITIZENS (30)</button>
+          </div>
+          <button type="button" class="suite-close-btn" data-close-modal="vaultModal">✕</button>
+        </div>
+      </div>
+
+      <div class="vault-grid-scroll">
+        <div class="vault-cards-grid" id="vaultCardsGrid">
+          <!-- Populated dynamically by script.js -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =======================================================================
+       MODAL 2: CUSTOM MAXI PFP & X BANNER STUDIO
+       ======================================================================= -->
+  <div class="suite-modal hidden" id="pfpModal" aria-hidden="true">
+    <div class="suite-backdrop" data-close-modal="pfpModal"></div>
+    <div class="suite-dialog suite-lg">
+      <div class="suite-header">
+        <div class="suite-title-block">
+          <span class="suite-kicker">03 // COMMUNITY RAID GENERATOR</span>
+          <h2 class="suite-title">MAXI PFP &amp; BANNER STUDIO</h2>
+        </div>
+        <button type="button" class="suite-close-btn" data-close-modal="pfpModal">✕</button>
+      </div>
+
+      <div class="pfp-studio-layout">
+        <!-- Left Canvas Preview -->
+        <div class="pfp-preview-col">
+          <div class="pfp-canvas-frame">
+            <canvas id="pfpStudioCanvas" width="1000" height="1000"></canvas>
+          </div>
+          <div class="pfp-export-bar">
+            <button type="button" class="suite-primary-btn" id="downloadPfpBtn">
+              <span>⬇ EXPORT HIGH-RES PNG</span>
+            </button>
+            <button type="button" class="suite-secondary-btn" id="copyPfpBtn">
+              <span id="copyPfpLabel">COPY IMAGE TO CLIPBOARD</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Right Studio Controls -->
+        <div class="pfp-controls-col">
+          <div class="control-block">
+            <label class="control-label">01 / FORMAT</label>
+            <div class="segmented-row" id="pfpFormatGroup">
+              <button type="button" class="seg-btn active" data-format="pfp">1:1 PFP (1000×1000)</button>
+              <button type="button" class="seg-btn" data-format="banner">3:1 X BANNER (1500×500)</button>
+            </div>
+          </div>
+
+          <div class="control-block">
+            <label class="control-label">02 / SELECT CITIZEN CUTOUT (36)</label>
+            <div class="pfp-citizen-picker" id="pfpCitizenPicker">
+              <!-- Populated by script.js -->
+            </div>
+          </div>
+
+          <div class="control-block">
+            <label class="control-label">03 / STUDIO BACKDROP</label>
+            <div class="segmented-row" id="pfpBgGroup">
+              <button type="button" class="seg-btn active" data-bg="obsidian">OBSIDIAN</button>
+              <button type="button" class="seg-btn" data-bg="gold">CHAMPAGNE</button>
+              <button type="button" class="seg-btn" data-bg="sapphire">SAPPHIRE</button>
+              <button type="button" class="seg-btn" data-bg="emerald">EMERALD</button>
+              <button type="button" class="seg-btn" data-bg="crimson">CRIMSON</button>
+            </div>
+          </div>
+
+          <div class="control-block">
+            <label class="control-label">04 / OVERLAY &amp; TYPOGRAPHY</label>
+            <div class="segmented-row" id="pfpOverlayGroup">
+              <button type="button" class="seg-btn active" data-overlay="clean">CLEAN STUDIO</button>
+              <button type="button" class="seg-btn" data-overlay="halo">ORBIT HALO</button>
+              <button type="button" class="seg-btn" data-overlay="grid">TELEMETRY</button>
+            </div>
+            <input
+              type="text"
+              id="pfpCustomText"
+              class="suite-input"
+              placeholder="Custom Tagline (e.g. $MAXI · 240 LBS)"
+              value="$MAXI"
+              maxlength="32"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =======================================================================
+       MODAL 3: 60FPS PROMO VIDEO RECORDER (.WEBM EXPORTER)
+       ======================================================================= -->
+  <div class="suite-modal hidden" id="videoModal" aria-hidden="true">
+    <div class="suite-backdrop" data-close-modal="videoModal"></div>
+    <div class="suite-dialog suite-lg">
+      <div class="suite-header">
+        <div class="suite-title-block">
+          <span class="suite-kicker">04 // 60FPS ORBITAL CAPTURE</span>
+          <h2 class="suite-title">PROMO VIDEO STUDIO &amp; EXPORTER</h2>
+        </div>
+
+        <div class="suite-header-controls">
+          <div class="segmented-row" id="videoAspectGroup">
+            <button type="button" class="seg-btn active" data-aspect="16:9">16:9 (X / WEB)</button>
+            <button type="button" class="seg-btn" data-aspect="9:16">9:16 (VERTICAL)</button>
+            <button type="button" class="seg-btn" data-aspect="1:1">1:1 (SQUARE)</button>
+          </div>
+          <button type="button" class="suite-close-btn" data-close-modal="videoModal">✕</button>
+        </div>
+      </div>
+
+      <div class="video-studio-body">
+        <div class="video-canvas-wrap">
+          <canvas id="studioCompositeCanvas" width="1280" height="720"></canvas>
+        </div>
+
+        <div class="video-studio-footer">
+          <div class="video-status-wrap">
+            <span class="rec-indicator" id="studioRecDot"></span>
+            <span class="video-status-text" id="studioStatusText">
+              READY — Captures the live 3D Planet Maxi dive + citizen lock-in + CA watermark at 60fps.
+            </span>
+          </div>
+
+          <div class="video-actions">
+            <button type="button" class="suite-secondary-btn" id="studioPreviewBtn">
+              <span>▶ PREVIEW DIVE</span>
+            </button>
+            <button type="button" class="suite-primary-btn" id="studioRecordBtn">
+              <span>● RECORD &amp; EXPORT (.WEBM)</span>
+            </button>
+            <a id="studioDownloadLink" class="suite-download-link hidden" download="planet-maxi-promo.webm">
+              <span>⬇ DOWNLOAD VIDEO</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =======================================================================
+       MODAL 4: LIVE MARKET & DEXSCREENER TERMINAL DRAWER
+       ======================================================================= -->
+  <div class="suite-modal hidden" id="chartModal" aria-hidden="true">
+    <div class="suite-backdrop" data-close-modal="chartModal"></div>
+    <div class="suite-dialog suite-xl">
+      <div class="suite-header">
+        <div class="suite-title-block">
+          <span class="suite-kicker">05 // SOLANA MAINNET TELEMETRY</span>
+          <h2 class="suite-title">$MAXI LIVE MARKET TERMINAL</h2>
+        </div>
+
+        <div class="suite-header-controls">
+          <div class="market-metrics-strip">
+            <div class="m-pill">
+              <span class="m-k">PRICE</span>
+              <span class="m-v" id="termPrice">LIVE</span>
+            </div>
+            <div class="m-pill">
+              <span class="m-k">MCAP</span>
+              <span class="m-v gold" id="termMcap">LIVE</span>
+            </div>
+            <div class="m-pill">
+              <span class="m-k">24H VOL</span>
+              <span class="m-v" id="termVol">—</span>
+            </div>
+            <div class="m-pill">
+              <span class="m-k">LIQUIDITY</span>
+              <span class="m-v" id="termLiq">—</span>
+            </div>
+          </div>
+          <a
+            href="https://pump.fun/coin/EBCpGdXuS34WZuX13thrku2KmuLSe3Tf2gMtMKndpump"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="suite-primary-btn compact"
+          >
+            <span>TRADE ON PUMP.FUN ↗</span>
+          </a>
+          <button type="button" class="suite-close-btn" data-close-modal="chartModal">✕</button>
+        </div>
+      </div>
+
+      <div class="terminal-chart-wrap">
+        <iframe
+          id="dexScreenerIframe"
+          src="https://dexscreener.com/solana/EBCpGdXuS34WZuX13thrku2KmuLSe3Tf2gMtMKndpump?embed=1&theme=dark&trades=1&info=0"
+          title="$MAXI DexScreener Live Chart"
+          frameborder="0"
+          allowfullscreen
+        ></iframe>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
