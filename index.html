@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="theme-color" content="#050507" />
-  <title>MAXI ($MAXI) — Welcome to the Maxiverse</title>
+  <title>MAXI ($MAXI) — MAXI WORLD ORDER</title>
   <link rel="icon" type="image/png" href="maxi Background Removed.png" />
 
   <!-- Clean Editorial & Technical Typography -->
@@ -29,8 +29,8 @@
           <img src="maxi Background Removed.png" alt="Maxi" class="brand-icon" />
         </div>
         <div class="brand-text">
-          <span class="brand-title">MAXIVERSE</span>
-          <span class="brand-coords">36 CITIZENS · PRIME: OG MAXI</span>
+          <span class="brand-title">MAXI WORLD ORDER</span>
+          <span class="brand-coords">MWO // 36 CITIZENS · PRIME: OG MAXI</span>
         </div>
       </a>
 
@@ -41,10 +41,15 @@
         <button type="button" class="nav-link" id="openPfpModalBtn">03 / PFP STUDIO</button>
         <button type="button" class="nav-link" id="openVideoModalBtn">04 / VIDEO RECORDER</button>
         <button type="button" class="nav-link" id="openChartModalBtn">05 / LIVE TERMINAL</button>
+        <button type="button" class="nav-link" id="openRankModalBtn">06 / MWO RANK</button>
       </nav>
 
       <!-- Right Live Market Ticker & Controls -->
       <div class="nav-actions">
+        <button type="button" class="hud-btn overdrive-toggle-btn" id="overdriveNavBtn" title="Toggle Green-Candle Overdrive Mode">
+          <span class="overdrive-dot"></span>
+          <span id="overdriveNavLabel">OVERDRIVE</span>
+        </button>
         <button type="button" class="hud-btn market-ticker-btn" id="navMarketBtn" title="Open Live DexScreener Terminal">
           <span class="status-dot"></span>
           <span class="ticker-symbol">$MAXI</span>
@@ -111,9 +116,9 @@
       <canvas id="diveFxCanvas"></canvas>
 
       <!-- ===================================================================
-           LAYER A: OPENING GATE ("WELCOME TO THE MAXIVERSE")
+           LAYER A: OPENING GATE ("WELCOME TO THE MAXI WORLD ORDER")
            =================================================================== -->
-      <div id="intro-screen" class="intro-gate-overlay" aria-label="Maxiverse Intro Gate">
+      <div id="intro-screen" class="intro-gate-overlay" aria-label="Maxi World Order Intro Gate">
         <div class="floodlights" aria-hidden="true">
           <div class="floodlight-beam beam-left"></div>
           <div class="floodlight-beam beam-right"></div>
@@ -125,11 +130,11 @@
         <header class="hud-top">
           <div class="hud-corner">
             <span class="hud-dot"></span>
-            <span class="hud-mono">PLANET MAXI // <strong>$MAXI</strong></span>
+            <span class="hud-mono">MAXI WORLD ORDER // <strong>$MAXI</strong></span>
           </div>
 
           <div class="hud-center-status">
-            <span class="hud-mono" id="hud-status-text">ORBITAL LOCK — 36 CITIZENS ON SURFACE</span>
+            <span class="hud-mono" id="hud-status-text">MWO ORBITAL LOCK — 36 CITIZENS ON SURFACE</span>
           </div>
 
           <div class="hud-corner">
@@ -161,17 +166,17 @@
           <div class="enter-cta-wrapper">
             <div class="tagline-pill">
               <span class="tagline-line"></span>
-              <span class="tagline-text">GENESIS SECTOR 00 · 36 CITIZENS · RULED BY OG MAXI</span>
+              <span class="tagline-text">NEW SOVEREIGN ORDER · 36 CITIZENS · SUPREME LEADER: OG MAXI</span>
               <span class="tagline-line"></span>
             </div>
 
             <h1 class="welcome-headline">
               <span class="wh-top">WELCOME TO THE</span>
-              <span class="wh-main">MAXIVERSE</span>
+              <span class="wh-main">MAXI WORLD ORDER</span>
             </h1>
 
             <button id="enter-btn" class="enter-btn" type="button">
-              <span class="btn-label">ENTER PLANET MAXI</span>
+              <span class="btn-label">INITIATE WORLD ORDER</span>
               <svg class="btn-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M5 12h14M13 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round"/>
               </svg>
@@ -223,7 +228,7 @@
         <!-- Bottom Bar -->
         <footer class="hud-bottom">
           <div class="hud-corner">
-            <span class="hud-mono">CAPITAL // <strong>00.000° N, 00.000° E (OG MAXI)</strong></span>
+            <span class="hud-mono">MWO CAPITAL // <strong>00.000° N, 00.000° E (OG MAXI)</strong></span>
           </div>
 
           <div class="spin-controls" role="group" aria-label="Orbit Modes">
@@ -255,9 +260,9 @@
 
         <!-- Top Left Telemetry Readout -->
         <div class="hud-panel hud-tl">
-          <div class="hud-tag">PLANET TELEMETRY</div>
+          <div class="hud-tag">MWO TELEMETRY</div>
           <div class="hud-metric-row">
-            <span class="hud-label">PRIME</span>
+            <span class="hud-label">SUPREME</span>
             <span class="hud-val" id="hudRuler">OG MAXI (#001)</span>
           </div>
           <div class="hud-metric-row">
@@ -291,7 +296,7 @@
         <div class="hud-panel hud-bl" id="hudMiniInset">
           <div class="inset-header">
             <span class="inset-dot"></span>
-            <span>SURFACE RADAR</span>
+            <span>MWO SURFACE RADAR</span>
           </div>
           <div class="inset-img-wrap" id="quickJumpToMaxi" title="Center on OG Maxi (#001)">
             <canvas id="miniRadarCanvas" width="200" height="116"></canvas>
@@ -305,8 +310,12 @@
             <button class="stage-ctrl-btn primary" id="snapOgBtn">
               <span>OG MAXI</span>
             </button>
-            <button class="stage-ctrl-btn" id="quickOpenPfpBtn" title="Customize this Citizen in PFP Studio">
-              <span>PFP STUDIO</span>
+            <button class="stage-ctrl-btn overdrive-stage-btn" id="overdriveStageBtn" title="Activate Green-Candle Overdrive Mode">
+              <span class="overdrive-dot"></span>
+              <span id="overdriveStageLabel">OVERDRIVE</span>
+            </button>
+            <button class="stage-ctrl-btn" id="quickOpenRankBtn" title="Calculate your MWO Cult Rank">
+              <span>MWO RANK</span>
             </button>
             <button class="stage-ctrl-btn" id="triggerZoomBtn">
               <span id="triggerZoomLabel">REPLAY DIVE</span>
@@ -321,7 +330,7 @@
               <img src="maxi Background Removed.png" alt="Active Maxi" class="arrived-logo" id="cardMaxiSprite" />
             </div>
             <div class="arrived-title-group">
-              <div class="arrived-kicker" id="cardKicker">PRIME ANCHOR · CITIZEN #001</div>
+              <div class="arrived-kicker" id="cardKicker">MWO SUPREME ANCHOR · CITIZEN #001</div>
               <h2 class="arrived-title" id="cardTitle">OG MAXI</h2>
             </div>
             <div class="arrived-header-actions">
@@ -333,7 +342,7 @@
           </div>
 
           <p class="arrived-desc" id="maxiLiveQuote">
-            The Prime inhabitant of Planet Maxi. 240 lbs lean on the Genesis Citadel while all 35 variants orbit the surrounding continents.
+            Supreme Sovereign of the Maxi World Order. 240 lbs lean on the Genesis Citadel while all 35 MWO citizens hold the surrounding continents.
           </p>
 
           <!-- Clean Scrollbar-Free Horizontal Citizen Roster Strip -->
@@ -349,7 +358,7 @@
       <div class="ca-bar-inner">
         <div class="ca-status">
           <span class="live-beacon"></span>
-          <span class="ca-tag">$MAXI CONTRACT</span>
+          <span class="ca-tag">MWO // $MAXI CA</span>
         </div>
 
         <div class="ca-box" id="copyCaBtn" title="Click to copy Contract Address">
@@ -390,6 +399,9 @@
           >
             <span>DEXSCREENER ↗</span>
           </a>
+          <button type="button" class="social-pill" id="bottomOpenRankBtn">
+            <span>MWO RANK</span>
+          </button>
           <button type="button" class="social-pill" id="bottomOpenVaultBtn">
             <span>36 VAULT</span>
           </button>
@@ -409,15 +421,15 @@
     <div class="suite-dialog suite-xl">
       <div class="suite-header">
         <div class="suite-title-block">
-          <span class="suite-kicker">02 // COMPLETE CITIZEN INDEX</span>
-          <h2 class="suite-title">THE 36 MAXIVERSE VAULT</h2>
+          <span class="suite-kicker">02 // MAXI WORLD ORDER ROSTER</span>
+          <h2 class="suite-title">THE 36 MWO CITIZEN VAULT</h2>
         </div>
 
         <div class="suite-header-controls">
           <div class="filter-group" id="vaultFilterGroup">
             <button type="button" class="suite-tab active" data-filter="ALL">ALL (36)</button>
             <button type="button" class="suite-tab" data-filter="MYTHIC">1-OF-1 MASTERS (6)</button>
-            <button type="button" class="suite-tab" data-filter="CITIZEN">PLANET CITIZENS (30)</button>
+            <button type="button" class="suite-tab" data-filter="CITIZEN">MWO CITIZENS (30)</button>
           </div>
           <button type="button" class="suite-close-btn" data-close-modal="vaultModal">✕</button>
         </div>
@@ -439,8 +451,8 @@
     <div class="suite-dialog suite-lg">
       <div class="suite-header">
         <div class="suite-title-block">
-          <span class="suite-kicker">03 // COMMUNITY RAID GENERATOR</span>
-          <h2 class="suite-title">MAXI PFP &amp; BANNER STUDIO</h2>
+          <span class="suite-kicker">03 // MWO PROPAGANDA &amp; PFP GENERATOR</span>
+          <h2 class="suite-title">MAXI WORLD ORDER PFP &amp; BANNER STUDIO</h2>
         </div>
         <button type="button" class="suite-close-btn" data-close-modal="pfpModal">✕</button>
       </div>
@@ -472,7 +484,7 @@
           </div>
 
           <div class="control-block">
-            <label class="control-label">02 / SELECT CITIZEN CUTOUT (36)</label>
+            <label class="control-label">02 / SELECT MWO CITIZEN CUTOUT (36)</label>
             <div class="pfp-citizen-picker" id="pfpCitizenPicker">
               <!-- Populated by script.js -->
             </div>
@@ -482,28 +494,35 @@
             <label class="control-label">03 / STUDIO BACKDROP</label>
             <div class="segmented-row" id="pfpBgGroup">
               <button type="button" class="seg-btn active" data-bg="obsidian">OBSIDIAN</button>
-              <button type="button" class="seg-btn" data-bg="gold">CHAMPAGNE</button>
+              <button type="button" class="seg-btn" data-bg="gold">SOVEREIGN GOLD</button>
+              <button type="button" class="seg-btn" data-bg="emerald">GREEN CANDLE</button>
               <button type="button" class="seg-btn" data-bg="sapphire">SAPPHIRE</button>
-              <button type="button" class="seg-btn" data-bg="emerald">EMERALD</button>
               <button type="button" class="seg-btn" data-bg="crimson">CRIMSON</button>
             </div>
           </div>
 
           <div class="control-block">
-            <label class="control-label">04 / OVERLAY &amp; TYPOGRAPHY</label>
+            <label class="control-label">04 / MWO OVERLAY &amp; PROPAGANDA STAMP</label>
             <div class="segmented-row" id="pfpOverlayGroup">
-              <button type="button" class="seg-btn active" data-overlay="clean">CLEAN STUDIO</button>
+              <button type="button" class="seg-btn active" data-overlay="mwo">MWO CULT SEAL</button>
               <button type="button" class="seg-btn" data-overlay="halo">ORBIT HALO</button>
               <button type="button" class="seg-btn" data-overlay="grid">TELEMETRY</button>
+              <button type="button" class="seg-btn" data-overlay="clean">CLEAN STUDIO</button>
             </div>
             <input
               type="text"
               id="pfpCustomText"
               class="suite-input"
-              placeholder="Custom Tagline (e.g. $MAXI · 240 LBS)"
-              value="$MAXI"
+              placeholder="Custom Tagline (e.g. MAXI WORLD ORDER)"
+              value="MAXI WORLD ORDER"
               maxlength="32"
             />
+            <div class="preset-chips-row" id="pfpPresetChips">
+              <button type="button" class="preset-chip" data-text="MAXI WORLD ORDER">MAXI WORLD ORDER</button>
+              <button type="button" class="preset-chip" data-text="$MAXI · 240 LBS">$MAXI · 240 LBS</button>
+              <button type="button" class="preset-chip" data-text="MWO SUPREME">MWO SUPREME</button>
+              <button type="button" class="preset-chip" data-text="SEND IT TO $1B">SEND IT TO $1B</button>
+            </div>
           </div>
         </div>
       </div>
@@ -518,8 +537,8 @@
     <div class="suite-dialog suite-lg">
       <div class="suite-header">
         <div class="suite-title-block">
-          <span class="suite-kicker">04 // 60FPS ORBITAL CAPTURE</span>
-          <h2 class="suite-title">PROMO VIDEO STUDIO &amp; EXPORTER</h2>
+          <span class="suite-kicker">04 // 60FPS MWO ORBITAL CAPTURE</span>
+          <h2 class="suite-title">MWO PROMO VIDEO STUDIO &amp; EXPORTER</h2>
         </div>
 
         <div class="suite-header-controls">
@@ -541,7 +560,7 @@
           <div class="video-status-wrap">
             <span class="rec-indicator" id="studioRecDot"></span>
             <span class="video-status-text" id="studioStatusText">
-              READY — Captures the live 3D Planet Maxi dive + citizen lock-in + CA watermark at 60fps.
+              READY — Captures the live 3D Planet Maxi dive + MWO watermark + synth audio at 60fps.
             </span>
           </div>
 
@@ -552,7 +571,7 @@
             <button type="button" class="suite-primary-btn" id="studioRecordBtn">
               <span>● RECORD &amp; EXPORT (.WEBM)</span>
             </button>
-            <a id="studioDownloadLink" class="suite-download-link hidden" download="planet-maxi-promo.webm">
+            <a id="studioDownloadLink" class="suite-download-link hidden" download="maxi-world-order-promo.webm">
               <span>⬇ DOWNLOAD VIDEO</span>
             </a>
           </div>
@@ -612,6 +631,110 @@
           frameborder="0"
           allowfullscreen
         ></iframe>
+      </div>
+    </div>
+  </div>
+
+  <!-- =======================================================================
+       MODAL 5: MWO CULT RANK & CONVICTION CALCULATOR
+       ======================================================================= -->
+  <div class="suite-modal hidden" id="rankModal" aria-hidden="true">
+    <div class="suite-backdrop" data-close-modal="rankModal"></div>
+    <div class="suite-dialog suite-lg">
+      <div class="suite-header">
+        <div class="suite-title-block">
+          <span class="suite-kicker">06 // SOVEREIGN DOSSIER &amp; BAG PROJECTION</span>
+          <h2 class="suite-title">MWO CULT RANK &amp; CONVICTION CALCULATOR</h2>
+        </div>
+        <button type="button" class="suite-close-btn" data-close-modal="rankModal">✕</button>
+      </div>
+
+      <div class="pfp-studio-layout rank-studio-layout">
+        <!-- Left: Live Rendered MWO Sovereign Rank Dossier Card -->
+        <div class="pfp-preview-col">
+          <div class="rank-canvas-frame">
+            <canvas id="rankCardCanvas" width="1000" height="640"></canvas>
+          </div>
+          <div class="pfp-export-bar">
+            <button type="button" class="suite-primary-btn" id="downloadRankCardBtn">
+              <span>⬇ EXPORT MWO DOSSIER PNG</span>
+            </button>
+            <button type="button" class="suite-secondary-btn" id="copyRankCardBtn">
+              <span id="copyRankCardLabel">COPY DOSSIER TO CLIPBOARD</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Right: Bag Size, Target Market Cap & Callsign Controls -->
+        <div class="pfp-controls-col">
+          <div class="control-block">
+            <label class="control-label">01 / YOUR $MAXI BAG SIZE (1B TOTAL SUPPLY)</label>
+            <input
+              type="number"
+              id="rankBagInput"
+              class="suite-input"
+              placeholder="Enter $MAXI tokens (e.g. 2500000)"
+              value="2500000"
+              min="1"
+              max="1000000000"
+            />
+            <div class="preset-chips-row" id="rankBagPresets">
+              <button type="button" class="preset-chip" data-bag="250000">250K $MAXI</button>
+              <button type="button" class="preset-chip" data-bag="1000000">1M $MAXI (0.1%)</button>
+              <button type="button" class="preset-chip active" data-bag="2500000">2.5M $MAXI</button>
+              <button type="button" class="preset-chip" data-bag="10000000">10M WHALE (1%)</button>
+              <button type="button" class="preset-chip" data-bag="25000000">25M SOVEREIGN</button>
+            </div>
+          </div>
+
+          <div class="control-block">
+            <label class="control-label">02 / TARGET MARKET CAP CONVICTION</label>
+            <div class="segmented-row" id="rankTargetMcapGroup">
+              <button type="button" class="seg-btn" data-mcap="10000000">$10M</button>
+              <button type="button" class="seg-btn" data-mcap="50000000">$50M</button>
+              <button type="button" class="seg-btn active" data-mcap="100000000">$100M</button>
+              <button type="button" class="seg-btn" data-mcap="500000000">$500M</button>
+              <button type="button" class="seg-btn" data-mcap="1000000000">$1B MWO</button>
+            </div>
+          </div>
+
+          <div class="control-block">
+            <label class="control-label">03 / OPERATIVE CALLSIGN &amp; AVATAR</label>
+            <div class="rank-callsign-row">
+              <input
+                type="text"
+                id="rankCallsignInput"
+                class="suite-input"
+                placeholder="Your X / TG Handle (e.g. @MAXI_SOVEREIGN)"
+                value="MWO OPERATIVE #001"
+                maxlength="24"
+              />
+              <button type="button" class="suite-secondary-btn compact" id="rankCycleCitizenBtn" title="Cycle Citizen Avatar">
+                <span>AVATAR ↻</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Live Conviction Projection Matrix -->
+          <div class="rank-projection-matrix">
+            <div class="rpm-box">
+              <span class="rpm-label">ASSIGNED CULT RANK</span>
+              <span class="rpm-value gold" id="rpmRankTitle">SECTOR WARLORD</span>
+            </div>
+            <div class="rpm-box">
+              <span class="rpm-label">SUPPLY OWNERSHIP</span>
+              <span class="rpm-value" id="rpmSupplyPct">0.250% OF 1B</span>
+            </div>
+            <div class="rpm-box">
+              <span class="rpm-label">PROJECTED BAG VALUE</span>
+              <span class="rpm-value emerald" id="rpmProjectedUsd">$250,000</span>
+            </div>
+            <div class="rpm-box">
+              <span class="rpm-label">MULTIPLE VS LIVE MCAP</span>
+              <span class="rpm-value" id="rpmMultiplier">LIVE</span>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>

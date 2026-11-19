@@ -19,21 +19,21 @@ const MAXI_CITIZENS = [
     id: 'citizen-001',
     rank: '#001',
     name: 'OG MAXI',
-    title: '👑 SOVEREIGN RULER OF PLANET MAXI · GENESIS #001',
+    title: 'MWO SUPREME SOVEREIGN · GENESIS #001',
     src: 'maxi Background Removed.png',
     isOg: true,
     isMythic: true,
     lat: 0.18,
     lon: 0.0,
     color: '#ffbe2e',
-    lore: '<strong>The Prime Anchor of the Maxiverse.</strong> Standing atop the Golden Genesis Citadel at 240 lbs lean while his tears feed the oceans below. All 35 of his multiverse variants inhabit the surrounding craters—drag the 3D planet or click any citizen below to visit them!'
+    lore: '<strong>Supreme Sovereign of the Maxi World Order.</strong> Standing atop the Genesis Citadel at 240 lbs lean while all 35 MWO citizens hold the surrounding continents—drag the 3D planet, scroll to zoom, or click any citizen below to inspect them.'
   },
   // 5 Inner-Ring 1-of-1 Mythic Citizens (Surrounding OG Maxi's Citadel)
   {
     id: 'citizen-002',
     rank: '#002',
     name: 'HEISENBERG MAXI',
-    title: '★ 1-OF-1 MYTHIC CITIZEN · CRYSTAL MESA',
+    title: '1-OF-1 MWO MASTER · CRYSTAL MESA',
     src: `${BG_REMOVED_DIR}photo_2026-11-18_22-43-12 Background Removed.png`,
     isMythic: true,
     lat: 0.36,
@@ -45,7 +45,7 @@ const MAXI_CITIZENS = [
     id: 'citizen-003',
     rank: '#003',
     name: 'SPRITE LEAN MAXI',
-    title: '★ 1-OF-1 MYTHIC CITIZEN · VIOLET LAGOON',
+    title: '1-OF-1 MWO MASTER · VIOLET LAGOON',
     src: `${BG_REMOVED_DIR}photo_2026-11-18_22-43-16 Background Removed.png`,
     isMythic: true,
     lat: 0.34,
@@ -57,7 +57,7 @@ const MAXI_CITIZENS = [
     id: 'citizen-004',
     rank: '#004',
     name: 'TUNG SAHUR MAXI',
-    title: '★ 1-OF-1 MYTHIC CITIZEN · TIMBER CRATER',
+    title: '1-OF-1 MWO MASTER · TIMBER CRATER',
     src: `${BG_REMOVED_DIR}photo_2026-11-18_22-43-33 Background Removed.png`,
     isMythic: true,
     lat: -0.14,
@@ -69,7 +69,7 @@ const MAXI_CITIZENS = [
     id: 'citizen-005',
     rank: '#005',
     name: 'HOKAGE MAXI',
-    title: '★ 1-OF-1 MYTHIC CITIZEN · AKATSUKI RIDGE',
+    title: '1-OF-1 MWO MASTER · AKATSUKI RIDGE',
     src: `${BG_REMOVED_DIR}photo_2026-11-18_22-43-38 Background Removed.png`,
     isMythic: true,
     lat: -0.16,
@@ -81,7 +81,7 @@ const MAXI_CITIZENS = [
     id: 'citizen-006',
     rank: '#006',
     name: 'STARBREAKER MAXI',
-    title: '★ 1-OF-1 MYTHIC CITIZEN · ROYAL SUMMIT',
+    title: '1-OF-1 MWO MASTER · ROYAL SUMMIT',
     src: `${BG_REMOVED_DIR}photo_2026-11-18_22-43-39 (2) Background Removed.png`,
     isMythic: true,
     lat: 0.56,
@@ -107,7 +107,7 @@ const MAXI_CITIZENS = [
     title: 'CITIZEN #008 · MJOLNIR GARRISON',
     src: `${BG_REMOVED_DIR}photo_2026-11-18_22-42-33 (2) Background Removed.png`,
     color: '#3ef095',
-    lore: '<strong>Master Chief of the Maxiverse.</strong> Olive-drab Mjolnir armor barely containing his 240-lb frame.'
+    lore: '<strong>Master Chief of the Maxi World Order.</strong> Olive-drab Mjolnir armor barely containing his 240-lb frame.'
   },
   {
     id: 'citizen-009',
@@ -1175,10 +1175,88 @@ class PlanetMaxiController {
     const rimLight1 = new THREE.PointLight(0x38bdf8, 0.9, 750);
     rimLight1.position.set(-240, -130, 170);
     this.scene.add(rimLight1);
+    this.rimLight1 = rimLight1;
 
     const rimLight2 = new THREE.PointLight(0xf59e0b, 0.7, 750);
     rimLight2.position.set(220, -150, -160);
     this.scene.add(rimLight2);
+    this.rimLight2 = rimLight2;
+
+    // 6. Green-Candle Overdrive 3D Orbital Laser Pillars (Anchored to OG Maxi + Mythic Masters)
+    this.isOverdrive = false;
+    this.overdriveLasersGroup = new THREE.Group();
+    this.overdriveLasersGroup.visible = false;
+    this.planetGroup.add(this.overdriveLasersGroup);
+
+    MAXI_CITIZENS.forEach((cit) => {
+      if (!cit.isOg && !cit.isMythic) return;
+      const beamLen = cit.isOg ? 85 : 52;
+      const beamRadius = cit.isOg ? 1.8 : 0.95;
+      const beamGeo = new THREE.CylinderGeometry(0.15, beamRadius, beamLen, 16, 1, true);
+      const beamMat = new THREE.MeshBasicMaterial({
+        color: cit.isOg ? 0x34d399 : 0xe5b869,
+        transparent: true,
+        opacity: cit.isOg ? 0.55 : 0.35,
+        side: THREE.DoubleSide,
+        blending: THREE.AdditiveBlending
+      });
+      const beamMesh = new THREE.Mesh(beamGeo, beamMat);
+
+      const r = this.planetRadius + beamLen * 0.45;
+      const cosLat = Math.cos(cit.lat);
+      const pos = new THREE.Vector3(
+        r * cosLat * Math.sin(cit.lon),
+        r * Math.sin(cit.lat),
+        r * cosLat * Math.cos(cit.lon)
+      );
+      beamMesh.position.copy(pos);
+      beamMesh.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), pos.clone().normalize());
+      this.overdriveLasersGroup.add(beamMesh);
+    });
+  }
+
+  toggleOverdriveMode() {
+    this.isOverdrive = !this.isOverdrive;
+    document.body.classList.toggle('mwo-overdrive', this.isOverdrive);
+    if (this.overdriveLasersGroup) {
+      this.overdriveLasersGroup.visible = this.isOverdrive;
+    }
+
+    const navLbl = document.getElementById('overdriveNavLabel');
+    const stageLbl = document.getElementById('overdriveStageLabel');
+    const phaseEl = document.getElementById('hudPhaseBadge');
+
+    if (this.isOverdrive) {
+      this.targetWarpSpeed = 9.5;
+      this.atmoMesh.material.color.setHex(0x34d399);
+      this.atmoMesh.material.opacity = 0.24;
+      if (this.rimLight1) this.rimLight1.color.setHex(0x34d399);
+      this.ringMeshes.forEach((rm, idx) => {
+        rm.material.color.setHex(idx % 2 === 0 ? 0x34d399 : 0xe5b869);
+        rm.material.opacity = 0.22;
+      });
+      if (navLbl) navLbl.textContent = 'OVERDRIVE: ON';
+      if (stageLbl) stageLbl.textContent = 'OVERDRIVE: ON';
+      if (phaseEl) phaseEl.textContent = 'MWO OVERDRIVE // GREEN CANDLE PROTOCOL';
+
+      sfx.playBeep(523.25, 0.12, 'sawtooth');
+      setTimeout(() => sfx.playBeep(659.25, 0.14, 'sawtooth'), 70);
+      setTimeout(() => sfx.playBeep(1046.5, 0.22, 'triangle'), 140);
+    } else {
+      this.targetWarpSpeed = 1.5;
+      const maps = generateRealisticPlanetMaps(this.paletteIdx);
+      this.atmoMesh.material.color.setHex(maps.atmoHex);
+      this.atmoMesh.material.opacity = 0.15;
+      if (this.rimLight1) this.rimLight1.color.setHex(0x38bdf8);
+      this.ringMeshes.forEach((rm, idx) => {
+        if (maps.ringColors[idx]) rm.material.color.setHex(maps.ringColors[idx]);
+        rm.material.opacity = idx === 0 ? 0.14 : idx === 1 ? 0.09 : 0.06;
+      });
+      if (navLbl) navLbl.textContent = 'OVERDRIVE';
+      if (stageLbl) stageLbl.textContent = 'OVERDRIVE';
+      if (phaseEl) phaseEl.textContent = 'SCROLL TO ZOOM · DRAG TO ROTATE';
+      sfx.playBeep(440, 0.09, 'sine');
+    }
   }
 
   cycleBiomeAura() {
@@ -1193,9 +1271,9 @@ class PlanetMaxiController {
     this.planetMesh.material.roughnessMap = this.roughTex;
     this.planetMesh.material.needsUpdate = true;
 
-    this.atmoMesh.material.color.setHex(maps.atmoHex);
+    this.atmoMesh.material.color.setHex(this.isOverdrive ? 0x34d399 : maps.atmoHex);
     this.ringMeshes.forEach((rm, idx) => {
-      if (maps.ringColors[idx]) rm.material.color.setHex(maps.ringColors[idx]);
+      if (maps.ringColors[idx]) rm.material.color.setHex(this.isOverdrive ? 0x34d399 : maps.ringColors[idx]);
     });
 
     const cycleBtn = document.getElementById('cycleBiomeBtn');
@@ -1550,6 +1628,35 @@ class PlanetMaxiController {
       });
       ctx.restore();
     }
+
+    // Green-Candle Overdrive Vertical Impulse Lasers & Telemetry
+    if (this.isOverdrive) {
+      ctx.save();
+      const candleCount = 14;
+      for (let i = 0; i < candleCount; i++) {
+        const xNorm = ((i * 0.61803398875) % 1);
+        const x = (0.04 + xNorm * 0.92) * w;
+        const speed = 180 + (i % 5) * 85;
+        const y = h - ((timeSec * speed + i * 190) % (h + 260));
+        const candleH = 44 + (i % 4) * 28;
+
+        // Wick
+        ctx.strokeStyle = 'rgba(52, 211, 153, 0.32)';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(x, y - 16);
+        ctx.lineTo(x, y + candleH + 16);
+        ctx.stroke();
+
+        // Green Candle Body
+        const cGrad = ctx.createLinearGradient(x, y, x, y + candleH);
+        cGrad.addColorStop(0, 'rgba(52, 211, 153, 0.55)');
+        cGrad.addColorStop(1, 'rgba(52, 211, 153, 0.08)');
+        ctx.fillStyle = cGrad;
+        ctx.fillRect(x - 2.5, y, 5, candleH);
+      }
+      ctx.restore();
+    }
   }
 
   bindEvents() {
@@ -1560,6 +1667,19 @@ class PlanetMaxiController {
 
     const replayDiveBtn = document.getElementById('triggerZoomBtn');
     if (replayDiveBtn) replayDiveBtn.addEventListener('click', () => this.resetToOrbit(true));
+
+    const overdriveBtns = [
+      document.getElementById('overdriveNavBtn'),
+      document.getElementById('overdriveStageBtn')
+    ];
+    overdriveBtns.forEach((btn) => {
+      if (btn) {
+        btn.addEventListener('click', (e) => {
+          e.preventDefault();
+          this.toggleOverdriveMode();
+        });
+      }
+    });
 
     const ogSnapBtns = [
       document.getElementById('focusOgBtn'),
@@ -1908,8 +2028,8 @@ class CommunitySuiteController {
     this.pfpFormat = 'pfp'; // 'pfp' (1000x1000) | 'banner' (1500x500)
     this.pfpCitizenIdx = 0;
     this.pfpBg = 'obsidian';
-    this.pfpOverlay = 'clean';
-    this.pfpCustomText = '$MAXI';
+    this.pfpOverlay = 'mwo';
+    this.pfpCustomText = 'MAXI WORLD ORDER';
     this.loadedImages = new Map();
 
     // Video Recorder State
@@ -1921,10 +2041,20 @@ class CommunitySuiteController {
     this.recordedChunks = [];
     this.videoModalOpen = false;
 
+    // MWO Cult Rank & Conviction Calculator State
+    this.rankCanvas = document.getElementById('rankCardCanvas');
+    this.rankCtx = this.rankCanvas ? this.rankCanvas.getContext('2d') : null;
+    this.rankBagSize = 2500000; // Default 2.5M $MAXI (0.25% of 1B supply)
+    this.rankTargetMcap = 100000000; // Default $100M Target MCAP
+    this.rankCallsign = 'MWO OPERATIVE #001';
+    this.rankCitizenIdx = 0;
+    this.liveMarketCapUsd = 0;
+
     this.initModals();
     this.initVaultGrid();
     this.initPfpStudio();
     this.initVideoRecorder();
+    this.initRankCalculator();
     this.initLiveMarketPoller();
   }
 
@@ -1956,6 +2086,8 @@ class CommunitySuiteController {
       this.renderPfpCanvas();
     } else if (modalId === 'videoModal') {
       this.startVideoCompositeLoop();
+    } else if (modalId === 'rankModal') {
+      this.updateRankCalculations();
     }
   }
 
@@ -1979,6 +2111,9 @@ class CommunitySuiteController {
     bindOpen('openChartModalBtn', 'chartModal');
     bindOpen('navMarketBtn', 'chartModal');
     bindOpen('bottomOpenChartBtn', 'chartModal');
+    bindOpen('openRankModalBtn', 'rankModal');
+    bindOpen('quickOpenRankBtn', 'rankModal');
+    bindOpen('bottomOpenRankBtn', 'rankModal');
 
     // Open active planet citizen directly in PFP Studio
     const customizeActiveBtn = document.getElementById('btnCustomizeActive');
@@ -2029,7 +2164,7 @@ class CommunitySuiteController {
 
       const card = document.createElement('div');
       card.className = `vault-item-card ${cit.isOg ? 'og-card' : ''}`;
-      const tierLabel = cit.isOg ? 'PRIME #001' : cit.isMythic ? '1-OF-1 MASTER' : 'CITIZEN';
+      const tierLabel = cit.isOg ? 'SUPREME #001' : cit.isMythic ? '1-OF-1 MASTER' : 'MWO CITIZEN';
 
       card.innerHTML = `
         <div>
@@ -2068,7 +2203,7 @@ class CommunitySuiteController {
   }
 
   /* -----------------------------------------------------------------------
-     2. CUSTOM MAXI PFP & X BANNER STUDIO
+     2. CUSTOM MAXI WORLD ORDER PFP & X BANNER STUDIO
      ----------------------------------------------------------------------- */
   initPfpStudio() {
     const picker = document.getElementById('pfpCitizenPicker');
@@ -2135,12 +2270,24 @@ class CommunitySuiteController {
       });
     }
 
-    // Custom text input
+    // Custom text input & 1-click propaganda preset chips
     const textInput = document.getElementById('pfpCustomText');
     if (textInput) {
       textInput.addEventListener('input', (e) => {
         this.pfpCustomText = e.target.value;
         this.renderPfpCanvas();
+      });
+    }
+
+    const presetChips = document.getElementById('pfpPresetChips');
+    if (presetChips) {
+      presetChips.querySelectorAll('.preset-chip').forEach((chip) => {
+        chip.addEventListener('click', () => {
+          this.pfpCustomText = chip.dataset.text;
+          if (textInput) textInput.value = chip.dataset.text;
+          sfx.playBeep(880, 0.06);
+          this.renderPfpCanvas();
+        });
       });
     }
 
@@ -2150,7 +2297,7 @@ class CommunitySuiteController {
       downloadBtn.addEventListener('click', () => {
         const cit = MAXI_CITIZENS[this.pfpCitizenIdx];
         const link = document.createElement('a');
-        link.download = `maxi-${this.pfpFormat}-${cit.rank.replace('#', '')}.png`;
+        link.download = `mwo-${this.pfpFormat}-${cit.rank.replace('#', '')}.png`;
         link.href = this.pfpCanvas.toDataURL('image/png');
         link.click();
         sfx.playBeep(1080, 0.1);
@@ -2212,9 +2359,9 @@ class CommunitySuiteController {
     ctx.fillStyle = grad;
     ctx.fillRect(0, 0, w, h);
 
-    // 2. Architectural Grid or Orbital Halo Overlay
-    if (this.pfpOverlay === 'grid') {
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.045)';
+    // 2. Architectural Grid or Orbital Halo / MWO Seal Overlay
+    if (this.pfpOverlay === 'grid' || this.pfpOverlay === 'mwo') {
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.04)';
       ctx.lineWidth = 1;
       const step = 50;
       for (let x = 0; x < w; x += step) {
@@ -2225,62 +2372,78 @@ class CommunitySuiteController {
       }
     }
 
-    if (this.pfpOverlay === 'halo' || this.pfpOverlay === 'grid') {
+    if (this.pfpOverlay === 'halo' || this.pfpOverlay === 'grid' || this.pfpOverlay === 'mwo') {
+      const ringCx = this.pfpFormat === 'banner' ? w * 0.74 : w * 0.5;
+      const ringCy = h * 0.52;
       ctx.save();
       ctx.strokeStyle = pal.accent;
-      ctx.globalAlpha = 0.35;
+      ctx.globalAlpha = 0.42;
       ctx.lineWidth = 2;
       ctx.beginPath();
-      ctx.arc(this.pfpFormat === 'banner' ? w * 0.72 : w * 0.5, h * 0.52, h * 0.36, 0, Math.PI * 2);
+      ctx.arc(ringCx, ringCy, h * 0.36, 0, Math.PI * 2);
       ctx.stroke();
 
-      ctx.setLineDash([8, 8]);
-      ctx.globalAlpha = 0.2;
+      ctx.setLineDash([10, 8]);
+      ctx.globalAlpha = 0.25;
       ctx.beginPath();
-      ctx.arc(this.pfpFormat === 'banner' ? w * 0.72 : w * 0.5, h * 0.52, h * 0.42, 0, Math.PI * 2);
+      ctx.arc(ringCx, ringCy, h * 0.42, 0, Math.PI * 2);
       ctx.stroke();
       ctx.restore();
     }
 
     // 3. Giant Watermark Typography
     ctx.save();
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.035)';
-    ctx.font = `800 ${this.pfpFormat === 'banner' ? '180px' : '160px'} "Syne", "Inter", sans-serif`;
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.038)';
+    ctx.font = `800 ${this.pfpFormat === 'banner' ? '150px' : '130px'} "Syne", "Inter", sans-serif`;
     ctx.textAlign = this.pfpFormat === 'banner' ? 'left' : 'center';
     ctx.textBaseline = 'middle';
-    const wmText = (this.pfpCustomText || 'MAXI').toUpperCase();
+    const wmText = (this.pfpCustomText || 'MWO').toUpperCase();
     if (this.pfpFormat === 'banner') {
       ctx.fillText(wmText, 70, h * 0.46);
     } else {
-      ctx.fillText(wmText, w * 0.5, h * 0.22);
+      ctx.fillText(wmText, w * 0.5, h * 0.2);
     }
     ctx.restore();
 
-    // 4. Banner Left Editorial Typography
+    // 4. Top MWO Cult Header Strip (for MWO Seal mode on 1:1 PFP)
+    if (this.pfpFormat === 'pfp' && this.pfpOverlay === 'mwo') {
+      ctx.save();
+      ctx.fillStyle = pal.accent;
+      ctx.font = '700 16px "JetBrains Mono", monospace';
+      ctx.textAlign = 'center';
+      ctx.fillText(`MAXI WORLD ORDER // SOVEREIGN CITIZEN ${cit.rank}`, w * 0.5, 54);
+      ctx.restore();
+    }
+
+    // 5. Banner Left Editorial Typography
     if (this.pfpFormat === 'banner') {
       ctx.save();
       ctx.fillStyle = pal.accent;
       ctx.font = '700 18px "JetBrains Mono", monospace';
-      ctx.fillText(`PLANET MAXI // CITIZEN ${cit.rank}`, 74, h * 0.34);
+      ctx.fillText(`MAXI WORLD ORDER // CITIZEN ${cit.rank}`, 74, h * 0.32);
 
       ctx.fillStyle = '#ffffff';
-      ctx.font = '800 68px "Syne", "Inter", sans-serif';
-      ctx.fillText(this.pfpCustomText || cit.name, 72, h * 0.52);
+      ctx.font = '800 58px "Syne", "Inter", sans-serif';
+      ctx.fillText((this.pfpCustomText || cit.name).toUpperCase(), 72, h * 0.5);
 
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.55)';
-      ctx.font = '500 16px "JetBrains Mono", monospace';
-      ctx.fillText(`CA: ${LIVE_CA}`, 74, h * 0.68);
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.65)';
+      ctx.font = '600 16px "JetBrains Mono", monospace';
+      ctx.fillText(`CA: ${LIVE_CA}`, 74, h * 0.66);
+
+      ctx.fillStyle = pal.accent;
+      ctx.font = '700 15px "JetBrains Mono", monospace';
+      ctx.fillText(`𝕏 @MAXIWORLDORDER · T.ME/MAXICOLLECTIVE`, 74, h * 0.78);
       ctx.restore();
     }
 
-    // 5. Draw Transparent Cutout Citizen
+    // 6. Draw Transparent Cutout Citizen
     const img = this.getCitizenImage(this.pfpCitizenIdx);
     if (img && img.complete && img.naturalWidth > 0) {
       ctx.save();
-      const targetH = this.pfpFormat === 'banner' ? h * 0.86 : h * 0.74;
+      const targetH = this.pfpFormat === 'banner' ? h * 0.86 : h * 0.73;
       const ratio = img.naturalWidth / img.naturalHeight;
       const targetW = targetH * ratio;
-      const cx = this.pfpFormat === 'banner' ? w * 0.72 - targetW / 2 : (w - targetW) / 2;
+      const cx = this.pfpFormat === 'banner' ? w * 0.74 - targetW / 2 : (w - targetW) / 2;
       const cy = this.pfpFormat === 'banner' ? h - targetH - 15 : h * 0.16;
 
       ctx.shadowColor = 'rgba(0, 0, 0, 0.85)';
@@ -2290,16 +2453,16 @@ class CommunitySuiteController {
       ctx.restore();
     }
 
-    // 6. Subtle Studio Corner Telemetry Stamp
+    // 7. Bottom MWO Sovereign Stamp on 1:1 PFP
     if (this.pfpFormat === 'pfp' && this.pfpCustomText) {
       ctx.save();
-      ctx.fillStyle = 'rgba(6, 8, 13, 0.88)';
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.18)';
+      ctx.fillStyle = 'rgba(6, 8, 13, 0.92)';
+      ctx.strokeStyle = pal.accent;
       ctx.lineWidth = 1.5;
-      const pillW = 340;
-      const pillH = 48;
+      const pillW = 460;
+      const pillH = 54;
       const px = (w - pillW) / 2;
-      const py = h - 76;
+      const py = h - 82;
       ctx.beginPath();
       ctx.roundRect(px, py, pillW, pillH, 8);
       ctx.fill();
@@ -2375,7 +2538,6 @@ class CommunitySuiteController {
       const fxC = this.planetCtrl.fxCanvas;
 
       if (spaceC && webglC) {
-        // Center-crop source viewport onto target aspect ratio
         const sw = spaceC.width;
         const sh = spaceC.height;
         const scale = Math.max(cw / sw, ch / sh);
@@ -2389,26 +2551,25 @@ class CommunitySuiteController {
         if (fxC) ctx.drawImage(fxC, dx, dy, dw, dh);
       }
 
-      // Draw Active Citizen Cutout & Telemetry Overlay in bottom corner of video
       const activeCit = MAXI_CITIZENS[this.planetCtrl.activeCitizenIndex] || MAXI_CITIZENS[0];
       const citImg = this.getCitizenImage(this.planetCtrl.activeCitizenIndex);
 
-      // Top Left Studio Watermark
+      // Top Left MWO Studio Watermark
       ctx.save();
-      ctx.fillStyle = 'rgba(5, 7, 12, 0.82)';
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
+      ctx.fillStyle = 'rgba(5, 7, 12, 0.86)';
+      ctx.strokeStyle = 'rgba(229, 184, 105, 0.35)';
       ctx.lineWidth = 1;
       ctx.beginPath();
-      ctx.roundRect(28, 28, 320, 56, 8);
+      ctx.roundRect(28, 28, 340, 56, 8);
       ctx.fill();
       ctx.stroke();
 
       ctx.fillStyle = '#e5b869';
       ctx.font = '700 13px "JetBrains Mono", monospace';
-      ctx.fillText('WELCOME TO THE MAXIVERSE', 46, 51);
+      ctx.fillText('MAXI WORLD ORDER // $MAXI', 46, 51);
       ctx.fillStyle = '#f4f4f6';
       ctx.font = '600 12px "JetBrains Mono", monospace';
-      ctx.fillText(`$MAXI · 36 CITIZENS LIVE`, 46, 70);
+      ctx.fillText('𝕏 @MAXIWORLDORDER · 36 CITIZENS', 46, 70);
       ctx.restore();
 
       // Bottom CA & Citizen Bar
@@ -2505,7 +2666,310 @@ class CommunitySuiteController {
   }
 
   /* -----------------------------------------------------------------------
-     4. LIVE DEXSCREENER MARKET TELEMETRY POLLER
+     4. MWO CULT RANK & CONVICTION CALCULATOR (DOSSIER CARD GENERATOR)
+     ----------------------------------------------------------------------- */
+  initRankCalculator() {
+    const bagInput = document.getElementById('rankBagInput');
+    const bagPresets = document.getElementById('rankBagPresets');
+    const targetMcapGroup = document.getElementById('rankTargetMcapGroup');
+    const callsignInput = document.getElementById('rankCallsignInput');
+    const cycleCitBtn = document.getElementById('rankCycleCitizenBtn');
+    const downloadRankBtn = document.getElementById('downloadRankCardBtn');
+    const copyRankBtn = document.getElementById('copyRankCardBtn');
+
+    if (bagInput) {
+      bagInput.addEventListener('input', (e) => {
+        const val = Math.max(1, Math.min(1000000000, Number(e.target.value) || 0));
+        this.rankBagSize = val;
+        if (bagPresets) {
+          bagPresets.querySelectorAll('.preset-chip').forEach((c) => {
+            c.classList.toggle('active', Number(c.dataset.bag) === val);
+          });
+        }
+        this.updateRankCalculations();
+      });
+    }
+
+    if (bagPresets) {
+      bagPresets.querySelectorAll('.preset-chip').forEach((chip) => {
+        chip.addEventListener('click', () => {
+          bagPresets.querySelectorAll('.preset-chip').forEach((c) => c.classList.remove('active'));
+          chip.classList.add('active');
+          this.rankBagSize = Number(chip.dataset.bag);
+          if (bagInput) bagInput.value = this.rankBagSize;
+          sfx.playBeep(820, 0.06);
+          this.updateRankCalculations();
+        });
+      });
+    }
+
+    if (targetMcapGroup) {
+      targetMcapGroup.querySelectorAll('.seg-btn').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          targetMcapGroup.querySelectorAll('.seg-btn').forEach((b) => b.classList.remove('active'));
+          btn.classList.add('active');
+          this.rankTargetMcap = Number(btn.dataset.mcap);
+          sfx.playBeep(880, 0.06);
+          this.updateRankCalculations();
+        });
+      });
+    }
+
+    if (callsignInput) {
+      callsignInput.addEventListener('input', (e) => {
+        this.rankCallsign = e.target.value || 'MWO OPERATIVE';
+        this.renderRankDossierCanvas();
+      });
+    }
+
+    if (cycleCitBtn) {
+      cycleCitBtn.addEventListener('click', () => {
+        this.rankCitizenIdx = (this.rankCitizenIdx + 1) % MAXI_CITIZENS.length;
+        sfx.playBeep(790, 0.06);
+        this.getCitizenImage(this.rankCitizenIdx, () => this.renderRankDossierCanvas());
+        this.renderRankDossierCanvas();
+      });
+    }
+
+    if (downloadRankBtn) {
+      downloadRankBtn.addEventListener('click', () => {
+        const link = document.createElement('a');
+        link.download = `mwo-sovereign-dossier-${this.rankBagSize}.png`;
+        link.href = this.rankCanvas.toDataURL('image/png');
+        link.click();
+        sfx.playBeep(1080, 0.1);
+      });
+    }
+
+    if (copyRankBtn) {
+      copyRankBtn.addEventListener('click', () => {
+        this.rankCanvas.toBlob(async (blob) => {
+          if (!blob) return;
+          try {
+            await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
+            const lbl = document.getElementById('copyRankCardLabel');
+            if (lbl) {
+              lbl.textContent = 'DOSSIER COPIED TO CLIPBOARD';
+              setTimeout(() => { lbl.textContent = 'COPY DOSSIER TO CLIPBOARD'; }, 1800);
+            }
+            sfx.playBeep(1120, 0.1);
+          } catch (_) {}
+        });
+      });
+    }
+
+    this.getCitizenImage(0, () => this.updateRankCalculations());
+  }
+
+  getCultRankMeta(bagSize) {
+    if (bagSize >= 20000000) {
+      return { tier: 'TIER V // SUPREME SOVEREIGN', title: 'SUPREME SOVEREIGN', color: '#f5d08a' };
+    }
+    if (bagSize >= 7500000) {
+      return { tier: 'TIER IV // MWO HIGH COUNCIL', title: 'MWO HIGH COUNCIL', color: '#e5b869' };
+    }
+    if (bagSize >= 2000000) {
+      return { tier: 'TIER III // SECTOR WARLORD', title: 'SECTOR WARLORD', color: '#34d399' };
+    }
+    if (bagSize >= 500000) {
+      return { tier: 'TIER II // FIELD OPERATIVE', title: 'FIELD OPERATIVE', color: '#7dd3fc' };
+    }
+    return { tier: 'TIER I // MWO INITIATE', title: 'MWO INITIATE', color: '#cbd5e1' };
+  }
+
+  updateRankCalculations() {
+    const TOTAL_SUPPLY = 1000000000; // 1B Pump.fun standard supply
+    const supplyShare = this.rankBagSize / TOTAL_SUPPLY;
+    const supplyPctStr = `${(supplyShare * 100).toFixed(3)}% OF 1B`;
+    const projectedUsd = supplyShare * this.rankTargetMcap;
+    const rankMeta = this.getCultRankMeta(this.rankBagSize);
+
+    const fmtMoney = (n) => {
+      if (n >= 1e6) return `$${(n / 1e6).toFixed(2)}M`;
+      if (n >= 1e3) return `$${Math.round(n).toLocaleString()}`;
+      return `$${n.toFixed(2)}`;
+    };
+
+    const baseMcap = this.liveMarketCapUsd > 0 ? this.liveMarketCapUsd : 50000;
+    const mult = Math.max(1, this.rankTargetMcap / baseMcap);
+    const multStr = `${mult >= 100 ? Math.round(mult).toLocaleString() : mult.toFixed(1)}×`;
+
+    const elTitle = document.getElementById('rpmRankTitle');
+    const elPct = document.getElementById('rpmSupplyPct');
+    const elUsd = document.getElementById('rpmProjectedUsd');
+    const elMult = document.getElementById('rpmMultiplier');
+
+    if (elTitle) elTitle.textContent = rankMeta.title;
+    if (elPct) elPct.textContent = supplyPctStr;
+    if (elUsd) elUsd.textContent = fmtMoney(projectedUsd);
+    if (elMult) elMult.textContent = `${multStr} TO TARGET`;
+
+    this.renderRankDossierCanvas(rankMeta, supplyPctStr, fmtMoney(projectedUsd), multStr);
+  }
+
+  renderRankDossierCanvas(rankMeta, supplyPctStr, projectedUsdStr, multStr) {
+    if (!this.rankCtx || !this.rankCanvas) return;
+    if (!rankMeta) {
+      const TOTAL_SUPPLY = 1000000000;
+      const supplyShare = this.rankBagSize / TOTAL_SUPPLY;
+      supplyPctStr = `${(supplyShare * 100).toFixed(3)}% OF 1B`;
+      const projectedUsd = supplyShare * this.rankTargetMcap;
+      projectedUsdStr = projectedUsd >= 1e6
+        ? `$${(projectedUsd / 1e6).toFixed(2)}M`
+        : `$${Math.round(projectedUsd).toLocaleString()}`;
+      const baseMcap = this.liveMarketCapUsd > 0 ? this.liveMarketCapUsd : 50000;
+      const mult = Math.max(1, this.rankTargetMcap / baseMcap);
+      multStr = `${mult >= 100 ? Math.round(mult).toLocaleString() : mult.toFixed(1)}×`;
+      rankMeta = this.getCultRankMeta(this.rankBagSize);
+    }
+
+    const ctx = this.rankCtx;
+    const w = this.rankCanvas.width; // 1000
+    const h = this.rankCanvas.height; // 640
+    const cit = MAXI_CITIZENS[this.rankCitizenIdx] || MAXI_CITIZENS[0];
+
+    // 1. Dark Obsidian Architectural Card Background
+    const bgGrad = ctx.createRadialGradient(w * 0.75, h * 0.5, 40, w * 0.5, h * 0.5, w * 0.85);
+    bgGrad.addColorStop(0, '#141926');
+    bgGrad.addColorStop(1, '#050609');
+    ctx.fillStyle = bgGrad;
+    ctx.fillRect(0, 0, w, h);
+
+    // Subtle Grid
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.035)';
+    ctx.lineWidth = 1;
+    for (let x = 0; x < w; x += 40) {
+      ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke();
+    }
+    for (let y = 0; y < h; y += 40) {
+      ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke();
+    }
+
+    // Outer 1px Hairline Border Frame
+    ctx.strokeStyle = 'rgba(229, 184, 105, 0.45)';
+    ctx.lineWidth = 2;
+    ctx.strokeRect(24, 24, w - 48, h - 48);
+
+    // Top Header Bar
+    ctx.fillStyle = 'rgba(229, 184, 105, 0.08)';
+    ctx.fillRect(25, 25, w - 50, 64);
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(25, 89);
+    ctx.lineTo(w - 25, 89);
+    ctx.stroke();
+
+    ctx.fillStyle = '#e5b869';
+    ctx.font = '700 16px "JetBrains Mono", monospace';
+    ctx.textAlign = 'left';
+    ctx.fillText('MAXI WORLD ORDER // SOVEREIGN CONVICTION DOSSIER', 52, 63);
+
+    ctx.fillStyle = '#34d399';
+    ctx.textAlign = 'right';
+    ctx.fillText('VERIFIED // $MAXI', w - 52, 63);
+
+    // Left Dossier Content
+    ctx.textAlign = 'left';
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+    ctx.font = '600 14px "JetBrains Mono", monospace';
+    ctx.fillText('OPERATIVE CALLSIGN', 56, 140);
+
+    ctx.fillStyle = '#ffffff';
+    ctx.font = '800 38px "Syne", "Inter", sans-serif';
+    ctx.fillText((this.rankCallsign || 'MWO OPERATIVE').toUpperCase(), 56, 182);
+
+    // Cult Rank Pill
+    ctx.fillStyle = 'rgba(229, 184, 105, 0.14)';
+    ctx.strokeStyle = rankMeta.color;
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.roundRect(56, 206, 360, 42, 6);
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.fillStyle = rankMeta.color;
+    ctx.font = '700 15px "JetBrains Mono", monospace';
+    ctx.fillText(rankMeta.tier, 74, 232);
+
+    // Metrics Grid Boxes on Dossier
+    const targetMcapStr = this.rankTargetMcap >= 1e9
+      ? '$1.00B MWO'
+      : `$${(this.rankTargetMcap / 1e6).toFixed(0)}M MCAP`;
+
+    const metrics = [
+      { label: '$MAXI HOLDINGS', val: `${this.rankBagSize.toLocaleString()} $MAXI`, color: '#ffffff' },
+      { label: 'SUPPLY SHARE', val: supplyPctStr, color: '#e5b869' },
+      { label: `BAG AT ${targetMcapStr}`, val: projectedUsdStr, color: '#34d399' },
+      { label: 'CONVICTION MULTIPLE', val: `${multStr} UPSIDE`, color: '#7dd3fc' }
+    ];
+
+    metrics.forEach((m, i) => {
+      const col = i % 2;
+      const row = Math.floor(i / 2);
+      const bx = 56 + col * 265;
+      const by = 278 + row * 112;
+
+      ctx.fillStyle = 'rgba(8, 10, 16, 0.85)';
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.12)';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.roundRect(bx, by, 248, 94, 8);
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+      ctx.font = '600 12px "JetBrains Mono", monospace';
+      ctx.fillText(m.label, bx + 18, by + 32);
+
+      ctx.fillStyle = m.color;
+      ctx.font = '700 22px "JetBrains Mono", monospace';
+      ctx.fillText(m.val, bx + 18, by + 68);
+    });
+
+    // Right Column: Citizen Avatar Halo & Cutout
+    const avatarCx = 785;
+    const avatarCy = 325;
+    ctx.save();
+    ctx.strokeStyle = rankMeta.color;
+    ctx.globalAlpha = 0.35;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.arc(avatarCx, avatarCy, 155, 0, Math.PI * 2);
+    ctx.stroke();
+
+    ctx.setLineDash([8, 6]);
+    ctx.globalAlpha = 0.2;
+    ctx.beginPath();
+    ctx.arc(avatarCx, avatarCy, 178, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.restore();
+
+    const img = this.getCitizenImage(this.rankCitizenIdx);
+    if (img && img.complete && img.naturalWidth > 0) {
+      ctx.save();
+      const targetH = 350;
+      const ratio = img.naturalWidth / img.naturalHeight;
+      const targetW = targetH * ratio;
+      ctx.shadowColor = 'rgba(0, 0, 0, 0.9)';
+      ctx.shadowBlur = 32;
+      ctx.drawImage(img, avatarCx - targetW / 2, avatarCy - targetH / 2 + 10, targetW, targetH);
+      ctx.restore();
+    }
+
+    // Bottom Footer Strip
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+    ctx.font = '500 13px "JetBrains Mono", monospace';
+    ctx.textAlign = 'left';
+    ctx.fillText(`CA: ${LIVE_CA}`, 56, h - 48);
+
+    ctx.fillStyle = '#e5b869';
+    ctx.textAlign = 'right';
+    ctx.fillText('𝕏 @MAXIWORLDORDER · T.ME/MAXICOLLECTIVE', w - 52, h - 48);
+  }
+
+  /* -----------------------------------------------------------------------
+     5. LIVE DEXSCREENER MARKET TELEMETRY POLLER
      ----------------------------------------------------------------------- */
   initLiveMarketPoller() {
     const fetchMarketData = async () => {
@@ -2516,6 +2980,11 @@ class CommunitySuiteController {
         const pair = data && data.pairs && data.pairs[0];
         if (!pair) return;
 
+        const rawMcap = Number(pair.fdv || pair.marketCap || 0);
+        if (rawMcap > 0) {
+          this.liveMarketCapUsd = rawMcap;
+        }
+
         const fmtUsd = (val) => {
           const n = Number(val);
           if (!n) return '—';
@@ -2524,7 +2993,7 @@ class CommunitySuiteController {
           return `$${n.toFixed(2)}`;
         };
 
-        const mcapStr = fmtUsd(pair.fdv || pair.marketCap);
+        const mcapStr = fmtUsd(rawMcap);
         const navMcap = document.getElementById('navLiveMcap');
         const termPrice = document.getElementById('termPrice');
         const termMcap = document.getElementById('termMcap');
@@ -2536,6 +3005,8 @@ class CommunitySuiteController {
         if (termMcap) termMcap.textContent = mcapStr;
         if (termVol && pair.volume) termVol.textContent = fmtUsd(pair.volume.h24);
         if (termLiq && pair.liquidity) termLiq.textContent = fmtUsd(pair.liquidity.usd);
+
+        this.updateRankCalculations();
       } catch (_) {}
     };
 
