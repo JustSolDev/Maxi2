@@ -1277,7 +1277,7 @@ class PlanetMaxiController {
     });
 
     const cycleBtn = document.getElementById('cycleBiomeBtn');
-    const shortNames = ['SURFACE: SAPPHIRE', 'SURFACE: EMERALD', 'SURFACE: OBSIDIAN'];
+    const shortNames = ['SAPPHIRE', 'EMERALD', 'OBSIDIAN'];
     if (cycleBtn) cycleBtn.innerHTML = `<span>${shortNames[this.paletteIdx]}</span>`;
     sfx.playBeep(740, 0.1, 'triangle');
   }
@@ -2032,15 +2032,6 @@ class CommunitySuiteController {
     this.pfpCustomText = 'MAXI WORLD ORDER';
     this.loadedImages = new Map();
 
-    // Video Recorder State
-    this.videoCanvas = document.getElementById('studioCompositeCanvas');
-    this.videoCtx = this.videoCanvas ? this.videoCanvas.getContext('2d') : null;
-    this.videoAspect = '16:9';
-    this.isRecording = false;
-    this.mediaRecorder = null;
-    this.recordedChunks = [];
-    this.videoModalOpen = false;
-
     // MWO Cult Rank & Conviction Calculator State
     this.rankCanvas = document.getElementById('rankCardCanvas');
     this.rankCtx = this.rankCanvas ? this.rankCanvas.getContext('2d') : null;
@@ -2053,7 +2044,6 @@ class CommunitySuiteController {
     this.initModals();
     this.initVaultGrid();
     this.initPfpStudio();
-    this.initVideoRecorder();
     this.initRankCalculator();
     this.initLiveMarketPoller();
   }
@@ -2081,11 +2071,8 @@ class CommunitySuiteController {
     const target = document.getElementById(modalId);
     if (target) target.classList.remove('hidden');
 
-    this.videoModalOpen = modalId === 'videoModal';
     if (modalId === 'pfpModal') {
       this.renderPfpCanvas();
-    } else if (modalId === 'videoModal') {
-      this.startVideoCompositeLoop();
     } else if (modalId === 'rankModal') {
       this.updateRankCalculations();
     }
@@ -2094,7 +2081,6 @@ class CommunitySuiteController {
   closeAllModals() {
     sfx.playBeep(520, 0.07, 'sine');
     document.querySelectorAll('.suite-modal').forEach((m) => m.classList.add('hidden'));
-    this.videoModalOpen = false;
   }
 
   initModals() {
@@ -2107,7 +2093,6 @@ class CommunitySuiteController {
     bindOpen('bottomOpenVaultBtn', 'vaultModal');
     bindOpen('openPfpModalBtn', 'pfpModal');
     bindOpen('quickOpenPfpBtn', 'pfpModal');
-    bindOpen('openVideoModalBtn', 'videoModal');
     bindOpen('openChartModalBtn', 'chartModal');
     bindOpen('navMarketBtn', 'chartModal');
     bindOpen('bottomOpenChartBtn', 'chartModal');
@@ -2478,195 +2463,7 @@ class CommunitySuiteController {
   }
 
   /* -----------------------------------------------------------------------
-     3. 60FPS PROMO VIDEO RECORDER (.WEBM EXPORTER)
-     ----------------------------------------------------------------------- */
-  initVideoRecorder() {
-    const aspectGroup = document.getElementById('videoAspectGroup');
-    if (aspectGroup) {
-      aspectGroup.querySelectorAll('.seg-btn').forEach((btn) => {
-        btn.addEventListener('click', () => {
-          if (this.isRecording) return;
-          aspectGroup.querySelectorAll('.seg-btn').forEach((b) => b.classList.remove('active'));
-          btn.classList.add('active');
-          this.videoAspect = btn.dataset.aspect;
-          if (this.videoAspect === '9:16') {
-            this.videoCanvas.width = 720;
-            this.videoCanvas.height = 1280;
-          } else if (this.videoAspect === '1:1') {
-            this.videoCanvas.width = 1080;
-            this.videoCanvas.height = 1080;
-          } else {
-            this.videoCanvas.width = 1280;
-            this.videoCanvas.height = 720;
-          }
-          sfx.playBeep(760, 0.06);
-        });
-      });
-    }
-
-    const previewBtn = document.getElementById('studioPreviewBtn');
-    if (previewBtn) {
-      previewBtn.addEventListener('click', () => {
-        this.planetCtrl.resetToOrbit(true);
-      });
-    }
-
-    const recordBtn = document.getElementById('studioRecordBtn');
-    if (recordBtn) {
-      recordBtn.addEventListener('click', () => {
-        if (this.isRecording) return;
-        this.start60fpsPromoRecording();
-      });
-    }
-  }
-
-  startVideoCompositeLoop() {
-    if (!this.videoCtx || !this.videoCanvas) return;
-
-    const renderCompositeFrame = () => {
-      if (!this.videoModalOpen && !this.isRecording) return;
-
-      const ctx = this.videoCtx;
-      const cw = this.videoCanvas.width;
-      const ch = this.videoCanvas.height;
-
-      ctx.fillStyle = '#030407';
-      ctx.fillRect(0, 0, cw, ch);
-
-      const spaceC = this.planetCtrl.spaceCanvas;
-      const webglC = this.planetCtrl.renderer ? this.planetCtrl.renderer.domElement : null;
-      const fxC = this.planetCtrl.fxCanvas;
-
-      if (spaceC && webglC) {
-        const sw = spaceC.width;
-        const sh = spaceC.height;
-        const scale = Math.max(cw / sw, ch / sh);
-        const dw = sw * scale;
-        const dh = sh * scale;
-        const dx = (cw - dw) / 2;
-        const dy = (ch - dh) / 2;
-
-        ctx.drawImage(spaceC, dx, dy, dw, dh);
-        ctx.drawImage(webglC, dx, dy, dw, dh);
-        if (fxC) ctx.drawImage(fxC, dx, dy, dw, dh);
-      }
-
-      const activeCit = MAXI_CITIZENS[this.planetCtrl.activeCitizenIndex] || MAXI_CITIZENS[0];
-      const citImg = this.getCitizenImage(this.planetCtrl.activeCitizenIndex);
-
-      // Top Left MWO Studio Watermark
-      ctx.save();
-      ctx.fillStyle = 'rgba(5, 7, 12, 0.86)';
-      ctx.strokeStyle = 'rgba(229, 184, 105, 0.35)';
-      ctx.lineWidth = 1;
-      ctx.beginPath();
-      ctx.roundRect(28, 28, 340, 56, 8);
-      ctx.fill();
-      ctx.stroke();
-
-      ctx.fillStyle = '#e5b869';
-      ctx.font = '700 13px "JetBrains Mono", monospace';
-      ctx.fillText('MAXI WORLD ORDER // $MAXI', 46, 51);
-      ctx.fillStyle = '#f4f4f6';
-      ctx.font = '600 12px "JetBrains Mono", monospace';
-      ctx.fillText('𝕏 @MAXIWORLDORDER · 36 CITIZENS', 46, 70);
-      ctx.restore();
-
-      // Bottom CA & Citizen Bar
-      ctx.save();
-      const barH = 68;
-      const barY = ch - barH - 28;
-      ctx.fillStyle = 'rgba(5, 7, 12, 0.88)';
-      ctx.strokeStyle = 'rgba(229, 184, 105, 0.45)';
-      ctx.lineWidth = 1.5;
-      ctx.beginPath();
-      ctx.roundRect(28, barY, cw - 56, barH, 10);
-      ctx.fill();
-      ctx.stroke();
-
-      if (citImg && citImg.complete && citImg.naturalWidth > 0) {
-        ctx.drawImage(citImg, 42, barY + 8, 52, 52);
-      }
-
-      ctx.fillStyle = '#e5b869';
-      ctx.font = '700 12px "JetBrains Mono", monospace';
-      ctx.fillText(`${activeCit.rank} · ${activeCit.name}`, 106, barY + 28);
-
-      ctx.fillStyle = '#f4f4f6';
-      ctx.font = '500 12px "JetBrains Mono", monospace';
-      ctx.fillText(`CA: ${LIVE_CA}`, 106, barY + 48);
-      ctx.restore();
-
-      requestAnimationFrame(renderCompositeFrame);
-    };
-
-    requestAnimationFrame(renderCompositeFrame);
-  }
-
-  start60fpsPromoRecording() {
-    if (this.isRecording) return;
-    this.isRecording = true;
-    this.recordedChunks = [];
-
-    const recDot = document.getElementById('studioRecDot');
-    const statusText = document.getElementById('studioStatusText');
-    const recordBtn = document.getElementById('studioRecordBtn');
-    const downloadLink = document.getElementById('studioDownloadLink');
-
-    if (recDot) recDot.classList.add('recording');
-    if (downloadLink) downloadLink.classList.add('hidden');
-    if (recordBtn) recordBtn.textContent = '● RECORDING 6.2s DIVE...';
-    if (statusText) statusText.textContent = 'CAPTURING 60FPS 3D ORBITAL DIVE + SYNTH AUDIO...';
-
-    sfx.init();
-    const canvasStream = this.videoCanvas.captureStream(60);
-    if (sfx.streamDest) {
-      const audioTracks = sfx.streamDest.stream.getAudioTracks();
-      audioTracks.forEach((t) => canvasStream.addTrack(t));
-    }
-
-    const mimeType = MediaRecorder.isTypeSupported('video/webm;codecs=vp9')
-      ? 'video/webm;codecs=vp9'
-      : 'video/webm';
-
-    this.mediaRecorder = new MediaRecorder(canvasStream, {
-      mimeType,
-      videoBitsPerSecond: 8000000
-    });
-
-    this.mediaRecorder.ondataavailable = (e) => {
-      if (e.data && e.data.size > 0) this.recordedChunks.push(e.data);
-    };
-
-    this.mediaRecorder.onstop = () => {
-      this.isRecording = false;
-      if (recDot) recDot.classList.remove('recording');
-      if (recordBtn) recordBtn.innerHTML = '<span>● RECORD &amp; EXPORT (.WEBM)</span>';
-
-      const blob = new Blob(this.recordedChunks, { type: 'video/webm' });
-      const url = URL.createObjectURL(blob);
-      if (downloadLink) {
-        downloadLink.href = url;
-        downloadLink.classList.remove('hidden');
-        downloadLink.click();
-      }
-      if (statusText) {
-        statusText.textContent = 'COMPLETE — Promo video (.WEBM) exported and ready for X/Telegram.';
-      }
-    };
-
-    this.mediaRecorder.start();
-    this.planetCtrl.resetToOrbit(true);
-
-    setTimeout(() => {
-      if (this.mediaRecorder && this.mediaRecorder.state === 'recording') {
-        this.mediaRecorder.stop();
-      }
-    }, 6400);
-  }
-
-  /* -----------------------------------------------------------------------
-     4. MWO CULT RANK & CONVICTION CALCULATOR (DOSSIER CARD GENERATOR)
+     3. MWO CULT RANK & CONVICTION CALCULATOR (DOSSIER CARD GENERATOR)
      ----------------------------------------------------------------------- */
   initRankCalculator() {
     const bagInput = document.getElementById('rankBagInput');

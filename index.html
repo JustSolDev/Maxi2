@@ -30,7 +30,7 @@
         </div>
         <div class="brand-text">
           <span class="brand-title">MAXI WORLD ORDER</span>
-          <span class="brand-coords">MWO // 36 CITIZENS · PRIME: OG MAXI</span>
+          <span class="brand-coords">MWO // 36 CITIZENS</span>
         </div>
       </a>
 
@@ -39,9 +39,8 @@
         <button type="button" class="nav-link active" id="focusOgBtn">01 / PLANET</button>
         <button type="button" class="nav-link" id="openVaultModalBtn">02 / 36 VAULT</button>
         <button type="button" class="nav-link" id="openPfpModalBtn">03 / PFP STUDIO</button>
-        <button type="button" class="nav-link" id="openVideoModalBtn">04 / VIDEO RECORDER</button>
-        <button type="button" class="nav-link" id="openChartModalBtn">05 / LIVE TERMINAL</button>
-        <button type="button" class="nav-link" id="openRankModalBtn">06 / MWO RANK</button>
+        <button type="button" class="nav-link" id="openChartModalBtn">04 / LIVE TERMINAL</button>
+        <button type="button" class="nav-link" id="openRankModalBtn">05 / MWO RANK</button>
       </nav>
 
       <!-- Right Live Market Ticker & Controls -->
@@ -53,7 +52,7 @@
         <button type="button" class="hud-btn market-ticker-btn" id="navMarketBtn" title="Open Live DexScreener Terminal">
           <span class="status-dot"></span>
           <span class="ticker-symbol">$MAXI</span>
-          <span class="ticker-mcap" id="navLiveMcap">LIVE CHART</span>
+          <span class="ticker-mcap" id="navLiveMcap">CHART</span>
         </button>
         <a
           href="https://x.com/maxiworldorder"
@@ -62,8 +61,7 @@
           class="hud-btn"
           title="Official X — @maxiworldorder"
         >
-          <span>𝕏 @MAXIWORLDORDER</span>
-          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>
+          <span>𝕏</span>
         </a>
         <a
           href="https://t.me/maxicollective"
@@ -72,8 +70,7 @@
           class="hud-btn"
           title="Official Telegram — t.me/maxicollective"
         >
-          <span>TG COLLECTIVE</span>
-          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>
+          <span>TG</span>
         </a>
         <a
           href="https://pump.fun/coin/EBCpGdXuS34WZuX13thrku2KmuLSe3Tf2gMtMKndpump"
@@ -85,14 +82,14 @@
           <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>
         </a>
         <button class="hud-btn" id="cycleBiomeBtn" title="Switch Planet Biome">
-          <span>SURFACE: SAPPHIRE</span>
+          <span>SAPPHIRE</span>
         </button>
         <button class="hud-btn" id="audioToggleBtn" title="Toggle Audio">
           <span class="status-dot" id="audioDot"></span>
-          <span id="audioLabel">AUDIO</span>
+          <span id="audioLabel">SFX</span>
         </button>
         <button id="replay-intro-btn" class="hud-btn" type="button" title="Return to Opening Gate">
-          <span>INTRO</span>
+          <span>GATE</span>
         </button>
       </div>
     </div>
@@ -530,65 +527,14 @@
   </div>
 
   <!-- =======================================================================
-       MODAL 3: 60FPS PROMO VIDEO RECORDER (.WEBM EXPORTER)
-       ======================================================================= -->
-  <div class="suite-modal hidden" id="videoModal" aria-hidden="true">
-    <div class="suite-backdrop" data-close-modal="videoModal"></div>
-    <div class="suite-dialog suite-lg">
-      <div class="suite-header">
-        <div class="suite-title-block">
-          <span class="suite-kicker">04 // 60FPS MWO ORBITAL CAPTURE</span>
-          <h2 class="suite-title">MWO PROMO VIDEO STUDIO &amp; EXPORTER</h2>
-        </div>
-
-        <div class="suite-header-controls">
-          <div class="segmented-row" id="videoAspectGroup">
-            <button type="button" class="seg-btn active" data-aspect="16:9">16:9 (X / WEB)</button>
-            <button type="button" class="seg-btn" data-aspect="9:16">9:16 (VERTICAL)</button>
-            <button type="button" class="seg-btn" data-aspect="1:1">1:1 (SQUARE)</button>
-          </div>
-          <button type="button" class="suite-close-btn" data-close-modal="videoModal">✕</button>
-        </div>
-      </div>
-
-      <div class="video-studio-body">
-        <div class="video-canvas-wrap">
-          <canvas id="studioCompositeCanvas" width="1280" height="720"></canvas>
-        </div>
-
-        <div class="video-studio-footer">
-          <div class="video-status-wrap">
-            <span class="rec-indicator" id="studioRecDot"></span>
-            <span class="video-status-text" id="studioStatusText">
-              READY — Captures the live 3D Planet Maxi dive + MWO watermark + synth audio at 60fps.
-            </span>
-          </div>
-
-          <div class="video-actions">
-            <button type="button" class="suite-secondary-btn" id="studioPreviewBtn">
-              <span>▶ PREVIEW DIVE</span>
-            </button>
-            <button type="button" class="suite-primary-btn" id="studioRecordBtn">
-              <span>● RECORD &amp; EXPORT (.WEBM)</span>
-            </button>
-            <a id="studioDownloadLink" class="suite-download-link hidden" download="maxi-world-order-promo.webm">
-              <span>⬇ DOWNLOAD VIDEO</span>
-            </a>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- =======================================================================
-       MODAL 4: LIVE MARKET & DEXSCREENER TERMINAL DRAWER
+       MODAL 3: LIVE MARKET & DEXSCREENER TERMINAL DRAWER
        ======================================================================= -->
   <div class="suite-modal hidden" id="chartModal" aria-hidden="true">
     <div class="suite-backdrop" data-close-modal="chartModal"></div>
     <div class="suite-dialog suite-xl">
       <div class="suite-header">
         <div class="suite-title-block">
-          <span class="suite-kicker">05 // SOLANA MAINNET TELEMETRY</span>
+          <span class="suite-kicker">04 // SOLANA MAINNET TELEMETRY</span>
           <h2 class="suite-title">$MAXI LIVE MARKET TERMINAL</h2>
         </div>
 
@@ -636,14 +582,14 @@
   </div>
 
   <!-- =======================================================================
-       MODAL 5: MWO CULT RANK & CONVICTION CALCULATOR
+       MODAL 4: MWO CULT RANK & CONVICTION CALCULATOR
        ======================================================================= -->
   <div class="suite-modal hidden" id="rankModal" aria-hidden="true">
     <div class="suite-backdrop" data-close-modal="rankModal"></div>
     <div class="suite-dialog suite-lg">
       <div class="suite-header">
         <div class="suite-title-block">
-          <span class="suite-kicker">06 // SOVEREIGN DOSSIER &amp; BAG PROJECTION</span>
+          <span class="suite-kicker">05 // SOVEREIGN DOSSIER &amp; BAG PROJECTION</span>
           <h2 class="suite-title">MWO CULT RANK &amp; CONVICTION CALCULATOR</h2>
         </div>
         <button type="button" class="suite-close-btn" data-close-modal="rankModal">✕</button>

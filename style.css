@@ -60,28 +60,31 @@ body {
 }
 
 .nav-inner {
-  max-width: 1520px;
+  max-width: 1560px;
   margin: 0 auto;
   height: 58px;
-  padding: 0 24px;
+  padding: 0 20px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
+  gap: 12px;
 }
 
 .brand-logo {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   text-decoration: none;
   color: var(--text-main);
   cursor: pointer;
+  flex-shrink: 0;
+  white-space: nowrap;
 }
 
 .brand-icon-wrap {
   width: 34px;
   height: 34px;
+  min-width: 34px;
   border-radius: 8px;
   border: 1px solid var(--border-gold);
   background: #0b0d13;
@@ -89,6 +92,7 @@ body {
   align-items: center;
   justify-content: center;
   overflow: hidden;
+  flex-shrink: 0;
 }
 
 .brand-icon {
@@ -101,45 +105,50 @@ body {
   display: flex;
   flex-direction: column;
   gap: 1px;
+  flex-shrink: 0;
+  white-space: nowrap;
 }
 
 .brand-title {
   font-family: var(--font-sans);
   font-weight: 800;
-  font-size: 0.88rem;
-  letter-spacing: 0.14em;
+  font-size: 0.84rem;
+  letter-spacing: 0.12em;
   color: var(--text-main);
+  white-space: nowrap;
 }
 
 .brand-coords {
   font-family: var(--font-mono);
-  font-size: 0.62rem;
+  font-size: 0.58rem;
   color: var(--text-muted);
   letter-spacing: 0.08em;
+  white-space: nowrap;
 }
 
 .nav-links {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 3px;
   background: rgba(255, 255, 255, 0.025);
   border: 1px solid var(--border-hairline);
   padding: 3px;
   border-radius: 8px;
+  flex-shrink: 0;
 }
 
 .nav-link {
   background: transparent;
   border: none;
   font-family: var(--font-mono);
-  font-size: 0.68rem;
+  font-size: 0.65rem;
   font-weight: 600;
   color: var(--text-muted);
-  padding: 6px 13px;
+  padding: 6px 11px;
   border-radius: 5px;
   cursor: pointer;
   transition: all 0.18s ease;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.05em;
   white-space: nowrap;
 }
 
@@ -156,18 +165,19 @@ body {
 .nav-actions {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
+  flex-shrink: 0;
 }
 
 .hud-btn {
   display: inline-flex;
   align-items: center;
-  gap: 7px;
+  gap: 6px;
   font-family: var(--font-mono);
-  font-size: 0.68rem;
+  font-size: 0.65rem;
   font-weight: 600;
-  letter-spacing: 0.06em;
-  padding: 7px 12px;
+  letter-spacing: 0.05em;
+  padding: 6px 10px;
   border-radius: 6px;
   border: 1px solid var(--border-hairline);
   background: rgba(255, 255, 255, 0.03);
@@ -176,6 +186,7 @@ body {
   cursor: pointer;
   transition: all 0.18s ease;
   white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .hud-btn:hover {
@@ -851,8 +862,11 @@ body.intro-locked .hero-viewport {
   display: flex;
   flex-direction: column;
   align-items: center;
-  line-height: 0.95;
-  margin: 2px 0 6px;
+  justify-content: center;
+  text-align: center;
+  width: 100%;
+  line-height: 1;
+  margin: 2px 0 8px;
 }
 
 .wh-top {
@@ -861,15 +875,18 @@ body.intro-locked .hero-viewport {
   font-weight: 600;
   letter-spacing: 0.38em;
   color: var(--gold);
-  margin-bottom: 6px;
+  margin-bottom: 8px;
+  text-align: center;
 }
 
 .wh-main {
   font-family: var(--font-display);
   font-weight: 800;
-  font-size: clamp(2.6rem, 5.6vw, 4.6rem);
-  letter-spacing: -0.02em;
+  font-size: clamp(1.45rem, 3.8vw, 3.6rem);
+  letter-spacing: -0.01em;
   color: #ffffff;
+  text-align: center;
+  white-space: nowrap;
 }
 
 .enter-btn {
@@ -2241,7 +2258,7 @@ body.mwo-overdrive .zoom-progress-fill {
 /* =========================================================================
    RESPONSIVE TABLET & MOBILE OPTIMIZATION
    ========================================================================= */
-@media (max-width: 1120px) {
+@media (max-width: 1280px) {
   .nav-inner {
     height: auto;
     padding: 8px 14px;
@@ -2289,7 +2306,8 @@ body.mwo-overdrive .zoom-progress-fill {
     display: none;
   }
 
-  .pfp-studio-layout {
+  .pfp-studio-layout,
+  .rank-studio-layout {
     grid-template-columns: 1fr;
     padding: 16px;
     gap: 16px;
@@ -2297,6 +2315,11 @@ body.mwo-overdrive .zoom-progress-fill {
 
   .pfp-canvas-frame {
     max-width: 340px;
+    margin: 0 auto;
+  }
+
+  .rank-canvas-frame {
+    max-width: 520px;
     margin: 0 auto;
   }
 }
@@ -2310,16 +2333,17 @@ body.mwo-overdrive .zoom-progress-fill {
   .brand-icon-wrap {
     width: 30px;
     height: 30px;
+    min-width: 30px;
   }
 
   .brand-title {
-    font-size: 0.8rem;
+    font-size: 0.78rem;
   }
 
   .hud-btn {
-    padding: 6px 9px;
-    font-size: 0.62rem;
-    gap: 5px;
+    padding: 6px 8px;
+    font-size: 0.6rem;
+    gap: 4px;
   }
 
   #sound-toggle {
@@ -2382,7 +2406,9 @@ body.mwo-overdrive .zoom-progress-fill {
   }
 
   .wh-main {
-    font-size: clamp(2rem, 9.2vw, 2.75rem);
+    font-size: clamp(1.25rem, 5.8vw, 2.1rem);
+    white-space: nowrap;
+    text-align: center;
   }
 
   .enter-btn {
