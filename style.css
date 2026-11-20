@@ -24,6 +24,24 @@
   user-select: none;
 }
 
+/* Contract addresses and form fields must stay selectable for manual copy. */
+code,
+kbd,
+samp,
+input,
+textarea,
+select,
+.intro-ca-code,
+.ca-box code {
+  user-select: text;
+  -webkit-user-select: text;
+}
+
+:where(a, button, input, textarea, select, [tabindex]):focus-visible {
+  outline: 2px solid var(--gold-bright);
+  outline-offset: 3px;
+}
+
 html,
 body {
   width: 100%;
@@ -1471,6 +1489,12 @@ body.intro-locked .ca-command-bar {
   transition: border-color 0.15s;
 }
 
+button.ca-box {
+  font: inherit;
+  text-align: left;
+  color: inherit;
+}
+
 .ca-box:hover {
   border-color: var(--border-hover);
 }
@@ -2305,7 +2329,9 @@ body.mwo-overdrive .zoom-progress-fill {
   .hud-bl {
     display: none;
   }
+}
 
+@media (max-width: 1100px) {
   .pfp-studio-layout,
   .rank-studio-layout {
     grid-template-columns: 1fr;
@@ -2326,8 +2352,29 @@ body.mwo-overdrive .zoom-progress-fill {
 
 @media (max-width: 720px) {
   /* Navbar Mobile Compaction */
+  .nav-inner {
+    gap: 6px;
+    padding: 8px 12px;
+  }
+
+  .brand-text {
+    display: none;
+  }
+
   .brand-coords {
     display: none;
+  }
+
+  /* Duplicate links live in the bottom CA bar; keep the post-dive nav one row. */
+  .nav-actions > a[href*="x.com"],
+  .nav-actions > a[href*="t.me"],
+  .nav-actions > a.pump-cta,
+  #cycleBiomeBtn {
+    display: none;
+  }
+
+  .hero-viewport {
+    padding-top: 96px;
   }
 
   .brand-icon-wrap {
@@ -2368,6 +2415,14 @@ body.mwo-overdrive .zoom-progress-fill {
     font-size: 0.58rem;
   }
 
+  .hud-bottom > .hud-corner:first-child {
+    display: none;
+  }
+
+  .intro-sfx-toggle {
+    white-space: nowrap;
+  }
+
   .hud-chip {
     padding: 4px 8px;
     font-size: 0.58rem;
@@ -2376,6 +2431,11 @@ body.mwo-overdrive .zoom-progress-fill {
   .intro-centerpiece {
     padding: 0 14px;
     gap: 10px;
+  }
+
+  .enter-cta-wrapper {
+    width: 100%;
+    min-width: 0;
   }
 
   .logo-stage {
@@ -2390,13 +2450,23 @@ body.mwo-overdrive .zoom-progress-fill {
     bottom: 0;
   }
 
+  .tagline-pill {
+    flex-wrap: wrap;
+    justify-content: center;
+    row-gap: 4px;
+    max-width: 100%;
+  }
+
   .tagline-line {
-    width: 20px;
+    display: none;
   }
 
   .tagline-text {
     font-size: 0.58rem;
     letter-spacing: 0.14em;
+    max-width: 100%;
+    line-height: 1.4;
+    text-align: center;
   }
 
   .wh-top {
@@ -2406,7 +2476,7 @@ body.mwo-overdrive .zoom-progress-fill {
   }
 
   .wh-main {
-    font-size: clamp(1.25rem, 5.8vw, 2.1rem);
+    font-size: clamp(1.05rem, 5.15vw, 2.1rem);
     white-space: nowrap;
     text-align: center;
   }
@@ -2473,15 +2543,25 @@ body.mwo-overdrive .zoom-progress-fill {
     right: 10px;
     bottom: auto;
     padding: 6px;
+    max-width: calc(50% - 16px);
   }
 
   .stage-controls {
     gap: 4px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+
+  #quickOpenRankBtn,
+  #triggerZoomBtn {
+    display: none;
   }
 
   .stage-ctrl-btn {
     padding: 7px 8px;
     font-size: 0.58rem;
+    flex: 1 1 calc(50% - 4px);
+    justify-content: center;
   }
 
   /* Scale 3D Surface Pins Slightly on Mobile Viewports */
@@ -2615,9 +2695,25 @@ body.mwo-overdrive .zoom-progress-fill {
     font-size: 0.92rem;
   }
 
+  .suite-title-block {
+    padding-right: 42px;
+  }
+
+  .suite-close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 3;
+  }
+
   .suite-header-controls {
     width: 100%;
     justify-content: space-between;
+  }
+
+  .filter-group {
+    width: 100%;
+    flex-wrap: wrap;
   }
 
   .vault-grid-scroll {
@@ -2658,6 +2754,23 @@ body.mwo-overdrive .zoom-progress-fill {
 
   .market-metrics-strip {
     display: none;
+  }
+}
+
+@media (max-width: 380px) {
+  #replay-intro-btn {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
   }
 }
 
