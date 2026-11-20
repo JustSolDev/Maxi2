@@ -460,13 +460,13 @@
   <!-- =======================================================================
        MODAL 1: 36-CITIZEN VAULT GRID & RAID DOWNLOAD PACK
        ======================================================================= -->
-  <div class="suite-modal hidden" id="vaultModal" aria-hidden="true">
+  <div class="suite-modal hidden" id="vaultModal" role="dialog" aria-modal="true" aria-labelledby="vaultModalTitle" aria-hidden="true">
     <div class="suite-backdrop" data-close-modal="vaultModal"></div>
     <div class="suite-dialog suite-xl">
       <div class="suite-header">
         <div class="suite-title-block">
           <span class="suite-kicker">02 // MAXI WORLD ORDER ROSTER</span>
-          <h2 class="suite-title">THE 36 MWO CITIZEN VAULT</h2>
+          <h2 class="suite-title" id="vaultModalTitle">THE 36 MWO CITIZEN VAULT</h2>
         </div>
 
         <div class="suite-header-controls">
@@ -475,7 +475,7 @@
             <button type="button" class="suite-tab" data-filter="MYTHIC">1-OF-1 MASTERS (6)</button>
             <button type="button" class="suite-tab" data-filter="CITIZEN">MWO CITIZENS (30)</button>
           </div>
-          <button type="button" class="suite-close-btn" data-close-modal="vaultModal">✕</button>
+          <button type="button" class="suite-close-btn" data-close-modal="vaultModal" aria-label="Close 36 Citizen Vault">✕</button>
         </div>
       </div>
 
@@ -490,15 +490,15 @@
   <!-- =======================================================================
        MODAL 2: CUSTOM MAXI PFP & X BANNER STUDIO
        ======================================================================= -->
-  <div class="suite-modal hidden" id="pfpModal" aria-hidden="true">
+  <div class="suite-modal hidden" id="pfpModal" role="dialog" aria-modal="true" aria-labelledby="pfpModalTitle" aria-hidden="true">
     <div class="suite-backdrop" data-close-modal="pfpModal"></div>
     <div class="suite-dialog suite-lg">
       <div class="suite-header">
         <div class="suite-title-block">
           <span class="suite-kicker">03 // MWO PROPAGANDA &amp; PFP GENERATOR</span>
-          <h2 class="suite-title">MAXI WORLD ORDER PFP &amp; BANNER STUDIO</h2>
+          <h2 class="suite-title" id="pfpModalTitle">MAXI WORLD ORDER PFP &amp; BANNER STUDIO</h2>
         </div>
-        <button type="button" class="suite-close-btn" data-close-modal="pfpModal">✕</button>
+        <button type="button" class="suite-close-btn" data-close-modal="pfpModal" aria-label="Close PFP and Banner Studio">✕</button>
       </div>
 
       <div class="pfp-studio-layout">
@@ -576,13 +576,13 @@
   <!-- =======================================================================
        MODAL 3: LIVE MARKET & DEXSCREENER TERMINAL DRAWER
        ======================================================================= -->
-  <div class="suite-modal hidden" id="chartModal" aria-hidden="true">
+  <div class="suite-modal hidden" id="chartModal" role="dialog" aria-modal="true" aria-labelledby="chartModalTitle" aria-hidden="true">
     <div class="suite-backdrop" data-close-modal="chartModal"></div>
     <div class="suite-dialog suite-xl">
       <div class="suite-header">
         <div class="suite-title-block">
           <span class="suite-kicker">04 // SOLANA MAINNET TELEMETRY</span>
-          <h2 class="suite-title">$MAXI LIVE MARKET TERMINAL</h2>
+          <h2 class="suite-title" id="chartModalTitle">$MAXI LIVE MARKET TERMINAL</h2>
         </div>
 
         <div class="suite-header-controls">
@@ -612,15 +612,17 @@
           >
             <span>TRADE ON PUMP.FUN ↗</span>
           </a>
-          <button type="button" class="suite-close-btn" data-close-modal="chartModal">✕</button>
+          <button type="button" class="suite-close-btn" data-close-modal="chartModal" aria-label="Close Live Market Terminal">✕</button>
         </div>
       </div>
 
       <div class="terminal-chart-wrap">
         <iframe
           id="dexScreenerIframe"
-          src="https://dexscreener.com/solana/EBCpGdXuS34WZuX13thrku2KmuLSe3Tf2gMtMKndpump?embed=1&theme=dark&trades=1&info=0"
+          data-src="https://dexscreener.com/solana/EBCpGdXuS34WZuX13thrku2KmuLSe3Tf2gMtMKndpump?embed=1&theme=dark&trades=1&info=0"
           title="$MAXI DexScreener Live Chart"
+          loading="lazy"
+          referrerpolicy="strict-origin-when-cross-origin"
           frameborder="0"
           allowfullscreen
         ></iframe>
@@ -631,15 +633,15 @@
   <!-- =======================================================================
        MODAL 4: MWO CULT RANK & CONVICTION CALCULATOR
        ======================================================================= -->
-  <div class="suite-modal hidden" id="rankModal" aria-hidden="true">
+  <div class="suite-modal hidden" id="rankModal" role="dialog" aria-modal="true" aria-labelledby="rankModalTitle" aria-hidden="true">
     <div class="suite-backdrop" data-close-modal="rankModal"></div>
     <div class="suite-dialog suite-lg">
       <div class="suite-header">
         <div class="suite-title-block">
           <span class="suite-kicker">05 // SOVEREIGN DOSSIER &amp; BAG PROJECTION</span>
-          <h2 class="suite-title">MWO CULT RANK &amp; CONVICTION CALCULATOR</h2>
+          <h2 class="suite-title" id="rankModalTitle">MWO CULT RANK &amp; CONVICTION CALCULATOR</h2>
         </div>
-        <button type="button" class="suite-close-btn" data-close-modal="rankModal">✕</button>
+        <button type="button" class="suite-close-btn" data-close-modal="rankModal" aria-label="Close MWO Cult Rank Calculator">✕</button>
       </div>
 
       <div class="pfp-studio-layout rank-studio-layout">
