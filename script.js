@@ -2388,7 +2388,19 @@ class CommunitySuiteController {
               setTimeout(() => { lbl.textContent = 'COPY IMAGE TO CLIPBOARD'; }, 1800);
             }
             sfx.playBeep(1120, 0.1);
-          } catch (_) {}
+          } catch (_) {
+            // Clipboard can be blocked (permissions, insecure context).
+            // Report it honestly and fall back to downloading the PNG.
+            const lbl = document.getElementById('copyPfpLabel');
+            if (lbl) {
+              lbl.textContent = 'COPY BLOCKED — DOWNLOADING PNG';
+              setTimeout(() => { lbl.textContent = 'COPY IMAGE TO CLIPBOARD'; }, 2600);
+            }
+            const link = document.createElement('a');
+            link.download = `mwo-${this.pfpFormat}-${MAXI_CITIZENS[this.pfpCitizenIdx]?.rank.replace('#', '') || 0}.png`;
+            link.href = this.pfpCanvas.toDataURL('image/png');
+            link.click();
+          }
         });
       });
     }
@@ -2635,7 +2647,19 @@ class CommunitySuiteController {
               setTimeout(() => { lbl.textContent = 'COPY DOSSIER TO CLIPBOARD'; }, 1800);
             }
             sfx.playBeep(1120, 0.1);
-          } catch (_) {}
+          } catch (_) {
+            // Clipboard can be blocked (permissions, insecure context).
+            // Report it honestly and fall back to downloading the PNG.
+            const lbl = document.getElementById('copyRankCardLabel');
+            if (lbl) {
+              lbl.textContent = 'COPY BLOCKED — DOWNLOADING PNG';
+              setTimeout(() => { lbl.textContent = 'COPY DOSSIER TO CLIPBOARD'; }, 2600);
+            }
+            const link = document.createElement('a');
+            link.download = `mwo-sovereign-dossier-${this.rankBagSize}.png`;
+            link.href = this.rankCanvas.toDataURL('image/png');
+            link.click();
+          }
         });
       });
     }
