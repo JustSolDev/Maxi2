@@ -1963,7 +1963,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!hudTelemetry) return;
     const d = new Date();
     const ms = String(Math.floor(d.getMilliseconds() / 10)).padStart(2, '0');
-    hudTelemetry.textContent = `${d.toTimeString().split(' ')[0]}.${ms} UTC`;
+    hudTelemetry.textContent = `${d.toISOString().slice(11, 19)}.${ms} UTC`;
   }, 60);
 
   spinChips.forEach((chip) => {
@@ -1992,24 +1992,43 @@ document.addEventListener('DOMContentLoaded', () => {
     if (btn) btn.addEventListener('click', () => sfx.toggle());
   });
 
-  const copyCA = (textElId, defaultLabel) => {
-    navigator.clipboard.writeText(LIVE_CA);
-    sfx.playBeep(1120, 0.1);
+  const copyCA = async (textElId, defaultLabel, codeElId) => {
     const el = document.getElementById(textElId);
-    if (el) {
-      el.textContent = 'COPIED';
-      setTimeout(() => { el.textContent = defaultLabel; }, 1600);
+    let copied = false;
+    try {
+      if (!navigator.clipboard || typeof navigator.clipboard.writeText !== 'function') {
+        throw new Error('Clipboard API unavailable');
+      }
+      await navigator.clipboard.writeText(LIVE_CA);
+      copied = true;
+    } catch (_) {
+      // Clipboard can be blocked (permissions, insecure context, embedded preview).
+      // Select the full address so the visitor can copy it manually.
+      const codeEl = document.getElementById(codeElId);
+      if (codeEl) {
+        const range = document.createRange();
+        range.selectNodeContents(codeEl);
+        const selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(range);
+      }
     }
+
+    if (el) {
+      el.textContent = copied ? 'COPIED' : 'SELECT & COPY';
+      setTimeout(() => { el.textContent = defaultLabel; }, copied ? 1600 : 2600);
+    }
+    if (copied) sfx.playBeep(1120, 0.1);
   };
 
   const introCopyBtn = document.getElementById('intro-copy-ca-btn');
   if (introCopyBtn) {
-    introCopyBtn.addEventListener('click', () => copyCA('intro-copy-ca-text', 'COPY'));
+    introCopyBtn.addEventListener('click', () => copyCA('intro-copy-ca-text', 'COPY', 'intro-ca-value'));
   }
 
   const bottomCopyBtn = document.getElementById('copyCaBtn');
   if (bottomCopyBtn) {
-    bottomCopyBtn.addEventListener('click', () => copyCA('copyBadge', 'COPY CA'));
+    bottomCopyBtn.addEventListener('click', () => copyCA('copyBadge', 'COPY CA', 'caText'));
   }
 });
 
