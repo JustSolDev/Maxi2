@@ -1909,7 +1909,8 @@ class PlanetMaxiController {
         this.updateTelemetryHUD(18.4, 0.18, 'SCROLL TO ZOOM · DRAG TO ROTATE');
       }
     } else if (this.state === 'LOCKED') {
-      this.planetGroup.position.y += (12 - this.planetGroup.position.y) * 0.1;
+      const lockOffsetY = window.innerWidth <= 720 ? 44 : 12;
+      this.planetGroup.position.y += (lockOffsetY - this.planetGroup.position.y) * 0.1;
       this.camDist += (this.targetCamDist - this.camDist) * 0.12;
       this.camera.position.z = this.camDist;
 
@@ -2065,6 +2066,17 @@ class CommunitySuiteController {
     this.initPfpStudio();
     this.initRankCalculator();
     this.initLiveMarketPoller();
+
+    // Canvas text must be drawn again once the display fonts are available,
+    // otherwise exports keep the fallback metrics and can clip long callsigns.
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready
+        .then(() => {
+          this.renderPfpCanvas();
+          this.updateRankCalculations();
+        })
+        .catch(() => {});
+    }
   }
 
   // Preload Citizen Image for Canvas Rendering
@@ -2457,9 +2469,9 @@ class CommunitySuiteController {
     ctx.textBaseline = 'middle';
     const wmText = (this.pfpCustomText || 'MWO').toUpperCase();
     if (this.pfpFormat === 'banner') {
-      ctx.fillText(wmText, 70, h * 0.46);
+      ctx.fillText(wmText, 70, h * 0.46, w * 0.58);
     } else {
-      ctx.fillText(wmText, w * 0.5, h * 0.2);
+      ctx.fillText(wmText, w * 0.5, h * 0.2, w * 0.86);
     }
     ctx.restore();
 
@@ -2482,7 +2494,7 @@ class CommunitySuiteController {
 
       ctx.fillStyle = '#ffffff';
       ctx.font = '800 58px "Syne", "Inter", sans-serif';
-      ctx.fillText((this.pfpCustomText || cit.name).toUpperCase(), 72, h * 0.5);
+      ctx.fillText((this.pfpCustomText || cit.name).toUpperCase(), 72, h * 0.5, w * 0.6);
 
       ctx.fillStyle = 'rgba(255, 255, 255, 0.65)';
       ctx.font = '600 16px "JetBrains Mono", monospace';
@@ -2530,7 +2542,7 @@ class CommunitySuiteController {
       ctx.font = '700 18px "JetBrains Mono", monospace';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
-      ctx.fillText(`${cit.rank} · ${this.pfpCustomText.toUpperCase()}`, w / 2, py + pillH / 2);
+      ctx.fillText(`${cit.rank} · ${this.pfpCustomText.toUpperCase()}`, w / 2, py + pillH / 2, pillW - 36);
       ctx.restore();
     }
   }
@@ -2747,7 +2759,7 @@ class CommunitySuiteController {
 
     ctx.fillStyle = '#ffffff';
     ctx.font = '800 38px "Syne", "Inter", sans-serif';
-    ctx.fillText((this.rankCallsign || 'MWO OPERATIVE').toUpperCase(), 56, 182);
+    ctx.fillText((this.rankCallsign || 'MWO OPERATIVE').toUpperCase(), 56, 182, 500);
 
     // Cult Rank Pill
     ctx.fillStyle = 'rgba(229, 184, 105, 0.14)';
@@ -2794,7 +2806,7 @@ class CommunitySuiteController {
 
       ctx.fillStyle = m.color;
       ctx.font = '700 22px "JetBrains Mono", monospace';
-      ctx.fillText(m.val, bx + 18, by + 68);
+      ctx.fillText(m.val, bx + 18, by + 68, 212);
     });
 
     // Right Column: Citizen Avatar Halo & Cutout
