@@ -30,14 +30,14 @@
         </div>
         <div class="brand-text">
           <span class="brand-title">MAXI WORLD ORDER</span>
-          <span class="brand-coords">MWO // 36 CITIZENS</span>
+          <span class="brand-coords">MWO // 100 CITIZENS</span>
         </div>
       </a>
 
       <!-- Center Feature Navigation -->
       <nav class="nav-links">
-        <button type="button" class="nav-link active" id="focusOgBtn">01 / PLANET</button>
-        <button type="button" class="nav-link" id="openVaultModalBtn">02 / 36 VAULT</button>
+        <button type="button" class="nav-link active" id="focusOgBtn">01 / CLAW VAULT</button>
+        <button type="button" class="nav-link" id="openVaultModalBtn">02 / 100 VAULT</button>
         <button type="button" class="nav-link" id="openPfpModalBtn">03 / PFP STUDIO</button>
         <button type="button" class="nav-link" id="openChartModalBtn">04 / LIVE TERMINAL</button>
         <button type="button" class="nav-link" id="openRankModalBtn">05 / MWO RANK</button>
@@ -81,8 +81,8 @@
           <span>PUMP.FUN</span>
           <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>
         </a>
-        <button class="hud-btn" id="cycleBiomeBtn" title="Switch Planet Biome">
-          <span>SAPPHIRE</span>
+        <button class="hud-btn" id="cycleBiomeBtn" title="Shuffle & Restock Claw Machine Pile">
+          <span>RESTOCK ↻</span>
         </button>
         <button class="hud-btn" id="audioToggleBtn" title="Toggle Audio">
           <span class="status-dot" id="audioDot"></span>
@@ -96,20 +96,120 @@
   </header>
 
   <!-- =======================================================================
-       UNIFIED HERO & INTRO GATE VIEWPORT
+       UNIFIED HERO & INTRO GATE VIEWPORT (SOLANA DEGEN VAULT CLAW MACHINE)
        ======================================================================= -->
   <section class="hero-viewport" id="hero">
     <div class="stage-container" id="stageContainer">
-      <!-- 1. Deep Space Starfield Canvas -->
+      <!-- 1. Deep Space & Green-Candle Backdrop Canvas -->
       <canvas id="intro-canvas" class="intro-canvas"></canvas>
 
-      <!-- 2. True 3D WebGL Planet Maxi + 36-Citizen 3D Pins Overlay -->
-      <div id="planetWebGLContainer"></div>
-      <div id="planetPinsOverlay" class="planet-pins-overlay">
-        <!-- Populated dynamically by script.js -->
+      <!-- 2. Flagship Solana Degen Vault Claw Machine Cabinet -->
+      <div id="clawCabinetStage" class="claw-cabinet-stage">
+        <div class="claw-machine-cabinet" id="clawMachineCabinet">
+          <!-- Top Industrial Marquee Header -->
+          <div class="claw-marquee-bar">
+            <div class="marquee-left">
+              <span class="marquee-beacon"></span>
+              <span class="marquee-tag">SOLANA DEGEN VAULT // MK.IV</span>
+            </div>
+            <div class="marquee-center">
+              <span class="marquee-title">MAXI WORLD ORDER // CLAW EXTRACTION UNIT</span>
+            </div>
+            <div class="marquee-right">
+              <span class="marquee-stat" id="clawExtractedCount">EXTRACTED: 0 / 100</span>
+              <span class="marquee-credits">FREE PLAY // ∞</span>
+            </div>
+          </div>
+
+          <!-- Armored Glass Tank Bay (Live 2D Physics Pile + Laser Robotic Claw) -->
+          <div class="claw-glass-bay" id="clawGlassBay">
+            <canvas id="clawMachineCanvas"></canvas>
+
+            <!-- Live Laser Lock Readout Pill Floating Inside Glass -->
+            <div class="claw-glass-hud-pill" id="clawLaserReadout">
+              AIM LASER &amp; PRESS SPACE OR DROP CLAW
+            </div>
+
+            <!-- Prize Extraction Reveal Card Overlay (Appears when Claw drops a Maxi into Chute) -->
+            <div class="pull-reveal-overlay hidden" id="pullRevealOverlay">
+              <div class="pull-reveal-card">
+                <div class="pull-reveal-header">
+                  <span class="pull-tier-badge" id="pullRevealTier">SOVEREIGN JACKPOT // #001</span>
+                  <button type="button" class="pull-close-btn" id="closePullRevealBtn">✕</button>
+                </div>
+
+                <div class="pull-reveal-body">
+                  <div class="pull-reveal-stage">
+                    <div class="pull-aura-ring"></div>
+                    <img src="maxi Background Removed.png" alt="Extracted Maxi" id="pullRevealImg" />
+                  </div>
+                  <div class="pull-reveal-info">
+                    <div class="pull-kicker" id="pullRevealRank">EXTRACTED SPECIMEN #001</div>
+                    <h3 class="pull-title" id="pullRevealTitle">OG MAXI</h3>
+                    <p class="pull-lore" id="pullRevealLore">
+                      Supreme Sovereign of the Maxi World Order. 240 lbs lean extracted directly from the Genesis Vault.
+                    </p>
+                  </div>
+                </div>
+
+                <div class="pull-reveal-actions">
+                  <button type="button" class="suite-primary-btn compact" id="pullAgainBtn">
+                    <span>⬇ DROP CLAW AGAIN</span>
+                  </button>
+                  <button type="button" class="suite-secondary-btn compact" id="pullToStudioBtn">
+                    <span>OPEN IN PFP STUDIO</span>
+                  </button>
+                  <a
+                    href="https://x.com/intent/tweet?text=Just%20extracted%20OG%20MAXI%20from%20the%20MAXI%20WORLD%20ORDER%20Claw%20Vault%20%24MAXI%20%40maxiworldorder%0ACA%3A%20EBCpGdXuS34WZuX13thrku2KmuLSe3Tf2gMtMKndpump"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="suite-secondary-btn compact"
+                    id="pullShareXLink"
+                  >
+                    <span>FLEX ON 𝕏 ↗</span>
+                  </a>
+                  <a
+                    href="maxi Background Removed.png"
+                    download="maxi-extracted.png"
+                    class="suite-secondary-btn compact"
+                    id="pullDownloadLink"
+                  >
+                    <span>PNG ⬇</span>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Physical Industrial Arcade Control Deck -->
+          <div class="claw-control-deck">
+            <div class="deck-group deck-dpad">
+              <button type="button" class="claw-deck-btn" id="clawMoveLeftBtn" title="Hold or press A / Left Arrow">
+                <span>◀ GANTRY LEFT</span>
+              </button>
+              <button type="button" class="claw-deck-btn" id="clawMoveRightBtn" title="Hold or press D / Right Arrow">
+                <span>GANTRY RIGHT ▶</span>
+              </button>
+            </div>
+
+            <button type="button" class="claw-drop-trigger" id="clawDropBtn" title="Press SPACEBAR or Click to Drop Laser Claw">
+              <span class="drop-led"></span>
+              <span id="clawDropBtnLabel">⬇ DROP CLAW // EXTRACT MAXI</span>
+            </button>
+
+            <div class="deck-group deck-utils">
+              <button type="button" class="claw-deck-btn gold-outline" id="clawAimOgBtn" title="Auto-Align Laser on OG Maxi (#001)">
+                <span>LOCK OG #001</span>
+              </button>
+              <button type="button" class="claw-deck-btn" id="clawShuffleBtn" title="Drop a Fresh Batch of Maxis from the 100-Citizen Vault">
+                <span>RESTOCK PILE ↻</span>
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
 
-      <!-- 3. Atmospheric Cloud Dive FX Canvas -->
+      <!-- 3. Atmospheric Green-Candle FX Canvas -->
       <canvas id="diveFxCanvas"></canvas>
 
       <!-- ===================================================================
@@ -131,7 +231,7 @@
           </div>
 
           <div class="hud-center-status">
-            <span class="hud-mono" id="hud-status-text">MWO ORBITAL LOCK — 36 CITIZENS ON SURFACE</span>
+            <span class="hud-mono" id="hud-status-text">SOLANA DEGEN CLAW VAULT — 100 CITIZENS LOADED</span>
           </div>
 
           <div class="hud-corner">
@@ -139,7 +239,7 @@
           </div>
         </header>
 
-        <!-- Centerpiece: 3D Planet Maxi inside Precision Orbital Rings -->
+        <!-- Centerpiece: Orbital Rings Framing OG Maxi & The Claw Vault -->
         <div class="intro-centerpiece">
           <div class="logo-stage" id="logo-stage">
             <div class="plasma-core"></div>
@@ -163,7 +263,7 @@
           <div class="enter-cta-wrapper">
             <div class="tagline-pill">
               <span class="tagline-line"></span>
-              <span class="tagline-text">NEW SOVEREIGN ORDER · 36 CITIZENS · SUPREME LEADER: OG MAXI</span>
+              <span class="tagline-text">SOLANA DEGEN CLAW VAULT · 100 CITIZENS · JACKPOT: OG MAXI</span>
               <span class="tagline-line"></span>
             </div>
 
@@ -173,7 +273,7 @@
             </h1>
 
             <button id="enter-btn" class="enter-btn" type="button">
-              <span class="btn-label">INITIATE WORLD ORDER</span>
+              <span class="btn-label">ENTER THE CLAW VAULT</span>
               <svg class="btn-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M5 12h14M13 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round"/>
               </svg>
@@ -225,13 +325,13 @@
         <!-- Bottom Bar -->
         <footer class="hud-bottom">
           <div class="hud-corner">
-            <span class="hud-mono">MWO CAPITAL // <strong>00.000° N, 00.000° E (OG MAXI)</strong></span>
+            <span class="hud-mono">JACKPOT // <strong>#001 OG MAXI (240 LBS LEAN)</strong></span>
           </div>
 
-          <div class="spin-controls" role="group" aria-label="Orbit Modes">
-            <button type="button" class="hud-chip active" data-spin="3d">ORBIT</button>
-            <button type="button" class="hud-chip" data-spin="gyro">GYRO</button>
-            <button type="button" class="hud-chip" data-spin="lock">LOCK OG</button>
+          <div class="spin-controls" role="group" aria-label="Vault Modes">
+            <button type="button" class="hud-chip active" data-spin="3d">VAULT READY</button>
+            <button type="button" class="hud-chip" data-spin="gyro">OVERDRIVE</button>
+            <button type="button" class="hud-chip" data-spin="lock">JACKPOT #001</button>
           </div>
 
           <div class="hud-corner">
@@ -243,69 +343,76 @@
       </div>
 
       <!-- ===================================================================
-           LAYER B: PLANET SURFACE HUD & CITIZEN INSPECTOR (AFTER DIVE)
+           LAYER B: SIDE TELEMETRY PANELS & ROSTER STRIP
            =================================================================== -->
       <div class="dive-hud-layer hud-hidden" id="diveHudLayer">
-        <!-- Minimal Precision Target Reticle during Dive -->
-        <div class="reticle-hud" id="reticleHud">
-          <div class="reticle-ring ring-outer"></div>
-          <div class="reticle-ring ring-mid"></div>
-          <div class="reticle-crosshair ch-h"></div>
-          <div class="reticle-crosshair ch-v"></div>
-          <div class="reticle-Readout" id="reticleReadout">LOCKING // OG MAXI #001</div>
-        </div>
-
-        <!-- Top Left Telemetry Readout -->
+        <!-- Top Left Vault Telemetry Readout -->
         <div class="hud-panel hud-tl">
-          <div class="hud-tag">MWO TELEMETRY</div>
+          <div class="hud-tag">CLAW VAULT TELEMETRY</div>
           <div class="hud-metric-row">
-            <span class="hud-label">SUPREME</span>
+            <span class="hud-label">JACKPOT</span>
             <span class="hud-val" id="hudRuler">OG MAXI (#001)</span>
           </div>
           <div class="hud-metric-row">
-            <span class="hud-label">CITIZENS</span>
-            <span class="hud-val highlight" id="hudPop">36 / 36 ACTIVE</span>
+            <span class="hud-label">ROSTER</span>
+            <span class="hud-val highlight" id="hudPop">100 / 100 LOADED</span>
           </div>
           <div class="hud-metric-row">
-            <span class="hud-label">SELECTED</span>
+            <span class="hud-label">LASER LOCK</span>
             <span class="hud-val" id="hudActiveTarget">#001 OG MAXI</span>
           </div>
         </div>
 
-        <!-- Top Right Altitude & Zoom Gauge -->
+        <!-- Top Right Gantry & Grip Pressure Gauge -->
         <div class="hud-panel hud-tr">
-          <div class="hud-tag">CAMERA VECTOR</div>
+          <div class="hud-tag">GANTRY &amp; LASER VECTOR</div>
           <div class="hud-metric-row">
-            <span class="hud-label">ALTITUDE</span>
-            <span class="hud-val" id="hudAltitude">42,000 KM</span>
+            <span class="hud-label">GANTRY X</span>
+            <span class="hud-val" id="hudAltitude">55.0%</span>
           </div>
           <div class="hud-metric-row">
-            <span class="hud-label">OPTICAL</span>
-            <span class="hud-val highlight" id="hudZoom">z=1.5</span>
+            <span class="hud-label">HYDRAULIC</span>
+            <span class="hud-val highlight" id="hudZoom">99.4 PSI</span>
           </div>
           <div class="zoom-progress-track">
-            <div class="zoom-progress-fill" id="hudZoomBar" style="width: 8%"></div>
+            <div class="zoom-progress-fill" id="hudZoomBar" style="width: 55%"></div>
           </div>
-          <div class="hud-phase-badge" id="hudPhaseBadge">SCROLL TO ZOOM · DRAG TO ROTATE</div>
+          <div class="hud-phase-badge" id="hudPhaseBadge">A/D OR DRAG TO AIM · SPACE TO DROP</div>
         </div>
 
-        <!-- Bottom Left Mini Radar -->
+        <!-- Bottom Left Mini Collection / Radar -->
         <div class="hud-panel hud-bl" id="hudMiniInset">
           <div class="inset-header">
             <span class="inset-dot"></span>
-            <span>MWO SURFACE RADAR</span>
+            <span>LAST EXTRACTED SPECIMEN</span>
           </div>
-          <div class="inset-img-wrap" id="quickJumpToMaxi" title="Center on OG Maxi (#001)">
-            <canvas id="miniRadarCanvas" width="200" height="116"></canvas>
-            <div class="inset-pin-badge">CENTER ON OG MAXI</div>
+          <div class="arrived-card-mini" id="arrivedCard">
+            <div class="arrived-card-header">
+              <div class="arrived-avatar-wrap" id="cardAvatarWrap">
+                <img src="maxi Background Removed.png" alt="Active Maxi" class="arrived-logo" id="cardMaxiSprite" />
+              </div>
+              <div class="arrived-title-group">
+                <div class="arrived-kicker" id="cardKicker">JACKPOT TARGET · #001</div>
+                <h2 class="arrived-title" id="cardTitle">OG MAXI</h2>
+              </div>
+              <div class="arrived-header-actions">
+                <button class="arrived-nav-btn" id="btnCustomizeActive" title="Open in PFP Studio">STUDIO</button>
+              </div>
+            </div>
+            <p class="arrived-desc" id="maxiLiveQuote">
+              Supreme Sovereign of the Maxi World Order. Aim the laser sight and drop the claw to extract him.
+            </p>
+            <div class="citizen-roster-strip" id="citizenRosterStrip">
+              <!-- Populated by script.js -->
+            </div>
           </div>
         </div>
 
-        <!-- Bottom Right Quick Camera & Suite Controls -->
+        <!-- Bottom Right Quick Vault & Overdrive Controls -->
         <div class="hud-panel hud-br">
           <div class="stage-controls">
             <button class="stage-ctrl-btn primary" id="snapOgBtn">
-              <span>OG MAXI</span>
+              <span>AIM OG #001</span>
             </button>
             <button class="stage-ctrl-btn overdrive-stage-btn" id="overdriveStageBtn" title="Activate Green-Candle Overdrive Mode">
               <span class="overdrive-dot"></span>
@@ -314,37 +421,9 @@
             <button class="stage-ctrl-btn" id="quickOpenRankBtn" title="Calculate your MWO Cult Rank">
               <span>MWO RANK</span>
             </button>
-            <button class="stage-ctrl-btn" id="triggerZoomBtn">
-              <span id="triggerZoomLabel">REPLAY DIVE</span>
+            <button class="stage-ctrl-btn" id="triggerZoomBtn" title="Restock & Shuffle Claw Tank">
+              <span id="triggerZoomLabel">RESTOCK ↻</span>
             </button>
-          </div>
-        </div>
-
-        <!-- Sleek Editorial Citizen Inspector Dock -->
-        <div class="arrived-card" id="arrivedCard">
-          <div class="arrived-card-header">
-            <div class="arrived-avatar-wrap" id="cardAvatarWrap">
-              <img src="maxi Background Removed.png" alt="Active Maxi" class="arrived-logo" id="cardMaxiSprite" />
-            </div>
-            <div class="arrived-title-group">
-              <div class="arrived-kicker" id="cardKicker">MWO SUPREME ANCHOR · CITIZEN #001</div>
-              <h2 class="arrived-title" id="cardTitle">OG MAXI</h2>
-            </div>
-            <div class="arrived-header-actions">
-              <button class="arrived-nav-btn" id="btnCustomizeActive" title="Open in PFP Studio">STUDIO</button>
-              <button class="arrived-nav-btn" id="btnPrevCitizen" title="Previous Citizen">←</button>
-              <button class="arrived-nav-btn" id="btnTourSectors" title="Next Citizen">→</button>
-              <button class="arrived-replay-btn" id="cardReturnOgBtn" title="Return to OG Maxi">OG #001</button>
-            </div>
-          </div>
-
-          <p class="arrived-desc" id="maxiLiveQuote">
-            Supreme Sovereign of the Maxi World Order. 240 lbs lean on the Genesis Citadel while all 35 MWO citizens hold the surrounding continents.
-          </p>
-
-          <!-- Clean Scrollbar-Free Horizontal Citizen Roster Strip -->
-          <div class="citizen-roster-strip" id="citizenRosterStrip">
-            <!-- Populated by script.js -->
           </div>
         </div>
       </div>
@@ -400,7 +479,7 @@
             <span>MWO RANK</span>
           </button>
           <button type="button" class="social-pill" id="bottomOpenVaultBtn">
-            <span>36 VAULT</span>
+            <span>100 VAULT</span>
           </button>
           <button type="button" class="social-pill" id="bottomOpenChartBtn">
             <span>LIVE CHART</span>
@@ -411,7 +490,7 @@
   </section>
 
   <!-- =======================================================================
-       MODAL 1: 36-CITIZEN VAULT GRID & RAID DOWNLOAD PACK
+       MODAL 1: 100-CITIZEN VAULT GRID & RAID DOWNLOAD PACK
        ======================================================================= -->
   <div class="suite-modal hidden" id="vaultModal" aria-hidden="true">
     <div class="suite-backdrop" data-close-modal="vaultModal"></div>
@@ -419,14 +498,14 @@
       <div class="suite-header">
         <div class="suite-title-block">
           <span class="suite-kicker">02 // MAXI WORLD ORDER ROSTER</span>
-          <h2 class="suite-title">THE 36 MWO CITIZEN VAULT</h2>
+          <h2 class="suite-title">THE 100 MWO CITIZEN VAULT</h2>
         </div>
 
         <div class="suite-header-controls">
           <div class="filter-group" id="vaultFilterGroup">
-            <button type="button" class="suite-tab active" data-filter="ALL">ALL (36)</button>
-            <button type="button" class="suite-tab" data-filter="MYTHIC">1-OF-1 MASTERS (6)</button>
-            <button type="button" class="suite-tab" data-filter="CITIZEN">MWO CITIZENS (30)</button>
+            <button type="button" class="suite-tab active" data-filter="ALL">ALL (100)</button>
+            <button type="button" class="suite-tab" data-filter="MYTHIC">1-OF-1 MASTERS (8)</button>
+            <button type="button" class="suite-tab" data-filter="CITIZEN">MWO CITIZENS (92)</button>
           </div>
           <button type="button" class="suite-close-btn" data-close-modal="vaultModal">✕</button>
         </div>
@@ -481,7 +560,7 @@
           </div>
 
           <div class="control-block">
-            <label class="control-label">02 / SELECT MWO CITIZEN CUTOUT (36)</label>
+            <label class="control-label">02 / SELECT MWO CITIZEN CUTOUT (100)</label>
             <div class="pfp-citizen-picker" id="pfpCitizenPicker">
               <!-- Populated by script.js -->
             </div>

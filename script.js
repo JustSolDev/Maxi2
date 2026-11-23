@@ -26,7 +26,7 @@ const MAXI_CITIZENS = [
     lat: 0.18,
     lon: 0.0,
     color: '#ffbe2e',
-    lore: '<strong>Supreme Sovereign of the Maxi World Order.</strong> Standing atop the Genesis Citadel at 240 lbs lean while all 35 MWO citizens hold the surrounding continents—drag the 3D planet, scroll to zoom, or click any citizen below to inspect them.'
+    lore: '<strong>Supreme Sovereign of the Maxi World Order.</strong> Standing atop the Genesis Citadel at 240 lbs lean while all 99 MWO citizens hold the surrounding continents—drag the 3D planet, scroll to zoom, or click any citizen below to inspect them.'
   },
   // 5 Inner-Ring 1-of-1 Mythic Citizens (Surrounding OG Maxi's Citadel)
   {
@@ -267,7 +267,7 @@ const MAXI_CITIZENS = [
     rank: '#026',
     name: 'PATRICK MAXI',
     title: 'CITIZEN #026 · CORAL ROCK',
-    src: `${BG_REMOVED_DIR}photo_2026-11-18_22-42-40 (2) Background Removed.png`,
+    src: `${BG_REMOVED_DIR}photo_2026-11-23_18-45-53 (2) Background Removed.png`,
     color: '#ff2a85',
     lore: '<strong>Starfish Super-Bulk.</strong> Green floral board shorts stretched to their absolute limit.'
   },
@@ -278,7 +278,7 @@ const MAXI_CITIZENS = [
     title: 'CITIZEN #027 · PORTAL LAB',
     src: `${BG_REMOVED_DIR}photo_2026-11-18_22-42-40 (3) Background Removed.png`,
     color: '#00f0ff',
-    lore: '<strong>Multiverse Scientist.</strong> Built the portal gun that connected all 36 Maxis to this planet.'
+    lore: '<strong>Multiverse Scientist.</strong> Built the portal gun that connected all 100 Maxis to this planet.'
   },
   {
     id: 'citizen-028',
@@ -360,10 +360,590 @@ const MAXI_CITIZENS = [
     src: `${BG_REMOVED_DIR}photo_2026-11-18_22-43-18 (2) Background Removed.png`,
     color: '#ff2a85',
     lore: '<strong>Cat-Ear Headset Boss.</strong> Pink camo fleece and 240 lbs of live-streamed tears.'
+  },
+
+  // 64 New Unique MWO Citizens (#037 – #100)
+  {
+    id: 'citizen-037',
+    rank: '#037',
+    name: 'PUMP.FUN PILL MAXI',
+    title: '1-OF-1 MWO MASTER · BONDING CURVE CITADEL',
+    src: `${BG_REMOVED_DIR}photo_2026-11-23_18-46-25 Background Removed.png`,
+    isMythic: true,
+    color: '#34d399',
+    lore: '<strong>The Sovereign Bonding Curve Capsule.</strong> Pure emerald & white pump.fun pill armor built to send $MAXI straight past graduation.'
+  },
+  {
+    id: 'citizen-038',
+    rank: '#038',
+    name: 'SHADOW HEDGEHOG MAXI',
+    title: '1-OF-1 MWO MASTER · ARK ORBITAL STATION',
+    src: `${BG_REMOVED_DIR}photo_2026-11-23_18-47-22 Background Removed.png`,
+    isMythic: true,
+    color: '#ef4444',
+    lore: '<strong>The Ultimate Lifeform.</strong> 16-bit crimson-striped quills, golden inhibitor rings, and Chaos Control hover skates.'
+  },
+  {
+    id: 'citizen-039',
+    rank: '#039',
+    name: 'GOTH DEMON MAXI',
+    title: 'CITIZEN #039 · ABYSSAL CATHEDRAL',
+    src: `${BG_REMOVED_DIR}photo_2026-11-23_18-44-33 Background Removed.png`,
+    color: '#ef4444',
+    lore: '<strong>Dark Wave Succubus Titan.</strong> Crimson horns, bat wings, silver pentagram choker, and platform combat boots.'
+  },
+  {
+    id: 'citizen-040',
+    rank: '#040',
+    name: 'KUROMI E-GIRL MAXI',
+    title: 'CITIZEN #040 · TOKYO NEON DISTRICT',
+    src: `${BG_REMOVED_DIR}photo_2026-11-23_18-44-38 Background Removed.png`,
+    color: '#c084fc',
+    lore: '<strong>Goth-Kawaii Enforcer.</strong> Black and violet striped sweater clutching a battle-ready Kuromi plushie.'
+  },
+  {
+    id: 'citizen-041',
+    rank: '#041',
+    name: 'HELLO KITTY DRIP MAXI',
+    title: 'CITIZEN #041 · SANRIO PLAZA',
+    src: `${BG_REMOVED_DIR}photo_2026-11-23_18-44-41 Background Removed.png`,
+    color: '#f472b6',
+    lore: '<strong>Pink Denim Overalls & High-Tops.</strong> Soft white bow hoodie paired with 240 lbs of raw anabolic mass.'
+  },
+  {
+    id: 'citizen-042',
+    rank: '#042',
+    name: 'MALIBU BADDIE MAXI',
+    title: 'CITIZEN #042 · SUNSET LAGOON',
+    src: `${BG_REMOVED_DIR}photo_2026-11-23_18-44-43 Background Removed.png`,
+    color: '#f472b6',
+    lore: '<strong>Beach Club Sovereign.</strong> Heart-shaped shades, hibiscus blossom, and a designer handbag stuffed with cold hard SOL.'
+  },
+  {
+    id: 'citizen-043',
+    rank: '#043',
+    name: 'TEDDY ONESIE MAXI',
+    title: 'CITIZEN #043 · PLUSHFORGE DOME',
+    src: `${BG_REMOVED_DIR}photo_2026-11-23_18-44-44 (2) Background Removed.png`,
+    color: '#fbcfe8',
+    lore: '<strong> Cozy Bulk Season.</strong> Sherpa fleece bow hood, matching kitty slippers, and an emotional-support teddy bear.'
+  },
+  {
+    id: 'citizen-044',
+    rank: '#044',
+    name: 'FAIRY PRINCESS MAXI',
+    title: 'CITIZEN #044 · RUBY TIARA SPIRE',
+    src: `${BG_REMOVED_DIR}photo_2026-11-23_18-44-44 Background Removed.png`,
+    color: '#f472b6',
+    lore: '<strong>Royal Wish Granter.</strong> Wears a silver ruby tiara and waves a crystal heart scepter that turns red candles green.'
+  },
+  {
+    id: 'citizen-045',
+    rank: '#045',
+    name: 'PINK COWGIRL MAXI',
+    title: 'CITIZEN #045 · RODEO RIDGE',
+    src: `${BG_REMOVED_DIR}photo_2026-11-23_18-44-45 Background Removed.png`,
+    color: '#f472b6',
+    lore: '<strong>Rhinestone Outlaw.</strong> Pink Stetson hat, cowhide vest, braided pigtails, and star-spurred boots.'
+  },
+  {
+    id: 'citizen-046',
+    rank: '#046',
+    name: 'FROSTY SNOWMAN MAXI',
+    title: 'CITIZEN #046 · GLACIER CAP',
+    src: `${BG_REMOVED_DIR}photo_2026-11-23_18-44-46 Background Removed.png`,
+    color: '#f8fafc',
+    lore: '<strong>Sub-Zero Hypertrophy.</strong> Silk top hat with a carrot-nosevisor, holly scarf, and a solid peppermint staff.'
+  },
+  {
+    id: 'citizen-047',
+    rank: '#047',
+    name: 'SANTA ELF MAXI',
+    title: 'CITIZEN #047 · TOYSHOP FOUNDRY',
+    src: `${BG_REMOVED_DIR}photo_2026-11-23_18-44-47 Background Removed.png`,
+    color: '#34d399',
+    lore: '<strong>North Pole Head of Security.</strong> Emerald tunic, candy-cane stockings, and brass jingle-bell curl shoes.'
+  },
+  {
+    id: 'citizen-048',
+    rank: '#048',
+    name: 'SANTA CLAUS MAXI',
+    title: 'CITIZEN #048 · POLAR CITADEL',
+    src: `${BG_REMOVED_DIR}photo_2026-11-23_18-44-48 Background Removed.png`,
+    color: '#ef4444',
+    lore: '<strong> Saint Nick of Solana.</strong> Hauling a 500-lb green velvet sack filled with 100x liquidity gifts.'
+  },
+  {
+    id: 'citizen-049',
+    rank: '#049',
+    name: 'GINGERBREAD MAXI',
+    title: 'CITIZEN #049 · SUGARSPICE CRATER',
+    src: `${BG_REMOVED_DIR}photo_2026-11-23_18-44-49 Background Removed.png`,
+    color: '#f59e0b',
+    lore: '<strong>Fresh Out the Oven at 240 Lbs.</strong> Royal icing trim, gumdrop buttons, and a crimson bow tie.'
+  },
+  {
+    id: 'citizen-050',
+    rank: '#050',
+    name: 'CHRISTMAS TREE MAXI',
+    title: 'CITIZEN #050 · EVERGREEN SUMMIT',
+    src: `${BG_REMOVED_DIR}photo_2026-11-23_18-44-50 Background Removed.png`,
+    color: '#34d399',
+    lore: '<strong>Lit Like a God Candle.</strong> Draped in pine boughs, glowing ornaments, and a solid gold star crown.'
+  },
+  {
+    id: 'citizen-051',
+    rank: '#051',
+    name: 'RUDOLPH REINDEER MAXI',
+    title: 'CITIZEN #051 · AURORA TUNDRA',
+    src: `${BG_REMOVED_DIR}photo_2026-11-23_18-44-51 Background Removed.png`,
+    color: '#f59e0b',
+    lore: '<strong>Red-Nosed Sleigh Puller.</strong> Guides the MWO fleet through high-volatility blizzards.'
+  },
+  {
+    id: 'citizen-052',
+    rank: '#052',
+    name: 'ZAZA HOODIE MAXI',
+    title: 'CITIZEN #052 · HIGH ALTITUDE GREENHOUSE',
+    src: `${BG_REMOVED_DIR}photo_2026-11-23_18-44-53 Background Removed.png`,
+    color: '#34d399',
+    lore: '<strong>Chief Botanical Officer.</strong> Black leaf-print street hoodie, matching kicks, and a king-size pre-roll.'
+  },
+  {
+    id: 'citizen-053',
+    rank: '#053',
+    name: 'RASTA MARLEY MAXI',
+    title: 'CITIZEN #053 · KINGSTON BAY',
+    src: `${BG_REMOVED_DIR}photo_2026-11-23_18-44-55 Background Removed.png`,
+    color: '#34d399',
+    lore: '<strong>One Love, One Billion Market Cap.</strong> Heavy dreads, knit rasta tam, gold leaf chain, and zero stress.'
+  },
+  {
+    id: 'citizen-054',
+    rank: '#054',
+    name: 'CAPTAIN AMERICA MAXI',
+    title: 'CITIZEN #054 · FIRST AVENGER GARRISON',
+    src: `${BG_REMOVED_DIR}photo_2026-11-23_18-44-56 (2) Background Removed.png`,
+    color: '#38bdf8',
+    lore: '<strong>Super-Soldier Serum Maximalist.</strong> Wields an indestructible vibranium shield and can hold the floor all day.'
+  },
+  {
+    id: 'citizen-055',
+    rank: '#055',
+    name: 'IRON MAN MAXI',
+    title: 'CITIZEN #055 · STARK ORBITAL FOUNDRY',
+    src: `${BG_REMOVED_DIR}photo_2026-11-23_18-44-56 Background Removed.png`,
+    color: '#ef4444',
+    lore: '<strong>Mark LXXXV Nanotech Suit.</strong> Powered by a glowing chest arc reactor and twin plasma repulsors.'
+  },
+  {
+    id: 'citizen-056',
+    rank: '#056',
+    name: 'THOR ODINSON MAXI',
+    title: 'CITIZEN #056 · ASGARD THUNDER RIDGE',
+    src: `${BG_REMOVED_DIR}photo_2026-11-23_18-44-57 Background Removed.png`,
+    color: '#38bdf8',
+    lore: '<strong>God of Thunder & Heavy Sets.</strong> Crimson Asgardian cloak and worthy enough to curl Mjolnir for reps.'
+  },
+  {
+    id: 'citizen-057',
+    rank: '#057',
+    name: 'SPIDER-MAXI',
+    title: 'CITIZEN #057 · QUEENS SKYLINE SECTOR',
+    src: `${BG_REMOVED_DIR}photo_2026-11-23_18-44-58 Background Removed.png`,
+    color: '#ef4444',
+    lore: '<strong>Friendly Neighborhood 240-Lb Web-Slinger.</strong> Spins tensile carbon webs strong enough to catch any dip.'
+  },
+  {
+    id: 'citizen-058',
+    rank: '#058',
+    name: 'BLACK PANTHER MAXI',
+    title: 'CITIZEN #058 · WAKANDA VIBRANIUM MOUND',
+    src: `${BG_REMOVED_DIR}photo_2026-11-23_18-44-59 Background Removed.png`,
+    color: '#c084fc',
+    lore: '<strong>Wakanda Forever.</strong> Kinetic-absorbing vibranium weave suit with royal silver claw collar.'
+  },
+  {
+    id: 'citizen-059',
+    rank: '#059',
+    name: 'INCREDIBLE HULK MAXI',
+    title: 'CITIZEN #059 · GAMMA CRATER',
+    src: `${BG_REMOVED_DIR}photo_2026-11-23_18-45-00 Background Removed.png`,
+    color: '#34d399',
+    lore: '<strong>Hulk Smash Resistance Levels.</strong> Pure gamma-irradiated green traps and shredded purple shorts.'
+  },
+  {
+    id: 'citizen-060',
+    rank: '#060',
+    name: 'DOCTOR STRANGE MAXI',
+    title: 'CITIZEN #060 · SANCTUM SANCTORUM',
+    src: `${BG_REMOVED_DIR}photo_2026-11-23_18-45-01 Background Removed.png`,
+    color: '#f59e0b',
+    lore: '<strong>Sorcerer Supreme of Solana.</strong> Viewed 14,000,605 timelines and in every single one $MAXI sends.'
+  },
+  {
+    id: 'citizen-061',
+    rank: '#061',
+    name: 'WOLVERINE MAXI',
+    title: 'CITIZEN #061 · WEAPON X FACILITY',
+    src: `${BG_REMOVED_DIR}photo_2026-11-23_18-45-02 Background Removed.png`,
+    color: '#fbbf24',
+    lore: '<strong>Adamantium Skeleton & Claws.</strong> Classic yellow-and-blue X-Men suit with instant recovery between sets.'
+  },
+  {
+    id: 'citizen-062',
+    rank: '#062',
+    name: 'PROFESSOR SNAPE MAXI',
+    title: 'CITIZEN #062 · POTIONS DUNGEON',
+    src: `${BG_REMOVED_DIR}photo_2026-11-23_18-45-03 (2) Background Removed.png`,
+    color: '#c084fc',
+    lore: '<strong>Half-Blood Prince of Pre-Workout.</strong> Flowing black robes and a wand blazing with dark violet fire.'
+  },
+  {
+    id: 'citizen-063',
+    rank: '#063',
+    name: 'HUFFLEPUFF WIZARD MAXI',
+    title: 'CITIZEN #063 · BADGER GREAT HALL',
+    src: `${BG_REMOVED_DIR}photo_2026-11-23_18-45-03 Background Removed.png`,
+    color: '#fbbf24',
+    lore: '<strong>Loyal to the Bag.</strong> Gold-and-black house scarf with an unbreakable diamond-paw grip on his wand.'
+  },
+  {
+    id: 'citizen-064',
+    rank: '#064',
+    name: 'SORTING HAT MAXI',
+    title: 'CITIZEN #064 · HOGWARTS HIGH TABLE',
+    src: `${BG_REMOVED_DIR}photo_2026-11-23_18-45-05 Background Removed.png`,
+    color: '#f59e0b',
+    lore: '<strong>Sorts Paperhands from Sovereigns.</strong> Ancient Enchanted Sorting Hat atop a tailored wizard coat.'
+  },
+  {
+    id: 'citizen-065',
+    rank: '#065',
+    name: 'RAVENCLAW WIZARD MAXI',
+    title: 'CITIZEN #065 · ASTRONOMY TOWER',
+    src: `${BG_REMOVED_DIR}photo_2026-11-23_18-45-07 Background Removed.png`,
+    color: '#38bdf8',
+    lore: '<strong> quantitative Spellcaster.</strong> Sapphire-and-silver scarf calculating orbital liquidity vectors.'
+  },
+  {
+    id: 'citizen-066',
+    rank: '#066',
+    name: 'ARCHMAGE MERLIN MAXI',
+    title: 'CITIZEN #066 · CELESTIAL OBSERVATORY',
+    src: `${BG_REMOVED_DIR}photo_2026-11-23_18-45-08 Background Removed.png`,
+    color: '#c084fc',
+    lore: '<strong>Grand Elder of the Arcane Order.</strong> Star-embroidered violet robes, flowing white beard, and a mana-orb staff.'
+  },
+  {
+    id: 'citizen-067',
+    rank: '#067',
+    name: 'POTTER MAXI',
+    title: 'CITIZEN #067 · GRYFFINDOR COMMON ROOM',
+    src: `${BG_REMOVED_DIR}photo_2026-11-23_18-45-09 Background Removed.png`,
+    color: '#ef4444',
+    lore: '<strong>The Boy Who Lifted.</strong> Lightning forehead scar, round spectacles, and crimson-and-gold house scarf.'
+  },
+  {
+    id: 'citizen-068',
+    rank: '#068',
+    name: 'SLYTHERIN LORD MAXI',
+    title: 'CITIZEN #068 · SERPENT CHAMBER',
+    src: `${BG_REMOVED_DIR}photo_2026-11-23_18-45-10 Background Removed.png`,
+    color: '#34d399',
+    lore: '<strong>Pureblood Green-Candle Summoner.</strong> Emerald house crest and a wand channeling pure green flame.'
+  },
+  {
+    id: 'citizen-069',
+    rank: '#069',
+    name: 'OUTLAW SHERIFF MAXI',
+    title: 'CITIZEN #069 · DEADWOOD CANYON',
+    src: `${BG_REMOVED_DIR}photo_2026-11-23_18-45-26 Background Removed.png`,
+    color: '#f59e0b',
+    lore: '<strong>Law of the Frontier.</strong> Leather duster, brass sheriff star hat, eyepatch, and a heavy .44 peacemaker.'
+  },
+  {
+    id: 'citizen-070',
+    rank: '#070',
+    name: 'VAQUERO BANDITO MAXI',
+    title: 'CITIZEN #070 · SONORAN MESA',
+    src: `${BG_REMOVED_DIR}photo_2026-11-23_18-45-27 Background Removed.png`,
+    color: '#ef4444',
+    lore: '<strong>El Bigote del Oro.</strong> Magnificent handlebar mustache, crimson poncho, and a braided bullwhip lasso.'
+  },
+  {
+    id: 'citizen-071',
+    rank: '#071',
+    name: 'FRED FLINTSTONE MAXI',
+    title: 'CITIZEN #071 · BEDROCK QUARRY',
+    src: `${BG_REMOVED_DIR}photo_2026-11-23_18-45-30 Background Removed.png`,
+    color: '#f59e0b',
+    lore: '<strong>Yabba-Dabba-Deadlift.</strong> Prehistoric sabertooth pelt tunic and cyan boulder necktie.'
+  },
+  {
+    id: 'citizen-072',
+    rank: '#072',
+    name: 'PINK PANTHER MAXI',
+    title: 'CITIZEN #072 · VELVET LOUNGE',
+    src: `${BG_REMOVED_DIR}photo_2026-11-23_18-45-32 Background Removed.png`,
+    color: '#f472b6',
+    lore: '<strong>Smooth Jazz & Heavy Iron.</strong> Stealthy rose-pink feline suit with golden panther eyes on the hood.'
+  },
+  {
+    id: 'citizen-073',
+    rank: '#073',
+    name: 'COURAGE DOG MAXI',
+    title: 'CITIZEN #073 · NOWHERE FARMSTEAD',
+    src: `${BG_REMOVED_DIR}photo_2026-11-23_18-45-34 Background Removed.png`,
+    color: '#f472b6',
+    lore: '<strong>The Things I Do For Gains.</strong> Wide-eyed pink hound hood with long floppy ears and zero fear of volatility.'
+  },
+  {
+    id: 'citizen-074',
+    rank: '#074',
+    name: 'BUGS BUNNY MAXI',
+    title: 'CITIZEN #074 · LOONEY WARREN',
+    src: `${BG_REMOVED_DIR}photo_2026-11-23_18-45-35 Background Removed.png`,
+    color: '#cbd5e1',
+    lore: '<strong>What’s Up, Doc?</strong> Grey rabbit suit with tall ears, snacking on a post-workout carrot.'
+  },
+  {
+    id: 'citizen-075',
+    rank: '#075',
+    name: 'DAFFY DUCK MAXI',
+    title: 'CITIZEN #075 · DUCK SEASON MARSH',
+    src: `${BG_REMOVED_DIR}photo_2026-11-23_18-45-36 Background Removed.png`,
+    color: '#f59e0b',
+    lore: '<strong>Despicable vascularity.</strong> Jet-black waterfowl suit with a bright orange bill and webbed feet.'
+  },
+  {
+    id: 'citizen-076',
+    rank: '#076',
+    name: 'TAZ DEVIL MAXI',
+    title: 'CITIZEN #076 · VORTEX OUTBACK',
+    src: `${BG_REMOVED_DIR}photo_2026-11-23_18-45-37 Background Removed.png`,
+    color: '#f59e0b',
+    lore: '<strong>Whirlwind of Mass.</strong> Ferocious fanged Tasmanian Devil hood ready to tear through sell walls.'
+  },
+  {
+    id: 'citizen-077',
+    rank: '#077',
+    name: 'POPEYE SAILOR MAXI',
+    title: 'CITIZEN #077 · SPINACH HARBOR',
+    src: `${BG_REMOVED_DIR}photo_2026-11-23_18-45-38 Background Removed.png`,
+    color: '#38bdf8',
+    lore: '<strong>22-Inch Forearms.</strong> Classic naval cap, corncob pipe, and freshly inked anchor tattoo.'
+  },
+  {
+    id: 'citizen-078',
+    rank: '#078',
+    name: 'SUPERMAN MAXI',
+    title: 'CITIZEN #078 · FORTRESS OF SOLITUDE',
+    src: `${BG_REMOVED_DIR}photo_2026-11-23_18-45-40 (2) Background Removed.png`,
+    color: '#ef4444',
+    lore: '<strong>Man of Steel, Eyes of Tears.</strong> House of El crest across a 240-lb Kryptonian chest.'
+  },
+  {
+    id: 'citizen-079',
+    rank: '#079',
+    name: 'FINN THE HUMAN MAXI',
+    title: 'CITIZEN #079 · TREEHOUSE FORT',
+    src: `${BG_REMOVED_DIR}photo_2026-11-23_18-45-40 Background Removed.png`,
+    color: '#38bdf8',
+    lore: '<strong>Adventure Time Champion.</strong> White polar bear hood, green pack, and the golden Scarlet broadsword.'
+  },
+  {
+    id: 'citizen-080',
+    rank: '#080',
+    name: 'JAKE THE DOG MAXI',
+    title: 'CITIZEN #080 · CANDY KINGDOM BORDER',
+    src: `${BG_REMOVED_DIR}photo_2026-11-23_18-45-41 Background Removed.png`,
+    color: '#fbbf24',
+    lore: '<strong> Magical Shape-Shifting Bulk.</strong> Golden bulldog suit morphed into peak muscular proportions.'
+  },
+  {
+    id: 'citizen-081',
+    rank: '#081',
+    name: 'DARK KNIGHT BATMAN MAXI',
+    title: 'CITIZEN #081 · GOTHAM BATCAVE',
+    src: `${BG_REMOVED_DIR}photo_2026-11-23_18-45-42 Background Removed.png`,
+    color: '#fbbf24',
+    lore: '<strong>Vengeance & Volume.</strong> Armored cowl, gold utility belt, and a cape that shadows the entire crater.'
+  },
+  {
+    id: 'citizen-082',
+    rank: '#082',
+    name: 'BUTTERCUP MAXI',
+    title: 'CITIZEN #082 · TOWNSVILLE LAB',
+    src: `${BG_REMOVED_DIR}photo_2026-11-23_18-45-43 Background Removed.png`,
+    color: '#34d399',
+    lore: '<strong>Spice, Everything Nice & Chemical X.</strong> Lime-green battle dress and the toughest attitude on Planet Maxi.'
+  },
+  {
+    id: 'citizen-083',
+    rank: '#083',
+    name: 'JERRY MOUSE MAXI',
+    title: 'CITIZEN #083 · CHEDDAR VAULT',
+    src: `${BG_REMOVED_DIR}photo_2026-11-23_18-45-44 (2) Background Removed.png`,
+    color: '#f59e0b',
+    lore: '<strong>Never Gets Caught.</strong> Built like a brick house inside a classic brown mouse hood.'
+  },
+  {
+    id: 'citizen-084',
+    rank: '#084',
+    name: 'GRIM SKULL MAXI',
+    title: 'CITIZEN #084 · UNDERWORLD GATE',
+    src: `${BG_REMOVED_DIR}photo_2026-11-23_18-45-44 Background Removed.png`,
+    color: '#ef4444',
+    lore: '<strong> Keeper of the Scythe.</strong> Bone-white skull mask beneath a crimson-lined reaper hood.'
+  },
+  {
+    id: 'citizen-085',
+    rank: '#085',
+    name: 'THE FLASH MAXI',
+    title: 'CITIZEN #085 · SPEED FORCE TRACK',
+    src: `${BG_REMOVED_DIR}photo_2026-11-23_18-45-45 Background Removed.png`,
+    color: '#ef4444',
+    lore: '<strong>Fastest Execution on Solana.</strong> Scarlet speedster suit with golden lightning earpieces.'
+  },
+  {
+    id: 'citizen-086',
+    rank: '#086',
+    name: 'JOHNNY BRAVO MAXI',
+    title: 'CITIZEN #086 · ARON CITY GYM',
+    src: `${BG_REMOVED_DIR}photo_2026-11-23_18-45-47 Background Removed.png`,
+    color: '#fbbf24',
+    lore: '<strong>Whoa, Mama!</strong> Sky-high golden pompadour, pitch-black shades, and a 26-inch flexed bicep.'
+  },
+  {
+    id: 'citizen-087',
+    rank: '#087',
+    name: 'TOM CAT MAXI',
+    title: 'CITIZEN #087 · LIVING ROOM ARENA',
+    src: `${BG_REMOVED_DIR}photo_2026-11-23_18-45-49 Background Removed.png`,
+    color: '#94a3b8',
+    lore: '<strong>Double-Cat Meta.</strong> A cat inside a jacked grey-and-white cat suit chasing 100x mice.'
+  },
+  {
+    id: 'citizen-088',
+    rank: '#088',
+    name: 'DEXTER GENIUS MAXI',
+    title: 'CITIZEN #088 · SECRET LABORATORY',
+    src: `${BG_REMOVED_DIR}photo_2026-11-23_18-45-50 Background Removed.png`,
+    color: '#34d399',
+    lore: '<strong>Omelette du Fromage & Pure Alpha.</strong> Lab coat, purple nitrile gloves, and an Erlenmeyer flask of liquid green candles.'
+  },
+  {
+    id: 'citizen-089',
+    rank: '#089',
+    name: 'BEN 10 MAXI',
+    title: 'CITIZEN #089 · OMNITRIX CORE',
+    src: `${BG_REMOVED_DIR}photo_2026-11-23_18-45-51 Background Removed.png`,
+    color: '#34d399',
+    lore: '<strong>It’s Hero Time.</strong> Number 10 tactical compression tee with a fully charged Omnitrix on his left wrist.'
+  },
+  {
+    id: 'citizen-090',
+    rank: '#090',
+    name: 'SCOOBY-DOO MAXI',
+    title: 'CITIZEN #090 · MYSTERY MACHINE BAY',
+    src: `${BG_REMOVED_DIR}photo_2026-11-23_18-45-52 Background Removed.png`,
+    color: '#f59e0b',
+    lore: '<strong>Will Deadlift for Scooby Snacks.</strong> Great Dane suit with the iconic blue-and-gold SD diamond tag.'
+  },
+  {
+    id: 'citizen-091',
+    rank: '#091',
+    name: 'GUMBALL WATTERSON MAXI',
+    title: 'CITIZEN #091 · ELMORE HIGH',
+    src: `${BG_REMOVED_DIR}photo_2026-11-23_18-45-53 Background Removed.png`,
+    color: '#38bdf8',
+    lore: '<strong>Amazing World of Hypertrophy.</strong> Sky-blue feline hoodie with rolled denim and tan cuffs.'
+  },
+  {
+    id: 'citizen-092',
+    rank: '#092',
+    name: 'TOAD MUSHROOM MAXI',
+    title: 'CITIZEN #092 · MUSHROOM KEEP',
+    src: `${BG_REMOVED_DIR}photo_2026-11-23_18-46-38 Background Removed.png`,
+    color: '#ef4444',
+    lore: '<strong>Your Liquidity Is in This Castle.</strong> Giant red-spotted mushroom cap and royal blue gold-trimmed vest.'
+  },
+  {
+    id: 'citizen-093',
+    rank: '#093',
+    name: 'YOSHI DINO MAXI',
+    title: 'CITIZEN #093 · DINOSAUR ISLAND',
+    src: `${BG_REMOVED_DIR}photo_2026-11-23_18-46-40 Background Removed.png`,
+    color: '#34d399',
+    lore: '<strong>Emerald Dino Steed.</strong> Devours red candles whole and turns them into golden eggs.'
+  },
+  {
+    id: 'citizen-094',
+    rank: '#094',
+    name: 'KING BOWSER MAXI',
+    title: 'CITIZEN #094 · LAVAFORGE KEEP',
+    src: `${BG_REMOVED_DIR}photo_2026-11-23_18-46-41 Background Removed.png`,
+    color: '#f59e0b',
+    lore: '<strong>King of the Koopas.</strong> Spiked green shell, iron-studded cuffs, horns, and a fiery red mane.'
+  },
+  {
+    id: 'citizen-095',
+    rank: '#095',
+    name: 'SUPER STAR MAXI',
+    title: 'CITIZEN #095 · INVINCIBILITY ORBIT',
+    src: `${BG_REMOVED_DIR}photo_2026-11-23_18-46-42 Background Removed.png`,
+    color: '#fbbf24',
+    lore: '<strong>100% Immune to FUD.</strong> Radiant five-point golden Starman suit humming at 60fps.'
+  },
+  {
+    id: 'citizen-096',
+    rank: '#096',
+    name: 'GOOMBA MAXI',
+    title: 'CITIZEN #096 · WORLD 1-1 GATE',
+    src: `${BG_REMOVED_DIR}photo_2026-11-23_18-46-44 Background Removed.png`,
+    color: '#f59e0b',
+    lore: '<strong>Never Gets Stomped.</strong> Scowling brown mushroom hood with twin lower fangs and 240 lbs of mass.'
+  },
+  {
+    id: 'citizen-097',
+    rank: '#097',
+    name: 'BULLET BILL MAXI',
+    title: 'CITIZEN #097 · CANNON BATTERY',
+    src: `${BG_REMOVED_DIR}photo_2026-11-23_18-46-45 Background Removed.png`,
+    color: '#cbd5e1',
+    lore: '<strong> supersonic Trajectory.</strong> Matte-black artillery shell armor with white gauntlets locked on $1B.'
+  },
+  {
+    id: 'citizen-098',
+    rank: '#098',
+    name: 'CHAIN CHOMP MAXI',
+    title: 'CITIZEN #098 · IRON JAW PADDOCK',
+    src: `${BG_REMOVED_DIR}photo_2026-11-23_18-46-47 Background Removed.png`,
+    color: '#94a3b8',
+    lore: '<strong>Unchained Beast.</strong> Razor-toothed steel sphere helmet with a heavy iron tether chain.'
+  },
+  {
+    id: 'citizen-099',
+    rank: '#099',
+    name: 'LUIGI MAXI',
+    title: 'CITIZEN #099 · MANSION SECTOR',
+    src: `${BG_REMOVED_DIR}photo_2026-11-23_18-46-50 Background Removed.png`,
+    color: '#34d399',
+    lore: '<strong>Green Thunder Brother.</strong> Signature emerald L cap, brass-button denim overalls, and high-jump quads.'
+  },
+  {
+    id: 'citizen-100',
+    rank: '#100',
+    name: 'SUPER MARIO MAXI',
+    title: 'CITIZEN #100 · CENTENNIAL CITADEL',
+    src: `${BG_REMOVED_DIR}photo_2026-11-23_18-46-52 Background Removed.png`,
+    color: '#ef4444',
+    lore: '<strong>Centennial #100 Champion.</strong> Iconic red M cap and overalls anchoring the 100th sovereign seat of the Maxi World Order.'
   }
 ];
 
-// Assign Fibonacci Spherical Coordinates to Citizens #007–#036 so they cover the 3D globe evenly
+// Assign Fibonacci Spherical Coordinates to Citizens #007–#100 so all 100 citizens cover the 3D globe evenly
 // while keeping a respectful royal plaza clearance around OG Maxi (#001 at lat=0.18, lon=0.0)
 (function distributeCitizensOnSphere() {
   const outerCitizens = MAXI_CITIZENS.slice(6);
@@ -371,14 +951,14 @@ const MAXI_CITIZENS = [
   const goldenAngle = Math.PI * (3 - Math.sqrt(5));
 
   outerCitizens.forEach((cit, i) => {
-    // Spread latitude between -68 deg and +68 deg
-    const y = 1 - ((i + 0.5) / N) * 1.75;
-    let lat = Math.asin(Math.max(-0.88, Math.min(0.88, y)));
+    // Spread latitude between -74 deg and +74 deg across the 3D sphere
+    const y = 1 - ((i + 0.5) / N) * 1.84;
+    let lat = Math.asin(Math.max(-0.92, Math.min(0.92, y)));
     let lon = ((i * goldenAngle) % (Math.PI * 2)) - Math.PI;
 
-    // Keep clear of OG Maxi's front throne plaza (|lat - 0.18| < 0.35 && |lon| < 0.55)
-    if (Math.abs(lat - 0.18) < 0.35 && Math.abs(lon) < 0.55) {
-      lon += lon >= 0 ? 0.65 : -0.65;
+    // Keep clear of OG Maxi's front throne plaza (|lat - 0.18| < 0.34 && |lon| < 0.52)
+    if (Math.abs(lat - 0.18) < 0.34 && Math.abs(lon) < 0.52) {
+      lon += lon >= 0 ? 0.62 : -0.62;
     }
 
     cit.lat = lat;
@@ -810,16 +1390,20 @@ function generateRealisticPlanetMaps(paletteIndex = 0) {
 }
 
 /* =========================================================================
-   3. TRUE 3D WEBGL PLANET MAXI & 36-CITIZEN CONTROLLER
+   3. SOLANA DEGEN VAULT CLAW MACHINE & 100-CITIZEN PHYSICS ENGINE
    ========================================================================= */
 class PlanetMaxiController {
   constructor() {
     this.spaceCanvas = document.getElementById('intro-canvas');
-    this.spaceCtx = this.spaceCanvas.getContext('2d');
+    this.spaceCtx = this.spaceCanvas ? this.spaceCanvas.getContext('2d') : null;
     this.fxCanvas = document.getElementById('diveFxCanvas');
-    this.fxCtx = this.fxCanvas.getContext('2d');
-    this.webglContainer = document.getElementById('planetWebGLContainer');
-    this.pinsOverlay = document.getElementById('planetPinsOverlay');
+    this.fxCtx = this.fxCanvas ? this.fxCanvas.getContext('2d') : null;
+
+    this.clawCanvas = document.getElementById('clawMachineCanvas');
+    this.clawCtx = this.clawCanvas ? this.clawCanvas.getContext('2d') : null;
+    this.clawGlassBay = document.getElementById('clawGlassBay');
+    this.clawCabinetStage = document.getElementById('clawCabinetStage');
+
     this.stageContainer = document.getElementById('stageContainer');
     this.logoStage = document.getElementById('logo-stage');
 
@@ -830,28 +1414,13 @@ class PlanetMaxiController {
     this.reticleHud = document.getElementById('reticleHud');
     this.arrivedCard = document.getElementById('arrivedCard');
 
-    this.state = 'ORBIT'; // 'ORBIT' | 'ZOOMING' | 'LOCKED'
+    this.state = 'ORBIT'; // 'ORBIT' (Intro Gate) | 'LOCKED' (Claw Machine Active)
     this.orbitSpinMode = '3d';
     this.paletteIdx = 0;
     this.activeCitizenIndex = 0; // 0 = OG MAXI (#001)
+    this.isOverdrive = false;
 
-    this.zoomStartTime = 0;
-    this.zoomDuration = 5800;
-    this.currentZoomLevel = 1.5;
-
-    // 3D Planet Rotation & Scrollable Camera Distance (OG Maxi is at lat=0.18, lon=0)
-    this.planetRotY = -1.8;
-    this.planetRotX = 0.18;
-    this.targetRotY = 0;
-    this.targetRotX = 0.18;
-    this.camDist = 360;
-    this.targetCamDist = 185; // User can scroll wheel between 145 (close surface) and 480 (deep orbit)
-
-    this.isDragging = false;
-    this.dragPrevX = 0;
-    this.dragPrevY = 0;
-
-    // 3D Warp Starfield particles
+    // 3D Starfield backdrop particles
     this.particles = [];
     this.baseWarpSpeed = 1.5;
     this.targetWarpSpeed = 1.5;
@@ -859,170 +1428,390 @@ class PlanetMaxiController {
     this.mouseY = 0;
     this.starColors = ['#ffbe2e', '#70f8ff', '#fff6e0', '#38bdf8', '#ffffff'];
 
-    this.cloudPuffs = Array.from({ length: 26 }, (_, i) => ({
-      angle: (i / 26) * Math.PI * 2 + Math.random() * 0.3,
-      dist: 0.08 + (i % 5) * 0.14,
-      size: 160 + (i % 4) * 95,
-      zStart: 6.2 + (i % 6) * 0.7,
-      tint: i % 2 === 0 ? '240, 248, 255' : '186, 230, 253'
-    }));
+    // Claw Machine State & Physics
+    this.imageCache = new Map();
+    this.extractedSet = new Set();
+    this.pileItems = [];
+    this.sparkParticles = [];
+    this.pileBatchOffset = 0;
 
-    this.buildCitizenDOMPins();
-    this.buildRosterStrip();
+    // Logical dimensions of the claw tank (updated on resize)
+    this.bayW = 920;
+    this.bayH = 480;
+    this.chuteWidthRatio = 0.20; // Left 20% is the Prize Extraction Chute
+
+    this.claw = {
+      x: 0.56,          // Normalized [0.08..0.93]
+      targetX: 0.56,
+      y: 54,            // Current claw head Y in logical px
+      railY: 26,        // Gantry top rail Y
+      homeY: 56,
+      state: 'IDLE',    // 'IDLE' | 'DROPPING' | 'CLAMPING' | 'HOISTING' | 'CARRYING' | 'RELEASING'
+      stateTimer: 0,
+      jawAngle: 0.55,   // Radians (0.58 = wide open, 0.14 = clamped tight)
+      targetJaw: 0.55,
+      swingAngle: 0,
+      swingVel: 0,
+      grabbedItem: null,
+      moveDir: 0        // -1 left, 0 stop, +1 right
+    };
+
+    this.preloadCitizenSprites();
     this.initWarpParticles();
-    this.initThreePlanet();
     this.resizeCanvases();
+    this.spawnClawPile(false);
     this.bindEvents();
-    this.renderMiniRadar();
 
+    this.lastFrameTime = performance.now();
     this.animate = this.animate.bind(this);
     requestAnimationFrame(this.animate);
   }
 
-  // Dynamically generate DOM pins for OG Maxi (#001) + all 35 transparent Maxi citizens
-  buildCitizenDOMPins() {
-    this.pinsOverlay.innerHTML = '';
-
+  preloadCitizenSprites() {
+    // Immediately preload OG Maxi + first 36, lazy-preload the rest so all 100 are ready
     MAXI_CITIZENS.forEach((cit, idx) => {
-      const pinEl = document.createElement('div');
-      pinEl.id = cit.id;
-
-      if (cit.isOg) {
-        pinEl.className = 'surface-pin og-pin selected-pin';
-        pinEl.innerHTML = `
-          <div class="pin-holo-beam"></div>
-          <div class="pin-sonar-wrap">
-            <div class="pin-sonar r1"></div>
-            <div class="pin-sonar r2"></div>
-          </div>
-
-          <div class="pin-overhead-badge">
-            <span class="pin-rank">#001</span>
-            <span class="pin-name">OG MAXI</span>
-            <span class="pin-status">PRIME</span>
-          </div>
-
-          <div class="pin-character-stage">
-            <div class="character-back-aura"></div>
-            <img
-              src="${cit.src}"
-              alt="OG Maxi on Planet Maxi"
-              class="pin-maxi-cutout"
-              draggable="false"
-            />
-          </div>
-
-          <div class="pin-pedestal-base">
-            <div class="pedestal-ring-outer"></div>
-          </div>
-        `;
+      const loadFn = () => {
+        if (this.imageCache.has(cit.src)) return;
+        const img = new Image();
+        img.src = cit.src;
+        this.imageCache.set(cit.src, img);
+      };
+      if (idx < 40) {
+        loadFn();
       } else {
-        pinEl.className = `surface-pin citizen-variant-pin ${cit.isMythic ? 'mythic-pin' : ''}`;
-        pinEl.style.setProperty('--pin-color', cit.color);
-        pinEl.innerHTML = `
-          <div class="variant-sprite-box">
-            <div class="variant-aura-ring"></div>
-            <img
-              src="${cit.src}"
-              alt="${cit.name}"
-              class="variant-cutout-img"
-              loading="lazy"
-              draggable="false"
-            />
-          </div>
-          <div class="variant-tag">${cit.rank} ${cit.name.replace(' MAXI', '')}</div>
-        `;
+        setTimeout(loadFn, 120 + (idx - 40) * 18);
       }
-
-      pinEl.addEventListener('click', (e) => {
-        e.stopPropagation();
-        if (this.state === 'ORBIT') {
-          this.startZoomSequence();
-          return;
-        }
-        this.selectCitizen(idx);
-      });
-
-      this.pinsOverlay.appendChild(pinEl);
-      cit.el = pinEl;
     });
   }
 
-  buildRosterStrip() {
-    const strip = document.getElementById('citizenRosterStrip');
-    if (!strip) return;
-    strip.innerHTML = '';
-
-    MAXI_CITIZENS.forEach((cit, idx) => {
-      const chip = document.createElement('button');
-      chip.type = 'button';
-      chip.className = `roster-chip ${cit.isOg ? 'og-chip active' : ''}`;
-      chip.dataset.idx = idx;
-      chip.innerHTML = `
-        <img src="${cit.src}" alt="${cit.name}" loading="lazy" />
-        <span>${cit.isOg ? '#001 OG MAXI' : `${cit.rank} ${cit.name.replace(' MAXI', '')}`}</span>
-      `;
-      chip.addEventListener('click', () => {
-        this.selectCitizen(idx);
-      });
-      strip.appendChild(chip);
-    });
+  getSprite(src) {
+    if (this.imageCache.has(src)) {
+      return this.imageCache.get(src);
+    }
+    const img = new Image();
+    img.src = src;
+    this.imageCache.set(src, img);
+    return img;
   }
 
-  selectCitizen(idx) {
-    this.activeCitizenIndex = (idx + MAXI_CITIZENS.length) % MAXI_CITIZENS.length;
-    const cit = MAXI_CITIZENS[this.activeCitizenIndex];
+  spawnClawPile(playSfx = true) {
+    const w = this.bayW || 920;
+    const h = this.bayH || 480;
+    const chuteW = Math.max(125, Math.min(200, w * this.chuteWidthRatio));
+    const pitLeft = chuteW + 24;
+    const pitRight = w - 24;
+    const pitW = Math.max(200, pitRight - pitLeft);
 
-    sfx.playBeep(cit.isOg ? 980 : 760, 0.09, 'triangle');
+    const isMobile = w < 640;
+    const count = isMobile ? 20 : 28;
+    const baseRadius = isMobile ? 27 : 34;
 
-    const targetLon = -cit.lon;
-    const currentNorm = ((this.planetRotY % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2);
-    const targetNorm = ((targetLon % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2);
-    let delta = targetNorm - currentNorm;
-    if (delta > Math.PI) delta -= Math.PI * 2;
-    if (delta < -Math.PI) delta += Math.PI * 2;
+    // Always include #001 OG MAXI and #037 PUMP.FUN PILL MAXI, plus a rotating batch from all 100 citizens
+    const chosenIndices = new Set([0]);
+    if (MAXI_CITIZENS.length > 36) chosenIndices.add(36); // #037 Pump.fun Pill Maxi
 
-    this.targetRotY = this.planetRotY + delta;
-    this.targetRotX = cit.lat;
-
-    if (this.targetCamDist > 260) {
-      this.targetCamDist = 195;
+    // Add 3 mythic citizens from the current rotation
+    const mythicPool = [1, 2, 3, 4, 5, 37, 50, 77].filter((i) => i < MAXI_CITIZENS.length);
+    for (let m = 0; m < 3; m++) {
+      chosenIndices.add(mythicPool[(this.pileBatchOffset + m) % mythicPool.length]);
     }
 
-    const cardSprite = document.getElementById('cardMaxiSprite');
-    const cardKicker = document.getElementById('cardKicker');
-    const cardTitle = document.getElementById('cardTitle');
-    const quoteEl = document.getElementById('maxiLiveQuote');
-    const hudActiveTarget = document.getElementById('hudActiveTarget');
-    const scanBtn = document.getElementById('scanSectorsBtn');
+    // Fill remaining slots sequentially across all 100 unique citizens so every restock cycles new Maxis
+    let cursor = (this.pileBatchOffset * 17) % MAXI_CITIZENS.length;
+    while (chosenIndices.size < Math.min(count, MAXI_CITIZENS.length)) {
+      chosenIndices.add(cursor);
+      cursor = (cursor + 3) % MAXI_CITIZENS.length;
+    }
+    this.pileBatchOffset = (this.pileBatchOffset + 1) % MAXI_CITIZENS.length;
 
-    if (cardSprite) cardSprite.src = cit.src;
-    if (cardKicker) cardKicker.textContent = cit.title.replace(/^[👑★]\s*/, '');
-    if (cardTitle) cardTitle.textContent = cit.name;
-    if (quoteEl) quoteEl.innerHTML = cit.lore;
-    if (hudActiveTarget) hudActiveTarget.textContent = `${cit.rank} ${cit.name}`;
-    if (scanBtn) scanBtn.textContent = `03 / CYCLE CITIZENS (${String(this.activeCitizenIndex + 1).padStart(2, '0')}/36)`;
+    const indicesArr = Array.from(chosenIndices);
+    // Shuffle order so OG Maxi lands near the middle-top of the pile
+    for (let i = indicesArr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [indicesArr[i], indicesArr[j]] = [indicesArr[j], indicesArr[i]];
+    }
+    // Put OG Maxi (#001) in the upper half of the drop order so he rests visibly on top of the pile
+    const ogPos = indicesArr.indexOf(0);
+    if (ogPos !== -1 && ogPos < indicesArr.length - 5) {
+      indicesArr.splice(ogPos, 1);
+      indicesArr.splice(indicesArr.length - 4, 0, 0);
+    }
 
-    MAXI_CITIZENS.forEach((c, i) => {
-      if (c.el) c.el.classList.toggle('selected-pin', i === this.activeCitizenIndex);
+    this.pileItems = indicesArr.map((citIdx, i) => {
+      const cit = MAXI_CITIZENS[citIdx];
+      this.getSprite(cit.src);
+      const r = cit.isOg
+        ? baseRadius * 1.16
+        : cit.isMythic
+        ? baseRadius * 1.06
+        : baseRadius * (0.92 + (i % 3) * 0.05);
+
+      const cols = isMobile ? 5 : 7;
+      const col = i % cols;
+      const row = Math.floor(i / cols);
+      const colSpan = (pitW - r * 2) / Math.max(1, cols - 1);
+      const spawnX =
+        pitLeft +
+        r +
+        col * colSpan +
+        (Math.random() - 0.5) * 26;
+      const spawnY = h - 180 - row * (r * 1.65) - Math.random() * 25;
+
+      return {
+        uid: `${cit.rank}-${Date.now()}-${i}`,
+        citizenIndex: citIdx,
+        cit,
+        x: Math.max(pitLeft + r, Math.min(pitRight - r, spawnX)),
+        y: spawnY,
+        vx: (Math.random() - 0.5) * 2.4,
+        vy: Math.random() * 1.5,
+        r,
+        angle: (Math.random() - 0.5) * 0.48,
+        vAngle: (Math.random() - 0.5) * 0.02,
+        inChute: false,
+        extracted: false
+      };
     });
 
-    document.querySelectorAll('.roster-chip').forEach((chip) => {
-      const isMatch = Number(chip.dataset.idx) === this.activeCitizenIndex;
-      chip.classList.toggle('active', isMatch);
-      if (isMatch) {
-        chip.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+    if (this.claw.grabbedItem) {
+      this.claw.grabbedItem = null;
+      this.claw.state = 'IDLE';
+    }
+
+    if (playSfx) {
+      sfx.playBeep(540, 0.07, 'triangle');
+      setTimeout(() => sfx.playBeep(760, 0.09, 'triangle'), 65);
+    }
+    this.updateMarqueeStatus('VAULT RESTOCKED // 100 CITIZENS IN ROTATION');
+  }
+
+  updateMarqueeStatus(text) {
+    const statusEl = document.getElementById('clawStatusReadout');
+    if (statusEl) statusEl.textContent = text;
+  }
+
+  selectCitizen(idx, triggerDrop = false) {
+    this.activeCitizenIndex = (idx + MAXI_CITIZENS.length) % MAXI_CITIZENS.length;
+    const cit = MAXI_CITIZENS[this.activeCitizenIndex];
+    sfx.playBeep(cit.isOg ? 980 : 760, 0.08, 'triangle');
+
+    // Check if this citizen is currently in the pile; if not, inject it onto the top of the pile!
+    let targetItem = this.pileItems.find((it) => it.citizenIndex === this.activeCitizenIndex && !it.extracted);
+    if (!targetItem) {
+      const w = this.bayW || 920;
+      const chuteW = Math.max(125, Math.min(200, w * this.chuteWidthRatio));
+      const pitLeft = chuteW + 40;
+      const pitRight = w - 40;
+      const spawnX = pitLeft + (pitRight - pitLeft) * (0.35 + Math.random() * 0.45);
+      const isMobile = w < 640;
+      const baseRadius = isMobile ? 27 : 34;
+
+      this.getSprite(cit.src);
+      targetItem = {
+        uid: `${cit.rank}-${Date.now()}`,
+        citizenIndex: this.activeCitizenIndex,
+        cit,
+        x: spawnX,
+        y: 120,
+        vx: 0,
+        vy: 1.5,
+        r: cit.isOg ? baseRadius * 1.16 : baseRadius * 1.04,
+        angle: 0,
+        vAngle: 0,
+        inChute: false,
+        extracted: false
+      };
+      this.pileItems.push(targetItem);
+    }
+
+    if (this.claw.state === 'IDLE' && targetItem) {
+      const w = this.bayW || 920;
+      this.claw.targetX = Math.max(0.24, Math.min(0.93, targetItem.x / w));
+      if (triggerDrop) {
+        setTimeout(() => this.triggerClawDrop(), 260);
       }
-    });
+    }
 
-    this.arrivedCard.classList.add('visible');
+    const laserEl = document.getElementById('clawLaserReadout');
+    if (laserEl) {
+      laserEl.textContent = `LOCKED: ${cit.rank} ${cit.name}`;
+    }
+  }
+
+  triggerClawDrop() {
+    if (this.state === 'ORBIT') {
+      this.startZoomSequence();
+      return;
+    }
+    // Close reveal overlay if open
+    const overlay = document.getElementById('pullRevealOverlay');
+    if (overlay && !overlay.classList.contains('hidden')) {
+      overlay.classList.add('hidden');
+    }
+
+    if (this.claw.state !== 'IDLE') return;
+
+    // Ensure claw is over the main pit (not inside the chute) when dropping
+    if (this.claw.x < this.chuteWidthRatio + 0.04) {
+      this.claw.targetX = 0.56;
+      this.claw.x = 0.56;
+    }
+
+    this.claw.state = 'DROPPING';
+    this.claw.stateTimer = 0;
+    this.claw.targetJaw = 0.62; // Open jaws wide
+    this.claw.grabbedItem = null;
+
+    sfx.playBeep(620, 0.09, 'sawtooth');
+    setTimeout(() => sfx.playBeep(440, 0.12, 'sawtooth'), 70);
+    this.updateMarqueeStatus('DESCENDING // LASER GUIDANCE ACTIVE');
+  }
+
+  triggerExtractionReveal(item) {
+    if (!item || !item.cit) return;
+    const cit = item.cit;
+    this.activeCitizenIndex = item.citizenIndex;
+    this.extractedSet.add(cit.rank);
+
+    sfx.playArrivalChord();
+
+    // Burst golden/emerald sparks at the extraction chute
+    const chuteX = (this.bayW || 920) * (this.chuteWidthRatio * 0.5);
+    const chuteY = (this.bayH || 480) - 70;
+    for (let i = 0; i < 28; i++) {
+      const ang = Math.random() * Math.PI * 2;
+      const spd = 2 + Math.random() * 6.5;
+      this.sparkParticles.push({
+        x: chuteX,
+        y: chuteY,
+        vx: Math.cos(ang) * spd,
+        vy: Math.sin(ang) * spd - 2.5,
+        life: 1.0,
+        color: i % 2 === 0 ? '#34d399' : '#e5b869',
+        size: 2.2 + Math.random() * 2.8
+      });
+    }
+
+    const countEl = document.getElementById('clawExtractedCount');
+    if (countEl) {
+      countEl.textContent = `${this.extractedSet.size} / ${MAXI_CITIZENS.length}`;
+    }
+
+    const overlay = document.getElementById('pullRevealOverlay');
+    const tierEl = document.getElementById('pullRevealTier');
+    const imgEl = document.getElementById('pullRevealImg');
+    const rankEl = document.getElementById('pullRevealRank');
+    const nameEl = document.getElementById('pullRevealName');
+    const titleEl = document.getElementById('pullRevealTitle');
+    const loreEl = document.getElementById('pullRevealLore');
+    const shareXEl = document.getElementById('pullShareXLink');
+    const dlEl = document.getElementById('pullDownloadLink');
+
+    if (tierEl) {
+      tierEl.textContent = cit.isOg
+        ? 'SOVEREIGN JACKPOT // #001'
+        : cit.isMythic
+        ? '1-OF-1 MWO MYTHIC PULL'
+        : 'VERIFIED MWO CITIZEN';
+    }
+    if (imgEl) imgEl.src = cit.src;
+    if (rankEl) rankEl.textContent = `CITIZEN ${cit.rank} / 100`;
+    if (nameEl) nameEl.textContent = cit.name;
+    if (titleEl) titleEl.textContent = cit.title.replace(/^[👑★]\s*/, '');
+    if (loreEl) loreEl.textContent = cit.lore.replace(/&quot;/g, '"');
+    if (dlEl) {
+      dlEl.href = cit.src;
+      dlEl.download = `MAXI-${cit.rank.replace('#', '')}-${cit.name.replace(/\s+/g, '-')}.png`;
+    }
+    if (shareXEl) {
+      const tweetText = `Just clawed ${cit.rank} ${cit.name} (${cit.title.replace(/^[👑★]\s*/, '')}) out of the MAXI WORLD ORDER Vault Claw Machine 🦾🌍\n\n$MAXI CA: EBCpGdXuS34WZuX13thrku2KmuLSe3Tf2gMtMKndpump\n@maxiworldorder`;
+      shareXEl.href = `https://twitter.com/intent/tweet?text=${encodeURIComponent(tweetText)}`;
+    }
+
+    if (overlay) {
+      overlay.classList.remove('hidden');
+    }
+
+    this.updateMarqueeStatus(`EXTRACTED ${cit.rank} ${cit.name} // PRIZE SECURED`);
+  }
+
+  toggleOverdriveMode() {
+    this.isOverdrive = !this.isOverdrive;
+    document.body.classList.toggle('mwo-overdrive', this.isOverdrive);
+
+    const navLbl = document.getElementById('overdriveNavLabel');
+    const stageLbl = document.getElementById('overdriveStageLabel');
+
+    if (this.isOverdrive) {
+      this.targetWarpSpeed = 9.5;
+      if (navLbl) navLbl.textContent = 'OVERDRIVE: ON';
+      if (stageLbl) stageLbl.textContent = 'OVERDRIVE: ON';
+      this.updateMarqueeStatus('MWO OVERDRIVE // HIGH-TORQUE GREEN CANDLE CLAW');
+
+      sfx.playBeep(523.25, 0.12, 'sawtooth');
+      setTimeout(() => sfx.playBeep(659.25, 0.14, 'sawtooth'), 70);
+      setTimeout(() => sfx.playBeep(1046.5, 0.22, 'triangle'), 140);
+    } else {
+      this.targetWarpSpeed = 1.5;
+      if (navLbl) navLbl.textContent = 'OVERDRIVE';
+      if (stageLbl) stageLbl.textContent = 'OVERDRIVE';
+      this.updateMarqueeStatus('GANTRY ARMED // 100 UNIQUE CITIZENS LOADED');
+      sfx.playBeep(440, 0.09, 'sine');
+    }
+  }
+
+  startZoomSequence() {
+    if (this.state === 'LOCKED') {
+      this.spawnClawPile(true);
+      return;
+    }
+
+    if (this.introScreen) this.introScreen.classList.add('warp-exit');
+    document.body.classList.remove('intro-locked');
+    if (this.mainNavbar) this.mainNavbar.classList.remove('nav-hidden');
+    if (this.diveHudLayer) this.diveHudLayer.classList.remove('hud-hidden');
+    if (this.bottomCaBar) this.bottomCaBar.classList.remove('hud-hidden');
+    if (this.clawCabinetStage) this.clawCabinetStage.classList.remove('cabinet-hidden');
+
+    this.state = 'LOCKED';
+    this.targetWarpSpeed = 2.0;
+
+    sfx.playWarpSound();
+    setTimeout(() => {
+      this.resizeCanvases();
+      this.spawnClawPile(false);
+    }, 60);
+  }
+
+  resetToOrbit(autoReplay = false) {
+    if (autoReplay) {
+      this.spawnClawPile(true);
+    } else {
+      this.returnToIntroGate();
+    }
+  }
+
+  returnToIntroGate() {
+    sfx.playHoverSound();
+    this.state = 'ORBIT';
+    this.targetWarpSpeed = 1.5;
+
+    const overlay = document.getElementById('pullRevealOverlay');
+    if (overlay) overlay.classList.add('hidden');
+
+    if (this.clawCabinetStage) this.clawCabinetStage.classList.add('cabinet-hidden');
+    if (this.introScreen) this.introScreen.classList.remove('warp-exit');
+    document.body.classList.add('intro-locked');
+    if (this.mainNavbar) this.mainNavbar.classList.add('nav-hidden');
+    if (this.diveHudLayer) this.diveHudLayer.classList.add('hud-hidden');
+    if (this.bottomCaBar) this.bottomCaBar.classList.add('hud-hidden');
   }
 
   initWarpParticles() {
     const w = window.innerWidth || 1440;
     const h = window.innerHeight || 900;
     this.particles.length = 0;
-    for (let i = 0; i < 250; i++) {
+    for (let i = 0; i < 200; i++) {
       const isStar = i % 4 === 0;
       const z = Math.random() * w;
       this.particles.push({
@@ -1034,506 +1823,667 @@ class PlanetMaxiController {
         angle: Math.random() * Math.PI * 2,
         spinSpeed: (Math.random() - 0.5) * 0.03,
         color: this.starColors[Math.floor(Math.random() * this.starColors.length)],
-        size: isStar ? Math.random() * 2.8 + 1.6 : Math.random() * 1.8 + 0.5
+        size: isStar ? Math.random() * 2.6 + 1.4 : Math.random() * 1.6 + 0.5
       });
     }
-  }
-
-  initThreePlanet() {
-    const w = window.innerWidth;
-    const h = window.innerHeight;
-
-    this.scene = new THREE.Scene();
-    this.camera = new THREE.PerspectiveCamera(42, w / h, 1, 3000);
-    this.camera.position.set(0, 0, this.camDist);
-
-    this.renderer = new THREE.WebGLRenderer({
-      alpha: true,
-      antialias: true,
-      preserveDrawingBuffer: true
-    });
-    this.renderer.setSize(w, h);
-    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    this.webglContainer.innerHTML = '';
-    this.webglContainer.appendChild(this.renderer.domElement);
-
-    this.planetGroup = new THREE.Group();
-    this.scene.add(this.planetGroup);
-
-    this.planetRadius = 100;
-    const maps = generateRealisticPlanetMaps(this.paletteIdx);
-    this.diffuseTex = new THREE.CanvasTexture(maps.diffCanvas);
-    this.bumpTex = new THREE.CanvasTexture(maps.bumpCanvas);
-    this.roughTex = new THREE.CanvasTexture(maps.roughCanvas);
-    this.cloudTex = new THREE.CanvasTexture(maps.cloudCanvas);
-
-    // 1. Realistic PBR Planet Surface (Deep oceans + 3D relief continents)
-    const sphereGeo = new THREE.SphereGeometry(this.planetRadius, 96, 96);
-    const sphereMat = new THREE.MeshStandardMaterial({
-      map: this.diffuseTex,
-      bumpMap: this.bumpTex,
-      bumpScale: 2.8,
-      roughnessMap: this.roughTex,
-      roughness: 0.9,
-      metalness: 0.08
-    });
-    this.planetMesh = new THREE.Mesh(sphereGeo, sphereMat);
-    this.planetGroup.add(this.planetMesh);
-
-    // 2. Realistic Floating Atmospheric Cloud Sphere (Slowly drifts over continents)
-    const cloudGeo = new THREE.SphereGeometry(this.planetRadius * 1.015, 64, 64);
-    const cloudMat = new THREE.MeshStandardMaterial({
-      map: this.cloudTex,
-      transparent: true,
-      opacity: 0.34,
-      roughness: 1.0,
-      metalness: 0.0,
-      depthWrite: false
-    });
-    this.cloudMesh = new THREE.Mesh(cloudGeo, cloudMat);
-    this.planetGroup.add(this.cloudMesh);
-
-    // 3. Rayleigh Atmospheric Scattering Rim Halo
-    const atmoGeo = new THREE.SphereGeometry(this.planetRadius * 1.08, 64, 64);
-    const atmoMat = new THREE.MeshBasicMaterial({
-      color: maps.atmoHex,
-      transparent: true,
-      opacity: 0.15,
-      side: THREE.BackSide,
-      blending: THREE.AdditiveBlending
-    });
-    this.atmoMesh = new THREE.Mesh(atmoGeo, atmoMat);
-    this.planetGroup.add(this.atmoMesh);
-
-    // 4. Subtle Outer Orbital Ring & Ice/Dust Particle Belt (Fixed in equatorial scene plane so it never slices across the Maxi sprites)
-    this.ringGroup = new THREE.Group();
-    this.ringGroup.rotation.x = Math.PI * 0.44;
-    this.ringGroup.rotation.z = -Math.PI * 0.08;
-    this.scene.add(this.ringGroup);
-
-    const ringConfigs = [
-      { inner: 148, outer: 158, color: maps.ringColors[0], opacity: 0.14 },
-      { inner: 162, outer: 178, color: maps.ringColors[1], opacity: 0.09 },
-      { inner: 182, outer: 190, color: maps.ringColors[2], opacity: 0.06 }
-    ];
-
-    this.ringMeshes = [];
-    ringConfigs.forEach((rc) => {
-      const rGeo = new THREE.RingGeometry(rc.inner, rc.outer, 128);
-      const rMat = new THREE.MeshBasicMaterial({
-        color: rc.color,
-        side: THREE.DoubleSide,
-        transparent: true,
-        opacity: rc.opacity
-      });
-      const rMesh = new THREE.Mesh(rGeo, rMat);
-      this.ringGroup.add(rMesh);
-      this.ringMeshes.push(rMesh);
-    });
-
-    const beltGeo = new THREE.BufferGeometry();
-    const beltCount = 360;
-    const positions = new Float32Array(beltCount * 3);
-    const colors = new Float32Array(beltCount * 3);
-    const colorObjs = [
-      new THREE.Color('#cbd5e1'),
-      new THREE.Color('#38bdf8'),
-      new THREE.Color('#fbbf24')
-    ];
-
-    for (let i = 0; i < beltCount; i++) {
-      const angle = Math.random() * Math.PI * 2;
-      const dist = 148 + Math.random() * 48;
-      positions[i * 3] = Math.cos(angle) * dist;
-      positions[i * 3 + 1] = Math.sin(angle) * dist;
-      positions[i * 3 + 2] = (Math.random() - 0.5) * 3.5;
-
-      const c = colorObjs[i % colorObjs.length];
-      colors[i * 3] = c.r;
-      colors[i * 3 + 1] = c.g;
-      colors[i * 3 + 2] = c.b;
-    }
-    beltGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-    beltGeo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
-    const beltMat = new THREE.PointsMaterial({
-      size: 1.6,
-      vertexColors: true,
-      transparent: true,
-      opacity: 0.55
-    });
-    this.asteroidBelt = new THREE.Points(beltGeo, beltMat);
-    this.ringGroup.add(this.asteroidBelt);
-
-    // 5. Realistic Orbital Sunlight & Atmospheric Fill Lights
-    const ambientLight = new THREE.AmbientLight(0xdbeafe, 0.75);
-    this.scene.add(ambientLight);
-
-    const sunLight = new THREE.DirectionalLight(0xfffbeb, 1.15);
-    sunLight.position.set(260, 180, 240);
-    this.scene.add(sunLight);
-
-    const rimLight1 = new THREE.PointLight(0x38bdf8, 0.9, 750);
-    rimLight1.position.set(-240, -130, 170);
-    this.scene.add(rimLight1);
-    this.rimLight1 = rimLight1;
-
-    const rimLight2 = new THREE.PointLight(0xf59e0b, 0.7, 750);
-    rimLight2.position.set(220, -150, -160);
-    this.scene.add(rimLight2);
-    this.rimLight2 = rimLight2;
-
-    // 6. Green-Candle Overdrive 3D Orbital Laser Pillars (Anchored to OG Maxi + Mythic Masters)
-    this.isOverdrive = false;
-    this.overdriveLasersGroup = new THREE.Group();
-    this.overdriveLasersGroup.visible = false;
-    this.planetGroup.add(this.overdriveLasersGroup);
-
-    MAXI_CITIZENS.forEach((cit) => {
-      if (!cit.isOg && !cit.isMythic) return;
-      const beamLen = cit.isOg ? 85 : 52;
-      const beamRadius = cit.isOg ? 1.8 : 0.95;
-      const beamGeo = new THREE.CylinderGeometry(0.15, beamRadius, beamLen, 16, 1, true);
-      const beamMat = new THREE.MeshBasicMaterial({
-        color: cit.isOg ? 0x34d399 : 0xe5b869,
-        transparent: true,
-        opacity: cit.isOg ? 0.55 : 0.35,
-        side: THREE.DoubleSide,
-        blending: THREE.AdditiveBlending
-      });
-      const beamMesh = new THREE.Mesh(beamGeo, beamMat);
-
-      const r = this.planetRadius + beamLen * 0.45;
-      const cosLat = Math.cos(cit.lat);
-      const pos = new THREE.Vector3(
-        r * cosLat * Math.sin(cit.lon),
-        r * Math.sin(cit.lat),
-        r * cosLat * Math.cos(cit.lon)
-      );
-      beamMesh.position.copy(pos);
-      beamMesh.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), pos.clone().normalize());
-      this.overdriveLasersGroup.add(beamMesh);
-    });
-  }
-
-  toggleOverdriveMode() {
-    this.isOverdrive = !this.isOverdrive;
-    document.body.classList.toggle('mwo-overdrive', this.isOverdrive);
-    if (this.overdriveLasersGroup) {
-      this.overdriveLasersGroup.visible = this.isOverdrive;
-    }
-
-    const navLbl = document.getElementById('overdriveNavLabel');
-    const stageLbl = document.getElementById('overdriveStageLabel');
-    const phaseEl = document.getElementById('hudPhaseBadge');
-
-    if (this.isOverdrive) {
-      this.targetWarpSpeed = 9.5;
-      this.atmoMesh.material.color.setHex(0x34d399);
-      this.atmoMesh.material.opacity = 0.24;
-      if (this.rimLight1) this.rimLight1.color.setHex(0x34d399);
-      this.ringMeshes.forEach((rm, idx) => {
-        rm.material.color.setHex(idx % 2 === 0 ? 0x34d399 : 0xe5b869);
-        rm.material.opacity = 0.22;
-      });
-      if (navLbl) navLbl.textContent = 'OVERDRIVE: ON';
-      if (stageLbl) stageLbl.textContent = 'OVERDRIVE: ON';
-      if (phaseEl) phaseEl.textContent = 'MWO OVERDRIVE // GREEN CANDLE PROTOCOL';
-
-      sfx.playBeep(523.25, 0.12, 'sawtooth');
-      setTimeout(() => sfx.playBeep(659.25, 0.14, 'sawtooth'), 70);
-      setTimeout(() => sfx.playBeep(1046.5, 0.22, 'triangle'), 140);
-    } else {
-      this.targetWarpSpeed = 1.5;
-      const maps = generateRealisticPlanetMaps(this.paletteIdx);
-      this.atmoMesh.material.color.setHex(maps.atmoHex);
-      this.atmoMesh.material.opacity = 0.15;
-      if (this.rimLight1) this.rimLight1.color.setHex(0x38bdf8);
-      this.ringMeshes.forEach((rm, idx) => {
-        if (maps.ringColors[idx]) rm.material.color.setHex(maps.ringColors[idx]);
-        rm.material.opacity = idx === 0 ? 0.14 : idx === 1 ? 0.09 : 0.06;
-      });
-      if (navLbl) navLbl.textContent = 'OVERDRIVE';
-      if (stageLbl) stageLbl.textContent = 'OVERDRIVE';
-      if (phaseEl) phaseEl.textContent = 'SCROLL TO ZOOM · DRAG TO ROTATE';
-      sfx.playBeep(440, 0.09, 'sine');
-    }
-  }
-
-  cycleBiomeAura() {
-    this.paletteIdx = (this.paletteIdx + 1) % 3;
-    const maps = generateRealisticPlanetMaps(this.paletteIdx);
-    this.diffuseTex = new THREE.CanvasTexture(maps.diffCanvas);
-    this.bumpTex = new THREE.CanvasTexture(maps.bumpCanvas);
-    this.roughTex = new THREE.CanvasTexture(maps.roughCanvas);
-
-    this.planetMesh.material.map = this.diffuseTex;
-    this.planetMesh.material.bumpMap = this.bumpTex;
-    this.planetMesh.material.roughnessMap = this.roughTex;
-    this.planetMesh.material.needsUpdate = true;
-
-    this.atmoMesh.material.color.setHex(this.isOverdrive ? 0x34d399 : maps.atmoHex);
-    this.ringMeshes.forEach((rm, idx) => {
-      if (maps.ringColors[idx]) rm.material.color.setHex(this.isOverdrive ? 0x34d399 : maps.ringColors[idx]);
-    });
-
-    const cycleBtn = document.getElementById('cycleBiomeBtn');
-    const shortNames = ['SAPPHIRE', 'EMERALD', 'OBSIDIAN'];
-    if (cycleBtn) cycleBtn.innerHTML = `<span>${shortNames[this.paletteIdx]}</span>`;
-    sfx.playBeep(740, 0.1, 'triangle');
-  }
-
-  computeIntroRingOffsetY() {
-    if (!this.stageContainer || !this.logoStage) return 0;
-    const stageRect = this.stageContainer.getBoundingClientRect();
-    const logoRect = this.logoStage.getBoundingClientRect();
-    if (logoRect.height === 0 || stageRect.height === 0) return 38;
-    const logoCenterY = logoRect.top - stageRect.top + logoRect.height / 2;
-    const stageCenterY = stageRect.height / 2;
-    const pixelOffset = stageCenterY - logoCenterY;
-    return (pixelOffset / stageRect.height) * 265;
   }
 
   resizeCanvases() {
     const w = this.stageContainer ? this.stageContainer.clientWidth : window.innerWidth;
     const h = this.stageContainer ? this.stageContainer.clientHeight : window.innerHeight;
-    this.spaceCanvas.width = w;
-    this.spaceCanvas.height = h;
-    this.fxCanvas.width = w;
-    this.fxCanvas.height = h;
-    if (this.renderer && this.camera) {
-      this.renderer.setSize(w, h);
-      this.camera.aspect = w / h;
-      this.camera.fov = w < 720 ? 52 : 42;
-      this.camera.updateProjectionMatrix();
+    if (this.spaceCanvas) {
+      this.spaceCanvas.width = w;
+      this.spaceCanvas.height = h;
+    }
+    if (this.fxCanvas) {
+      this.fxCanvas.width = w;
+      this.fxCanvas.height = h;
+    }
+
+    if (this.clawCanvas && this.clawGlassBay) {
+      const rect = this.clawGlassBay.getBoundingClientRect();
+      const bayW = Math.max(300, Math.floor(rect.width || 920));
+      const bayH = Math.max(240, Math.floor(rect.height || 460));
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+      this.bayW = bayW;
+      this.bayH = bayH;
+      this.clawCanvas.width = bayW * dpr;
+      this.clawCanvas.height = bayH * dpr;
+      if (this.clawCtx) {
+        this.clawCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      }
     }
   }
 
-  renderMiniRadar() {
-    const radarCanvas = document.getElementById('miniRadarCanvas');
-    if (!radarCanvas) return;
-    const ctx = radarCanvas.getContext('2d');
-    const w = radarCanvas.width;
-    const h = radarCanvas.height;
+  updateClawAndPilePhysics(dt) {
+    const w = this.bayW || 920;
+    const h = this.bayH || 480;
+    const chuteW = Math.max(125, Math.min(200, w * this.chuteWidthRatio));
+    const dividerTopY = h - Math.min(185, h * 0.40);
+    const floorY = h - 14;
+    const gantrySpeed = this.isOverdrive ? 0.58 : 0.42;
 
-    const drawRadar = (t = 0) => {
-      ctx.fillStyle = '#05070c';
-      ctx.fillRect(0, 0, w, h);
+    // 1. Update Robotic Gantry & 3-Prong Claw State Machine
+    const claw = this.claw;
+    const prevClawX = claw.x * w;
 
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.08)';
-      ctx.lineWidth = 1;
-      const cx = w / 2;
-      const cy = h / 2;
-      [18, 34, 50].forEach((r) => {
-        ctx.beginPath();
-        ctx.arc(cx, cy, r, 0, Math.PI * 2);
-        ctx.stroke();
-      });
+    if (claw.state === 'IDLE') {
+      if (claw.moveDir !== 0) {
+        claw.targetX = Math.max(
+          this.chuteWidthRatio + 0.04,
+          Math.min(0.94, claw.targetX + claw.moveDir * gantrySpeed * dt)
+        );
+      }
+      claw.x += (claw.targetX - claw.x) * Math.min(1, dt * 12);
+      claw.y += (claw.homeY - claw.y) * Math.min(1, dt * 10);
+      claw.targetJaw = 0.56;
 
-      MAXI_CITIZENS.forEach((cit, idx) => {
-        const bx = cx + (cit.lon / Math.PI) * 48;
-        const by = cy - (cit.lat / (Math.PI / 2)) * 42;
-        ctx.fillStyle = cit.isOg
-          ? '#e5b869'
-          : idx === this.activeCitizenIndex
-          ? '#ffffff'
-          : 'rgba(255, 255, 255, 0.35)';
-        ctx.beginPath();
-        ctx.arc(bx, by, cit.isOg ? 4 : 1.6, 0, Math.PI * 2);
-        ctx.fill();
-      });
+      // Update live laser target readout under the claw
+      const clawPxX = claw.x * w;
+      let nearest = null;
+      let bestDist = 9999;
+      for (let i = 0; i < this.pileItems.length; i++) {
+        const it = this.pileItems[i];
+        if (it.extracted || it.inChute) continue;
+        const dx = Math.abs(it.x - clawPxX);
+        if (dx < it.r * 1.35 && it.y < bestDist) {
+          bestDist = it.y;
+          nearest = it;
+        }
+      }
+      const laserEl = document.getElementById('clawLaserReadout');
+      if (laserEl) {
+        if (nearest) {
+          laserEl.textContent = `LASER LOCK // ${nearest.cit.rank} ${nearest.cit.name}`;
+        } else {
+          laserEl.textContent = `GANTRY X=${Math.round(claw.x * 100)}% // READY`;
+        }
+      }
+    } else if (claw.state === 'DROPPING') {
+      const dropSpeed = this.isOverdrive ? 440 : 340;
+      claw.y += dropSpeed * dt;
+      claw.targetJaw = 0.64;
 
-      const angle = (t * 0.002) % (Math.PI * 2);
-      ctx.strokeStyle = 'rgba(229, 184, 105, 0.65)';
-      ctx.lineWidth = 1.2;
+      const clawPxX = claw.x * w;
+      const grabCenterY = claw.y + 30;
+
+      // Check collision with any Maxi in the pile
+      let hitCandidate = null;
+      let minDist = 9999;
+      for (let i = 0; i < this.pileItems.length; i++) {
+        const it = this.pileItems[i];
+        if (it.extracted || it.inChute) continue;
+        const dist = Math.hypot(it.x - clawPxX, it.y - grabCenterY);
+        if (dist <= it.r * 1.05 && dist < minDist) {
+          minDist = dist;
+          hitCandidate = it;
+        }
+      }
+
+      if (hitCandidate || claw.y >= floorY - 58) {
+        claw.state = 'CLAMPING';
+        claw.stateTimer = 0;
+        claw.targetJaw = 0.16;
+
+        // If no direct hit, check within slightly wider magnetic reach
+        if (!hitCandidate) {
+          for (let i = 0; i < this.pileItems.length; i++) {
+            const it = this.pileItems[i];
+            if (it.extracted || it.inChute) continue;
+            const dist = Math.hypot(it.x - clawPxX, it.y - grabCenterY);
+            if (dist <= it.r * 1.48 && dist < minDist) {
+              minDist = dist;
+              hitCandidate = it;
+            }
+          }
+        }
+
+        if (hitCandidate) {
+          claw.grabbedItem = hitCandidate;
+          sfx.playBeep(880, 0.09, 'triangle');
+          this.updateMarqueeStatus(`CLAMP LOCKED // ${hitCandidate.cit.rank} ${hitCandidate.cit.name}`);
+        } else {
+          sfx.playBeep(300, 0.09, 'sine');
+          this.updateMarqueeStatus('CLAMP MISSED // RETRACTING GANTRY');
+        }
+      }
+    } else if (claw.state === 'CLAMPING') {
+      claw.stateTimer += dt;
+      claw.targetJaw = claw.grabbedItem ? 0.18 : 0.12;
+      if (claw.grabbedItem) {
+        const targetX = claw.x * w;
+        const targetY = claw.y + 34;
+        claw.grabbedItem.x += (targetX - claw.grabbedItem.x) * 0.35;
+        claw.grabbedItem.y += (targetY - claw.grabbedItem.y) * 0.35;
+        claw.grabbedItem.vx = 0;
+        claw.grabbedItem.vy = 0;
+      }
+      if (claw.stateTimer >= 0.32) {
+        claw.state = 'HOISTING';
+        claw.stateTimer = 0;
+        sfx.playBeep(660, 0.08, 'sine');
+      }
+    } else if (claw.state === 'HOISTING') {
+      const hoistSpeed = this.isOverdrive ? 360 : 280;
+      claw.y -= hoistSpeed * dt;
+      if (claw.y <= claw.homeY) {
+        claw.y = claw.homeY;
+        if (claw.grabbedItem) {
+          claw.state = 'CARRYING';
+          claw.stateTimer = 0;
+          this.updateMarqueeStatus(`TRANSPORTING ${claw.grabbedItem.cit.rank} TO EXTRACTION CHUTE`);
+        } else {
+          claw.state = 'IDLE';
+          claw.targetJaw = 0.56;
+          this.updateMarqueeStatus('GANTRY READY // AIM & DROP CLAW');
+        }
+      }
+    } else if (claw.state === 'CARRYING') {
+      const chuteCenterNorm = (chuteW * 0.52) / w;
+      const carrySpeed = this.isOverdrive ? 0.52 : 0.38;
+      if (claw.x > chuteCenterNorm) {
+        claw.x = Math.max(chuteCenterNorm, claw.x - carrySpeed * dt);
+        claw.targetX = claw.x;
+      } else {
+        claw.state = 'RELEASING';
+        claw.stateTimer = 0;
+        claw.targetJaw = 0.65;
+        if (claw.grabbedItem) {
+          claw.grabbedItem.inChute = true;
+          claw.grabbedItem.vx = 0;
+          claw.grabbedItem.vy = 2.8;
+          claw.grabbedItem = null;
+        }
+        sfx.playBeep(990, 0.1, 'triangle');
+      }
+    } else if (claw.state === 'RELEASING') {
+      claw.stateTimer += dt;
+      claw.targetJaw = 0.65;
+      if (claw.stateTimer >= 0.45) {
+        claw.state = 'IDLE';
+        claw.targetX = 0.54;
+      }
+    }
+
+    // Smooth jaw & cable pendulum swing physics
+    claw.jawAngle += (claw.targetJaw - claw.jawAngle) * Math.min(1, dt * 14);
+    const clawVelX = (claw.x * w - prevClawX) / Math.max(0.001, dt);
+    claw.swingVel += (-clawVelX * 0.0012 - claw.swingAngle * 14) * dt;
+    claw.swingVel *= 0.90;
+    claw.swingAngle = Math.max(-0.35, Math.min(0.35, claw.swingAngle + claw.swingVel));
+
+    if (claw.grabbedItem) {
+      const grabX = claw.x * w + Math.sin(claw.swingAngle) * 18;
+      const grabY = claw.y + 34;
+      claw.grabbedItem.x = grabX;
+      claw.grabbedItem.y = grabY;
+      claw.grabbedItem.vx = 0;
+      claw.grabbedItem.vy = 0;
+      claw.grabbedItem.angle = claw.swingAngle * 0.6;
+    }
+
+    // 2. Rigid-Body 2D Circle Physics for the Maxi Cutout Pile
+    const gravity = 760 * dt;
+    for (let i = 0; i < this.pileItems.length; i++) {
+      const it = this.pileItems[i];
+      if (it.extracted || it === claw.grabbedItem) continue;
+
+      it.vy += gravity;
+      it.x += it.vx;
+      it.y += it.vy * dt * 60;
+      it.vx *= 0.96;
+      it.vy *= 0.96;
+      it.angle += it.vAngle;
+      it.vAngle *= 0.92;
+
+      if (it.inChute || it.x < chuteW) {
+        // Inside Left Prize Extraction Chute
+        if (it.x - it.r < 10) {
+          it.x = 10 + it.r;
+          it.vx = Math.abs(it.vx) * 0.4;
+        }
+        if (it.x + it.r > chuteW - 6) {
+          it.x = chuteW - 6 - it.r;
+          it.vx = -Math.abs(it.vx) * 0.4;
+        }
+        if (it.y > h - 36 && !it.extracted) {
+          it.extracted = true;
+          this.triggerExtractionReveal(it);
+        }
+      } else {
+        // Inside Main Prize Containment Pit
+        if (it.y + it.r > floorY) {
+          it.y = floorY - it.r;
+          it.vy = -Math.abs(it.vy) * 0.25;
+          it.vx *= 0.85;
+          it.vAngle = it.vx * 0.01;
+        }
+        if (it.x + it.r > w - 12) {
+          it.x = w - 12 - it.r;
+          it.vx = -Math.abs(it.vx) * 0.4;
+        }
+        // Chute Divider Wall collision
+        if (it.y + it.r > dividerTopY && it.x - it.r < chuteW + 8) {
+          it.x = chuteW + 8 + it.r;
+          it.vx = Math.abs(it.vx) * 0.45 + 0.4;
+        }
+      }
+    }
+
+    // 3. Pairwise Capsule Collision Resolution (3 relaxation passes for stable stacking)
+    for (let pass = 0; pass < 3; pass++) {
+      for (let i = 0; i < this.pileItems.length; i++) {
+        const a = this.pileItems[i];
+        if (a.extracted || a.inChute || a === claw.grabbedItem) continue;
+
+        for (let j = i + 1; j < this.pileItems.length; j++) {
+          const b = this.pileItems[j];
+          if (b.extracted || b.inChute || b === claw.grabbedItem) continue;
+
+          const dx = b.x - a.x;
+          const dy = b.y - a.y;
+          const distSq = dx * dx + dy * dy;
+          const minDist = (a.r + b.r) * 0.93;
+
+          if (distSq > 0.0001 && distSq < minDist * minDist) {
+            const dist = Math.sqrt(distSq);
+            const overlap = (minDist - dist) * 0.5;
+            const nx = dx / dist;
+            const ny = dy / dist;
+
+            a.x -= nx * overlap;
+            a.y -= ny * overlap;
+            b.x += nx * overlap;
+            b.y += ny * overlap;
+
+            // Clamp against floor & walls during relaxation
+            if (a.y + a.r > floorY) a.y = floorY - a.r;
+            if (b.y + b.r > floorY) b.y = floorY - b.r;
+            if (a.x - a.r < chuteW + 8) a.x = chuteW + 8 + a.r;
+            if (b.x - b.r < chuteW + 8) b.x = chuteW + 8 + b.r;
+            if (a.x + a.r > w - 12) a.x = w - 12 - a.r;
+            if (b.x + b.r > w - 12) b.x = w - 12 - b.r;
+
+            const dvx = b.vx - a.vx;
+            const dvy = b.vy - a.vy;
+            const relVel = dvx * nx + dvy * ny;
+            if (relVel < 0) {
+              const imp = relVel * 0.35;
+              a.vx += nx * imp;
+              a.vy += ny * imp;
+              b.vx -= nx * imp;
+              b.vy -= ny * imp;
+            }
+          }
+        }
+      }
+    }
+
+    // Remove extracted items once revealed
+    if (this.pileItems.some((it) => it.extracted)) {
+      this.pileItems = this.pileItems.filter((it) => !it.extracted);
+      if (this.pileItems.length < 8) {
+        this.spawnClawPile(false);
+      }
+    }
+
+    // 4. Update Extraction Sparks
+    for (let i = this.sparkParticles.length - 1; i >= 0; i--) {
+      const sp = this.sparkParticles[i];
+      sp.x += sp.vx;
+      sp.y += sp.vy;
+      sp.vy += 0.18;
+      sp.life -= dt * 1.6;
+      if (sp.life <= 0) this.sparkParticles.splice(i, 1);
+    }
+  }
+
+  renderClawMachineCanvas(timeSec) {
+    if (!this.clawCtx || !this.clawCanvas) return;
+    const ctx = this.clawCtx;
+    const w = this.bayW || 920;
+    const h = this.bayH || 480;
+    const chuteW = Math.max(125, Math.min(200, w * this.chuteWidthRatio));
+    const dividerTopY = h - Math.min(185, h * 0.40);
+    const floorY = h - 14;
+
+    ctx.clearRect(0, 0, w, h);
+
+    // 1. Industrial Vault Interior Grid & Ambient Depth Glow
+    const bgGrad = ctx.createRadialGradient(w * 0.58, h * 0.45, 30, w * 0.58, h * 0.45, w * 0.7);
+    bgGrad.addColorStop(
+      0,
+      this.isOverdrive ? 'rgba(52, 211, 153, 0.09)' : 'rgba(229, 184, 105, 0.06)'
+    );
+    bgGrad.addColorStop(1, 'rgba(3, 5, 10, 0.92)');
+    ctx.fillStyle = bgGrad;
+    ctx.fillRect(0, 0, w, h);
+
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.035)';
+    ctx.lineWidth = 1;
+    const gridStep = 44;
+    for (let gx = chuteW; gx < w; gx += gridStep) {
       ctx.beginPath();
-      ctx.moveTo(cx, cy);
-      ctx.lineTo(cx + Math.cos(angle) * 52, cy + Math.sin(angle) * 52);
+      ctx.moveTo(gx, 0);
+      ctx.lineTo(gx, floorY);
+      ctx.stroke();
+    }
+    for (let gy = 26; gy < floorY; gy += gridStep) {
+      ctx.beginPath();
+      ctx.moveTo(0, gy);
+      ctx.lineTo(w, gy);
+      ctx.stroke();
+    }
+
+    // 2. Left Extraction Chute ("DROP ZONE")
+    const chuteGrad = ctx.createLinearGradient(0, dividerTopY, 0, h);
+    chuteGrad.addColorStop(0, 'rgba(52, 211, 153, 0.04)');
+    chuteGrad.addColorStop(1, 'rgba(52, 211, 153, 0.16)');
+    ctx.fillStyle = chuteGrad;
+    ctx.fillRect(4, dividerTopY, chuteW - 4, h - dividerTopY - 4);
+
+    // Animated Chute Laser Tripwire Sensor
+    const laserY = h - 42;
+    ctx.save();
+    ctx.strokeStyle = '#34d399';
+    ctx.lineWidth = 1.5;
+    ctx.setLineDash([6, 5]);
+    ctx.lineDashOffset = -timeSec * 36;
+    ctx.beginPath();
+    ctx.moveTo(12, laserY);
+    ctx.lineTo(chuteW - 8, laserY);
+    ctx.stroke();
+    ctx.restore();
+
+    // Chute Telemetry Label
+    ctx.save();
+    ctx.fillStyle = 'rgba(52, 211, 153, 0.82)';
+    ctx.font = '700 10px "JetBrains Mono", monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText('PRIZE CHUTE', chuteW * 0.5, dividerTopY + 22);
+    ctx.fillStyle = 'rgba(148, 163, 184, 0.55)';
+    ctx.font = '600 9px "JetBrains Mono", monospace';
+    ctx.fillText('▼ DROP ZONE ▼', chuteW * 0.5, dividerTopY + 38);
+    ctx.restore();
+
+    // Armored Chute Divider Wall
+    ctx.fillStyle = '#111623';
+    ctx.strokeStyle = this.isOverdrive ? '#34d399' : '#e5b869';
+    ctx.lineWidth = 1.5;
+    ctx.fillRect(chuteW - 3, dividerTopY, 8, h - dividerTopY);
+    ctx.strokeRect(chuteW - 3, dividerTopY, 8, h - dividerTopY);
+
+    // Top Warning Beacon on Chute Divider
+    const beaconPulse = 0.5 + 0.5 * Math.sin(timeSec * 5);
+    ctx.fillStyle = `rgba(52, 211, 153, ${0.4 + beaconPulse * 0.5})`;
+    ctx.beginPath();
+    ctx.arc(chuteW + 1, dividerTopY, 5, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Containment Floor Deck
+    ctx.fillStyle = '#0b0e17';
+    ctx.fillRect(0, floorY, w, h - floorY);
+    ctx.strokeStyle = 'rgba(229, 184, 105, 0.35)';
+    ctx.beginPath();
+    ctx.moveTo(chuteW + 5, floorY);
+    ctx.lineTo(w, floorY);
+    ctx.stroke();
+
+    // 3. Top Gantry Rail Beam
+    const railY = this.claw.railY;
+    ctx.fillStyle = '#0d121c';
+    ctx.fillRect(0, railY - 10, w, 16);
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.14)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(0, railY + 6);
+    ctx.lineTo(w, railY + 6);
+    ctx.stroke();
+
+    // 4. Vertical Laser Aiming Sight from Claw Carriage
+    const clawPxX = this.claw.x * w;
+    const clawHeadY = this.claw.y;
+
+    if (this.claw.state === 'IDLE' || this.claw.state === 'DROPPING') {
+      ctx.save();
+      const laserGrad = ctx.createLinearGradient(clawPxX, clawHeadY + 24, clawPxX, floorY);
+      const laserRgb = this.isOverdrive ? '52, 211, 153' : '229, 184, 105';
+      laserGrad.addColorStop(0, `rgba(${laserRgb}, 0.55)`);
+      laserGrad.addColorStop(1, `rgba(${laserRgb}, 0.05)`);
+      ctx.strokeStyle = laserGrad;
+      ctx.lineWidth = 1.5;
+      ctx.setLineDash([5, 5]);
+      ctx.lineDashOffset = -timeSec * 40;
+      ctx.beginPath();
+      ctx.moveTo(clawPxX, clawHeadY + 24);
+      ctx.lineTo(clawPxX, floorY);
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    // 5. Render Pile of Background-Removed Maxi Cutouts inside Obsidian/Gold/Emerald Capsules
+    for (let i = 0; i < this.pileItems.length; i++) {
+      const it = this.pileItems[i];
+      if (it.extracted || it === this.claw.grabbedItem) continue;
+      this.drawMaxiCapsuleItem(ctx, it, timeSec, false);
+    }
+
+    // Draw grabbed Maxi inside the claw jaws if currently holding one
+    if (this.claw.grabbedItem) {
+      this.drawMaxiCapsuleItem(ctx, this.claw.grabbedItem, timeSec, true);
+    }
+
+    // 6. Render Robotic Gantry Trolley, Hoist Cable, & Articulated 3-Prong Claw
+    this.drawRoboticClawAssembly(ctx, clawPxX, clawHeadY, railY, timeSec);
+
+    // 7. Render Extraction Sparks
+    for (let i = 0; i < this.sparkParticles.length; i++) {
+      const sp = this.sparkParticles[i];
+      ctx.save();
+      ctx.globalAlpha = Math.max(0, sp.life);
+      ctx.fillStyle = sp.color;
+      ctx.beginPath();
+      ctx.arc(sp.x, sp.y, sp.size, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
+  }
+
+  drawMaxiCapsuleItem(ctx, it, timeSec, isGrabbed) {
+    const cit = it.cit;
+    const r = it.r;
+    const img = this.getSprite(cit.src);
+
+    ctx.save();
+    ctx.translate(it.x, it.y);
+    ctx.rotate(it.angle);
+
+    // Capsule Outer Rim & Glass Backing so transparent cutouts pop cleanly
+    const rimColor = cit.isOg
+      ? '#e5b869'
+      : cit.isMythic || cit.rank === '#037'
+      ? '#34d399'
+      : isGrabbed
+      ? '#e5b869'
+      : 'rgba(255, 255, 255, 0.22)';
+
+    const podGrad = ctx.createRadialGradient(0, -r * 0.2, r * 0.1, 0, 0, r);
+    if (cit.isOg) {
+      podGrad.addColorStop(0, 'rgba(229, 184, 105, 0.30)');
+      podGrad.addColorStop(0.75, 'rgba(13, 18, 30, 0.88)');
+      podGrad.addColorStop(1, 'rgba(229, 184, 105, 0.45)');
+    } else if (cit.isMythic || cit.rank === '#037') {
+      podGrad.addColorStop(0, 'rgba(52, 211, 153, 0.24)');
+      podGrad.addColorStop(0.75, 'rgba(11, 16, 26, 0.86)');
+      podGrad.addColorStop(1, 'rgba(52, 211, 153, 0.35)');
+    } else {
+      podGrad.addColorStop(0, 'rgba(30, 41, 59, 0.65)');
+      podGrad.addColorStop(0.8, 'rgba(8, 11, 18, 0.88)');
+      podGrad.addColorStop(1, 'rgba(148, 163, 184, 0.22)');
+    }
+
+    ctx.fillStyle = podGrad;
+    ctx.beginPath();
+    ctx.arc(0, 0, r * 0.94, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.strokeStyle = rimColor;
+    ctx.lineWidth = cit.isOg || isGrabbed ? 2.4 : cit.isMythic ? 1.8 : 1.1;
+    ctx.stroke();
+
+    // Draw Background-Removed Maxi Cutout Sprite (aspect-ratio preserved)
+    if (img && img.complete && img.naturalWidth > 0) {
+      const iw = img.naturalWidth;
+      const ih = img.naturalHeight;
+      const maxDim = r * 1.82;
+      const scale = Math.min(maxDim / iw, maxDim / ih);
+      const dw = iw * scale;
+      const dh = ih * scale;
+      ctx.drawImage(img, -dw * 0.5, -dh * 0.52, dw, dh);
+    } else {
+      ctx.fillStyle = '#e5b869';
+      ctx.font = '700 10px "JetBrains Mono", monospace';
+      ctx.textAlign = 'center';
+      ctx.fillText(cit.rank, 0, 4);
+    }
+
+    // Specular Glass Capsule Highlight Arc
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.26)';
+    ctx.lineWidth = 1.4;
+    ctx.beginPath();
+    ctx.arc(0, 0, r * 0.84, -Math.PI * 0.78, -Math.PI * 0.28);
+    ctx.stroke();
+
+    ctx.restore();
+
+    // Unrotated Rank Tag Pill beneath capsule
+    ctx.save();
+    ctx.translate(it.x, it.y + r * 0.82);
+    const pillW = cit.isOg ? 52 : 34;
+    const pillH = 14;
+    ctx.fillStyle = cit.isOg ? '#e5b869' : 'rgba(6, 9, 15, 0.92)';
+    ctx.strokeStyle = rimColor;
+    ctx.lineWidth = 1;
+    ctx.fillRect(-pillW * 0.5, -pillH * 0.5, pillW, pillH);
+    ctx.strokeRect(-pillW * 0.5, -pillH * 0.5, pillW, pillH);
+
+    ctx.fillStyle = cit.isOg ? '#05070c' : '#f8fafc';
+    ctx.font = '700 9px "JetBrains Mono", monospace';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(cit.isOg ? '👑 #001' : cit.rank, 0, 0.5);
+    ctx.restore();
+  }
+
+  drawRoboticClawAssembly(ctx, clawPxX, clawHeadY, railY, timeSec) {
+    const accent = this.isOverdrive ? '#34d399' : '#e5b869';
+
+    // 1. Top Gantry Trolley Carriage
+    ctx.save();
+    ctx.fillStyle = '#151c2c';
+    ctx.strokeStyle = accent;
+    ctx.lineWidth = 1.5;
+    ctx.fillRect(clawPxX - 28, railY - 8, 56, 18);
+    ctx.strokeRect(clawPxX - 28, railY - 8, 56, 18);
+
+    // Gantry Trolley Status LEDs
+    ctx.fillStyle = '#34d399';
+    ctx.beginPath();
+    ctx.arc(clawPxX - 16, railY + 1, 2.5, 0, Math.PI * 2);
+    ctx.arc(clawPxX + 16, railY + 1, 2.5, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+
+    // 2. Braided Steel Hoist Cable
+    const hubX = clawPxX + Math.sin(this.claw.swingAngle) * 10;
+    const hubY = clawHeadY;
+
+    ctx.save();
+    ctx.strokeStyle = '#94a3b8';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(clawPxX, railY + 10);
+    ctx.lineTo(hubX, hubY);
+    ctx.stroke();
+
+    ctx.strokeStyle = accent;
+    ctx.lineWidth = 1;
+    ctx.setLineDash([4, 4]);
+    ctx.beginPath();
+    ctx.moveTo(clawPxX, railY + 10);
+    ctx.lineTo(hubX, hubY);
+    ctx.stroke();
+    ctx.restore();
+
+    // 3. Articulated 3-Prong Robotic Claw Head
+    ctx.save();
+    ctx.translate(hubX, hubY);
+    ctx.rotate(this.claw.swingAngle * 0.7);
+
+    const jaw = this.claw.jawAngle;
+
+    // Center Vertical Stabilizer Prong
+    ctx.strokeStyle = 'rgba(148, 163, 184, 0.55)';
+    ctx.lineWidth = 3.5;
+    ctx.beginPath();
+    ctx.moveTo(0, 6);
+    ctx.lineTo(0, 38 + Math.cos(jaw) * 8);
+    ctx.stroke();
+
+    // Left & Right Articulated Mechanical Fingers
+    [-1, 1].forEach((dir) => {
+      ctx.save();
+      ctx.rotate(dir * jaw);
+
+      // Upper Arm Segment
+      ctx.strokeStyle = '#e2e8f0';
+      ctx.lineWidth = 5;
+      ctx.lineCap = 'round';
+      ctx.beginPath();
+      ctx.moveTo(dir * 10, 4);
+      ctx.lineTo(dir * 30, 24);
       ctx.stroke();
 
-      requestAnimationFrame(drawRadar);
-    };
-    requestAnimationFrame(drawRadar);
-  }
+      // Elbow Joint Pin
+      ctx.fillStyle = accent;
+      ctx.beginPath();
+      ctx.arc(dir * 30, 24, 3.5, 0, Math.PI * 2);
+      ctx.fill();
 
-  updateSurfacePins() {
-    if (!this.planetGroup || !this.camera) return;
-    const w = this.stageContainer.clientWidth;
-    const h = this.stageContainer.clientHeight;
-    const camPos = this.camera.position.clone();
-    const planetCenter = this.planetGroup.position.clone();
+      // Lower Curved Talon Tip
+      ctx.strokeStyle = accent;
+      ctx.lineWidth = 4;
+      ctx.beginPath();
+      ctx.moveTo(dir * 30, 24);
+      ctx.lineTo(dir * 14, 50);
+      ctx.stroke();
 
-    MAXI_CITIZENS.forEach((cit, idx) => {
-      const el = cit.el;
-      if (!el) return;
-
-      if (this.state === 'ORBIT' && this.currentZoomLevel < 3.0) {
-        el.style.opacity = '0';
-        el.style.pointerEvents = 'none';
-        return;
-      }
-
-      const r = this.planetRadius * 1.01;
-      const cosLat = Math.cos(cit.lat);
-      const localVec = new THREE.Vector3(
-        r * cosLat * Math.sin(cit.lon),
-        r * Math.sin(cit.lat),
-        r * cosLat * Math.cos(cit.lon)
-      );
-
-      const worldVec = localVec.clone().applyMatrix4(this.planetGroup.matrixWorld);
-      const surfaceNormal = worldVec.clone().sub(planetCenter).normalize();
-      const toCam = camPos.clone().sub(worldVec).normalize();
-      const facingDot = surfaceNormal.dot(toCam);
-
-      const minDot = cit.isOg ? 0.08 : 0.22;
-      if (facingDot < minDot) {
-        el.style.opacity = '0';
-        el.style.pointerEvents = 'none';
-        return;
-      }
-
-      const ndc = worldVec.clone().project(this.camera);
-      const sx = (ndc.x * 0.5 + 0.5) * w;
-      const sy = (-(ndc.y * 0.5) + 0.5) * h;
-
-      const distZoomFactor = Math.max(0.32, Math.min(1.45, 215 / this.camDist));
-      const isSelected = idx === this.activeCitizenIndex;
-
-      let baseScale;
-      if (cit.isOg) {
-        baseScale = 1.08 * distZoomFactor;
-      } else if (isSelected) {
-        baseScale = 1.15 * distZoomFactor;
-      } else if (cit.isMythic) {
-        baseScale = 0.78 * distZoomFactor;
-      } else {
-        baseScale = 0.64 * distZoomFactor;
-      }
-
-      const limbFactor = Math.min(1, (facingDot - minDot) * 2.6);
-      const finalScale = baseScale * (0.74 + 0.26 * limbFactor);
-
-      const visAlpha = limbFactor * Math.min(1, (this.currentZoomLevel - 2.5) / 3);
-      el.style.opacity = visAlpha.toFixed(2);
-      el.style.pointerEvents = visAlpha > 0.45 ? 'auto' : 'none';
-      el.style.transform = `translate3d(${sx.toFixed(1)}px, ${sy.toFixed(1)}px, 0) translate(-50%, -65%) scale(${finalScale.toFixed(3)})`;
+      ctx.restore();
     });
-  }
 
-  startZoomSequence() {
-    if (this.state === 'ZOOMING') return;
-    if (this.state === 'LOCKED') {
-      this.resetToOrbit(true);
-      return;
-    }
-
-    if (this.introScreen) this.introScreen.classList.add('warp-exit');
-    document.body.classList.remove('intro-locked');
-    if (this.mainNavbar) this.mainNavbar.classList.remove('nav-hidden');
-    if (this.diveHudLayer) this.diveHudLayer.classList.remove('hud-hidden');
-    if (this.bottomCaBar) this.bottomCaBar.classList.remove('hud-hidden');
-
-    this.targetWarpSpeed = 26;
-    sfx.playWarpSound();
-    sfx.playZoomSequenceSFX();
-
-    this.state = 'ZOOMING';
-    this.zoomStartTime = performance.now();
-
-    this.activeCitizenIndex = 0;
-    this.startRotY = ((this.planetRotY % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2);
-    if (this.startRotY > Math.PI) this.startRotY -= Math.PI * 2;
-    this.startRotY -= Math.PI * 2;
-    this.startRotX = this.planetRotX;
-    this.startOffsetY = this.planetGroup.position.y;
-    this.targetCamDist = 195;
-
-    this.arrivedCard.classList.remove('visible');
-    this.reticleHud.classList.add('active');
-  }
-
-  resetToOrbit(autoReplay = false) {
-    sfx.playBeep(660, 0.08);
-    this.state = 'ORBIT';
-    this.targetWarpSpeed = 1.5;
-    this.reticleHud.classList.remove('active');
-    this.arrivedCard.classList.remove('visible');
-    this.currentZoomLevel = 1.5;
-
-    if (autoReplay) {
-      this.planetRotY = -2.4;
-      this.planetRotX = 0.18;
-      this.camDist = 360;
-      setTimeout(() => this.startZoomSequence(), 100);
-    } else {
-      this.returnToIntroGate();
-    }
-  }
-
-  returnToIntroGate() {
-    sfx.playHoverSound();
-    this.state = 'ORBIT';
-    this.targetWarpSpeed = 1.5;
-    this.currentZoomLevel = 1.5;
-    this.camDist = 360;
-    this.reticleHud.classList.remove('active');
-    this.arrivedCard.classList.remove('visible');
-
-    if (this.introScreen) this.introScreen.classList.remove('warp-exit');
-    document.body.classList.add('intro-locked');
-    if (this.mainNavbar) this.mainNavbar.classList.add('nav-hidden');
-    if (this.diveHudLayer) this.diveHudLayer.classList.add('hud-hidden');
-    if (this.bottomCaBar) this.bottomCaBar.classList.add('hud-hidden');
-  }
-
-  updateTelemetryHUD(zoom, altitudeKm, phaseText) {
-    const altEl = document.getElementById('hudAltitude');
-    const zoomEl = document.getElementById('hudZoom');
-    const barEl = document.getElementById('hudZoomBar');
-    const phaseEl = document.getElementById('hudPhaseBadge');
-    const reticleText = document.getElementById('reticleReadout');
-
-    if (altEl) {
-      altEl.textContent =
-        altitudeKm >= 10
-          ? `${Math.round(altitudeKm).toLocaleString()} KM`
-          : `${Math.max(85, Math.round(altitudeKm * 1000))} M`;
-    }
-    if (zoomEl) zoomEl.textContent = `z=${zoom.toFixed(1)}`;
-    if (barEl) barEl.style.width = `${Math.min(100, Math.max(6, ((zoom - 1.5) / 16.9) * 100))}%`;
-    if (phaseEl) phaseEl.textContent = phaseText;
-    if (reticleText) {
-      if (zoom < 5.5) reticleText.textContent = 'ORBITAL SLEW // 36 CITIZENS';
-      else if (zoom < 12.5) reticleText.textContent = 'ATMOSPHERIC DESCENT';
-      else if (zoom < 16.8) reticleText.textContent = 'APPROACHING GENESIS CITADEL';
-      else reticleText.textContent = 'LOCKED // OG MAXI #001';
-    }
-  }
-
-  drawFivePointStar(ctx, cx, cy, outerRadius, rotation, color, alpha) {
-    const innerRadius = outerRadius * 0.42;
-    ctx.save();
-    ctx.translate(cx, cy);
-    ctx.rotate(rotation);
+    // Robotic Motor Housing Hub
+    ctx.fillStyle = '#0f172a';
+    ctx.strokeStyle = accent;
+    ctx.lineWidth = 2;
     ctx.beginPath();
-    for (let i = 0; i < 5; i++) {
-      const outerAngle = (i * 2 * Math.PI) / 5 - Math.PI / 2;
-      const innerAngle = outerAngle + Math.PI / 5;
-      if (i === 0) {
-        ctx.moveTo(Math.cos(outerAngle) * outerRadius, Math.sin(outerAngle) * outerRadius);
-      } else {
-        ctx.lineTo(Math.cos(outerAngle) * outerRadius, Math.sin(outerAngle) * outerRadius);
-      }
-      ctx.lineTo(Math.cos(innerAngle) * innerRadius, Math.sin(innerAngle) * innerRadius);
-    }
-    ctx.closePath();
-    ctx.fillStyle = color;
-    ctx.globalAlpha = alpha;
+    ctx.roundRect(-18, -8, 36, 18, 4);
     ctx.fill();
+    ctx.stroke();
+
+    // Center Laser Core Lens
+    const corePulse = 0.6 + 0.4 * Math.sin(timeSec * 8);
+    ctx.fillStyle = this.claw.grabbedItem ? '#34d399' : accent;
+    ctx.globalAlpha = corePulse;
+    ctx.beginPath();
+    ctx.arc(0, 1, 4.5, 0, Math.PI * 2);
+    ctx.fill();
+
     ctx.restore();
   }
 
   drawSpaceBackdrop() {
+    if (!this.spaceCtx || !this.spaceCanvas) return;
     const ctx = this.spaceCtx;
     const w = this.spaceCanvas.width;
     const h = this.spaceCanvas.height;
@@ -1541,27 +2491,16 @@ class PlanetMaxiController {
     this.baseWarpSpeed += (this.targetWarpSpeed - this.baseWarpSpeed) * 0.08;
 
     ctx.save();
-    ctx.fillStyle = this.state === 'ZOOMING' ? 'rgba(3, 4, 8, 0.25)' : 'rgba(3, 4, 8, 0.52)';
+    ctx.fillStyle = 'rgba(3, 4, 8, 0.55)';
     ctx.fillRect(0, 0, w, h);
 
     const cx = w / 2 + this.mouseX;
     const cy = h / 2 + this.mouseY;
 
-    const globeRadius = Math.min(w, h) * 0.22;
-    const haloGrad = ctx.createRadialGradient(w * 0.5, h * 0.42, globeRadius * 0.3, w * 0.5, h * 0.42, globeRadius * 1.8);
-    haloGrad.addColorStop(0, 'rgba(56, 189, 248, 0.14)');
-    haloGrad.addColorStop(0.5, 'rgba(229, 184, 105, 0.05)');
-    haloGrad.addColorStop(1, 'transparent');
-    ctx.fillStyle = haloGrad;
-    ctx.beginPath();
-    ctx.arc(w * 0.5, h * 0.42, globeRadius * 1.8, 0, Math.PI * 2);
-    ctx.fill();
-
     for (let i = 0; i < this.particles.length; i++) {
       const p = this.particles[i];
       p.pz = p.z;
-      p.z -= this.baseWarpSpeed * 3.8;
-      p.angle += p.spinSpeed;
+      p.z -= this.baseWarpSpeed * 3.5;
 
       if (p.z <= 1) {
         p.x = (Math.random() - 0.5) * w * 2.1;
@@ -1576,82 +2515,47 @@ class PlanetMaxiController {
       const py = (p.y / p.pz) * (h * 0.6) + cy;
 
       const depthRatio = 1 - p.z / w;
-      const alpha = Math.min(1, depthRatio * 1.2);
-      const radius = Math.max(0.4, depthRatio * p.size * 1.6);
+      const alpha = Math.min(1, depthRatio * 1.15);
+      const radius = Math.max(0.4, depthRatio * p.size * 1.5);
 
       ctx.beginPath();
       ctx.strokeStyle = p.color;
-      ctx.globalAlpha = alpha * 0.75;
-      ctx.lineWidth = this.state === 'ZOOMING' ? radius * 1.3 : radius * 0.75;
+      ctx.globalAlpha = alpha * 0.7;
+      ctx.lineWidth = radius * 0.75;
       ctx.moveTo(px, py);
       ctx.lineTo(sx, sy);
       ctx.stroke();
-
-      if (this.state !== 'ZOOMING' && alpha > 0.55) {
-        ctx.fillStyle = p.color;
-        ctx.beginPath();
-        ctx.arc(sx, sy, radius * 0.6, 0, Math.PI * 2);
-        ctx.fill();
-      }
     }
     ctx.restore();
   }
 
-  drawAtmosphericDiveFX(zoom, timeSec) {
+  drawAtmosphericDiveFX(timeSec) {
+    if (!this.fxCtx || !this.fxCanvas) return;
     const ctx = this.fxCtx;
     const w = this.fxCanvas.width;
     const h = this.fxCanvas.height;
     ctx.clearRect(0, 0, w, h);
 
-    if (zoom > 5.5 && zoom < 14.8) {
-      ctx.save();
-      this.cloudPuffs.forEach((puff) => {
-        const localProgress = (zoom - puff.zStart) / 3.2;
-        if (localProgress <= 0 || localProgress >= 1) return;
-
-        const scale = Math.pow(localProgress, 1.8) * 3.6;
-        const alpha = Math.sin(localProgress * Math.PI) * 0.26;
-        const distPx = (puff.dist + localProgress * 0.55) * Math.max(w, h);
-        const cx = w * 0.5 + Math.cos(puff.angle) * distPx;
-        const cy = h * 0.5 + Math.sin(puff.angle) * distPx;
-        const r = puff.size * (0.6 + scale);
-
-        const cloudGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, r);
-        cloudGrad.addColorStop(0, `rgba(${puff.tint}, ${alpha})`);
-        cloudGrad.addColorStop(0.5, `rgba(186, 230, 253, ${alpha * 0.4})`);
-        cloudGrad.addColorStop(1, 'transparent');
-
-        ctx.fillStyle = cloudGrad;
-        ctx.beginPath();
-        ctx.arc(cx, cy, r, 0, Math.PI * 2);
-        ctx.fill();
-      });
-      ctx.restore();
-    }
-
-    // Green-Candle Overdrive Vertical Impulse Lasers & Telemetry
     if (this.isOverdrive) {
       ctx.save();
-      const candleCount = 14;
+      const candleCount = 12;
       for (let i = 0; i < candleCount; i++) {
-        const xNorm = ((i * 0.61803398875) % 1);
+        const xNorm = (i * 0.61803398875) % 1;
         const x = (0.04 + xNorm * 0.92) * w;
         const speed = 180 + (i % 5) * 85;
         const y = h - ((timeSec * speed + i * 190) % (h + 260));
         const candleH = 44 + (i % 4) * 28;
 
-        // Wick
-        ctx.strokeStyle = 'rgba(52, 211, 153, 0.32)';
+        ctx.strokeStyle = 'rgba(52, 211, 153, 0.30)';
         ctx.lineWidth = 1;
         ctx.beginPath();
         ctx.moveTo(x, y - 16);
         ctx.lineTo(x, y + candleH + 16);
         ctx.stroke();
 
-        // Green Candle Body
         const cGrad = ctx.createLinearGradient(x, y, x, y + candleH);
-        cGrad.addColorStop(0, 'rgba(52, 211, 153, 0.55)');
-        cGrad.addColorStop(1, 'rgba(52, 211, 153, 0.08)');
+        cGrad.addColorStop(0, 'rgba(52, 211, 153, 0.50)');
+        cGrad.addColorStop(1, 'rgba(52, 211, 153, 0.06)');
         ctx.fillStyle = cGrad;
         ctx.fillRect(x - 2.5, y, 5, candleH);
       }
@@ -1666,8 +2570,128 @@ class PlanetMaxiController {
     if (enterBtn) enterBtn.addEventListener('click', () => this.startZoomSequence());
 
     const replayDiveBtn = document.getElementById('triggerZoomBtn');
-    if (replayDiveBtn) replayDiveBtn.addEventListener('click', () => this.resetToOrbit(true));
+    if (replayDiveBtn) replayDiveBtn.addEventListener('click', () => this.spawnClawPile(true));
 
+    // Claw Machine Control Deck Buttons
+    const leftBtn = document.getElementById('clawMoveLeftBtn');
+    const rightBtn = document.getElementById('clawMoveRightBtn');
+    const dropBtn = document.getElementById('clawDropBtn');
+    const aimOgBtn = document.getElementById('clawAimOgBtn');
+    const shuffleBtn = document.getElementById('clawShuffleBtn');
+
+    const bindHoldDir = (btn, dir) => {
+      if (!btn) return;
+      const startMove = (e) => {
+        e.preventDefault();
+        if (this.claw.state === 'IDLE') {
+          this.claw.moveDir = dir;
+          sfx.playBeep(dir < 0 ? 480 : 540, 0.04, 'sine');
+        }
+      };
+      const stopMove = () => {
+        if (this.claw.moveDir === dir) this.claw.moveDir = 0;
+      };
+      btn.addEventListener('pointerdown', startMove);
+      window.addEventListener('pointerup', stopMove);
+      btn.addEventListener('pointerleave', stopMove);
+    };
+
+    bindHoldDir(leftBtn, -1);
+    bindHoldDir(rightBtn, 1);
+
+    if (dropBtn) {
+      dropBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        this.triggerClawDrop();
+      });
+    }
+
+    if (aimOgBtn) {
+      aimOgBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        this.selectCitizen(0, true);
+      });
+    }
+
+    if (shuffleBtn) {
+      shuffleBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        this.spawnClawPile(true);
+      });
+    }
+
+    // Direct Pointer/Touch Aiming on the Glass Tank
+    if (this.clawGlassBay) {
+      let isAimingGlass = false;
+      const updateAimFromPointer = (clientX) => {
+        if (this.claw.state !== 'IDLE') return;
+        const rect = this.clawGlassBay.getBoundingClientRect();
+        if (!rect.width) return;
+        const relX = (clientX - rect.left) / rect.width;
+        this.claw.targetX = Math.max(this.chuteWidthRatio + 0.04, Math.min(0.94, relX));
+      };
+
+      this.clawGlassBay.addEventListener('pointerdown', (e) => {
+        if (e.target.closest('.pull-reveal-overlay')) return;
+        isAimingGlass = true;
+        updateAimFromPointer(e.clientX);
+      });
+
+      window.addEventListener('pointermove', (e) => {
+        if (!isAimingGlass) return;
+        updateAimFromPointer(e.clientX);
+      });
+
+      window.addEventListener('pointerup', () => {
+        isAimingGlass = false;
+      });
+    }
+
+    // Pull Reveal Overlay Buttons
+    const closePullBtn = document.getElementById('closePullRevealBtn');
+    const pullAgainBtn = document.getElementById('pullAgainBtn');
+    [closePullBtn, pullAgainBtn].forEach((btn) => {
+      if (btn) {
+        btn.addEventListener('click', () => {
+          const overlay = document.getElementById('pullRevealOverlay');
+          if (overlay) overlay.classList.add('hidden');
+          sfx.playBeep(640, 0.06, 'sine');
+        });
+      }
+    });
+
+    // Keyboard Arcade Controls (A/D, ArrowLeft/ArrowRight, Space/Enter)
+    window.addEventListener('keydown', (e) => {
+      if (this.state !== 'LOCKED') return;
+      if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA')) return;
+      const anyModalOpen = document.querySelector('.suite-modal:not(.hidden)');
+      if (anyModalOpen) return;
+
+      if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') {
+        this.claw.moveDir = -1;
+      } else if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') {
+        this.claw.moveDir = 1;
+      } else if (e.key === ' ') {
+        e.preventDefault();
+        this.triggerClawDrop();
+      }
+    });
+
+    window.addEventListener('keyup', (e) => {
+      if (
+        (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') &&
+        this.claw.moveDir === -1
+      ) {
+        this.claw.moveDir = 0;
+      } else if (
+        (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') &&
+        this.claw.moveDir === 1
+      ) {
+        this.claw.moveDir = 0;
+      }
+    });
+
+    // Overdrive Mode Buttons
     const overdriveBtns = [
       document.getElementById('overdriveNavBtn'),
       document.getElementById('overdriveStageBtn')
@@ -1681,53 +2705,7 @@ class PlanetMaxiController {
       }
     });
 
-    const ogSnapBtns = [
-      document.getElementById('focusOgBtn'),
-      document.getElementById('snapOgBtn'),
-      document.getElementById('cardReturnOgBtn'),
-      document.getElementById('quickJumpToMaxi'),
-      document.getElementById('pillReturnOg')
-    ];
-    ogSnapBtns.forEach((btn) => {
-      if (btn) {
-        btn.addEventListener('click', (e) => {
-          e.preventDefault();
-          if (this.state === 'ORBIT') {
-            this.startZoomSequence();
-          } else {
-            this.selectCitizen(0);
-          }
-        });
-      }
-    });
-
-    this.mythicCounter = 1;
-    const tourMythicsBtn = document.getElementById('tourMythicsBtn');
-    if (tourMythicsBtn) {
-      tourMythicsBtn.addEventListener('click', (e) => {
-        e.preventDefault();
-        const idx = ((this.mythicCounter - 1) % 5) + 1;
-        this.mythicCounter++;
-        this.selectCitizen(idx);
-      });
-    }
-
-    const nextCitizenHandler = (e) => {
-      if (e) e.preventDefault();
-      this.selectCitizen(this.activeCitizenIndex + 1);
-    };
-    const prevCitizenHandler = (e) => {
-      if (e) e.preventDefault();
-      this.selectCitizen(this.activeCitizenIndex - 1);
-    };
-
-    const nextBtn = document.getElementById('btnTourSectors');
-    if (nextBtn) nextBtn.addEventListener('click', nextCitizenHandler);
-    const prevBtn = document.getElementById('btnPrevCitizen');
-    if (prevBtn) prevBtn.addEventListener('click', prevCitizenHandler);
-    const scanBtn = document.getElementById('scanSectorsBtn');
-    if (scanBtn) scanBtn.addEventListener('click', nextCitizenHandler);
-
+    // Return to Opening Gate Buttons
     const returnToGateBtns = [
       document.getElementById('resetOrbitBtn'),
       document.getElementById('replay-intro-btn'),
@@ -1741,192 +2719,21 @@ class PlanetMaxiController {
         });
       }
     });
-
-    const cycleBiomeBtn = document.getElementById('cycleBiomeBtn');
-    if (cycleBiomeBtn) {
-      cycleBiomeBtn.addEventListener('click', () => this.cycleBiomeAura());
-    }
-
-    this.isPinching = false;
-    this.pinchPrevDist = 0;
-
-    this.webglContainer.addEventListener('pointerdown', (e) => {
-      if (this.isPinching) return;
-      this.isDragging = true;
-      this.dragPrevX = e.clientX;
-      this.dragPrevY = e.clientY;
-    });
-
-    window.addEventListener('pointermove', (e) => {
-      if (!this.isDragging || this.isPinching) return;
-      const dx = e.clientX - this.dragPrevX;
-      const dy = e.clientY - this.dragPrevY;
-      this.dragPrevX = e.clientX;
-      this.dragPrevY = e.clientY;
-
-      this.planetRotY += dx * 0.007;
-      this.planetRotX = Math.max(-1.05, Math.min(1.05, this.planetRotX + dy * 0.007));
-      this.targetRotY = this.planetRotY;
-      this.targetRotX = this.planetRotX;
-    });
-
-    window.addEventListener('pointerup', () => {
-      this.isDragging = false;
-    });
-
-    // Mobile Two-Finger Pinch-to-Zoom on the 3D Planet
-    this.stageContainer.addEventListener(
-      'touchstart',
-      (e) => {
-        if (e.touches.length === 2) {
-          this.isPinching = true;
-          this.isDragging = false;
-          const dx = e.touches[0].clientX - e.touches[1].clientX;
-          const dy = e.touches[0].clientY - e.touches[1].clientY;
-          this.pinchPrevDist = Math.hypot(dx, dy);
-        }
-      },
-      { passive: true }
-    );
-
-    this.stageContainer.addEventListener(
-      'touchmove',
-      (e) => {
-        if (this.state !== 'LOCKED' || e.touches.length !== 2) return;
-        e.preventDefault();
-        const dx = e.touches[0].clientX - e.touches[1].clientX;
-        const dy = e.touches[0].clientY - e.touches[1].clientY;
-        const dist = Math.hypot(dx, dy);
-        const delta = this.pinchPrevDist - dist;
-        this.pinchPrevDist = dist;
-
-        this.targetCamDist = Math.max(142, Math.min(480, this.targetCamDist + delta * 0.9));
-        const zVal = 18.4 - ((this.targetCamDist - 142) / (480 - 142)) * 16.2;
-        const altKm = ((this.targetCamDist - 140) / 340) * 28500;
-        this.updateTelemetryHUD(
-          Math.max(1.8, zVal),
-          altKm,
-          this.targetCamDist > 300 ? 'ORBITAL OVERVIEW' : 'SURFACE LOCK · PINCH TO ZOOM'
-        );
-      },
-      { passive: false }
-    );
-
-    this.stageContainer.addEventListener(
-      'touchend',
-      (e) => {
-        if (e.touches.length < 2) {
-          this.isPinching = false;
-        }
-      },
-      { passive: true }
-    );
-
-    // Mouse Wheel / Trackpad Scroll to Zoom In & Out on the 3D Planet
-    this.stageContainer.addEventListener(
-      'wheel',
-      (e) => {
-        if (this.state !== 'LOCKED') return;
-        if (e.target.closest('.citizen-roster-strip')) return;
-        e.preventDefault();
-
-        this.targetCamDist = Math.max(
-          142,
-          Math.min(480, this.targetCamDist + e.deltaY * 0.22)
-        );
-
-        const zVal = 18.4 - ((this.targetCamDist - 142) / (480 - 142)) * 16.2;
-        const altKm = ((this.targetCamDist - 140) / 340) * 28500;
-        this.updateTelemetryHUD(
-          Math.max(1.8, zVal),
-          altKm,
-          this.targetCamDist > 300
-            ? 'ORBITAL OVERVIEW'
-            : 'SURFACE LOCK · SCROLL TO ZOOM'
-        );
-      },
-      { passive: false }
-    );
   }
 
   animate(now) {
     requestAnimationFrame(this.animate);
+    const dt = Math.min(0.05, Math.max(0.001, (now - this.lastFrameTime) / 1000));
+    this.lastFrameTime = now;
     const timeSec = now / 1000;
 
-    if (this.asteroidBelt) this.asteroidBelt.rotation.z = timeSec * 0.05;
-    if (this.cloudMesh) this.cloudMesh.rotation.y = timeSec * 0.015;
-
-    if (this.state === 'ORBIT') {
-      const targetOffsetY = this.computeIntroRingOffsetY();
-      this.planetGroup.position.y += (targetOffsetY - this.planetGroup.position.y) * 0.15;
-      this.camDist += (360 - this.camDist) * 0.12;
-      this.camera.position.z = this.camDist;
-
-      if (!this.isDragging) {
-        if (this.orbitSpinMode === '3d') {
-          this.planetRotY += 0.005;
-          this.planetRotX += (0.18 - this.planetRotX) * 0.05;
-        } else if (this.orbitSpinMode === 'gyro') {
-          this.planetRotY += 0.014;
-          this.planetRotX = Math.sin(timeSec * 1.4) * 0.45;
-        } else if (this.orbitSpinMode === 'lock') {
-          this.planetRotY += (0 - (this.planetRotY % (Math.PI * 2))) * 0.08;
-          this.planetRotX += (0.18 - this.planetRotX) * 0.08;
-        }
-      }
-      this.currentZoomLevel = 1.5;
-    } else if (this.state === 'ZOOMING') {
-      const elapsed = now - this.zoomStartTime;
-      const t = Math.min(1, elapsed / this.zoomDuration);
-      const ease = t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
-
-      this.planetGroup.position.y = this.startOffsetY * (1 - Math.min(1, t / 0.35));
-
-      this.planetRotY = this.startRotY * (1 - ease);
-      this.planetRotX = this.startRotX + (0.18 - this.startRotX) * ease;
-      this.targetRotY = 0;
-      this.targetRotX = 0.18;
-
-      this.camDist = 360 - ease * 165;
-      this.targetCamDist = 195;
-      this.camera.position.z = this.camDist;
-
-      this.currentZoomLevel = 1.5 + ease * 16.9;
-      const altitudeKm = 42000 * Math.pow(0.000005, t);
-
-      let phaseStr = 'ORBITAL SCAN';
-      if (t >= 0.25 && t < 0.62) phaseStr = 'ATMOSPHERIC ENTRY';
-      else if (t >= 0.62 && t < 0.88) phaseStr = 'SURFACE APPROACH';
-      else if (t >= 0.88) phaseStr = 'LOCKED ON OG MAXI';
-
-      this.updateTelemetryHUD(this.currentZoomLevel, altitudeKm, phaseStr);
-
-      if (t >= 1) {
-        this.state = 'LOCKED';
-        this.targetWarpSpeed = 1.5;
-        this.reticleHud.classList.remove('active');
-        this.selectCitizen(0);
-        this.updateTelemetryHUD(18.4, 0.18, 'SCROLL TO ZOOM · DRAG TO ROTATE');
-      }
-    } else if (this.state === 'LOCKED') {
-      this.planetGroup.position.y += (12 - this.planetGroup.position.y) * 0.1;
-      this.camDist += (this.targetCamDist - this.camDist) * 0.12;
-      this.camera.position.z = this.camDist;
-
-      if (!this.isDragging) {
-        this.planetRotY += (this.targetRotY - this.planetRotY) * 0.08;
-        this.planetRotX += (this.targetRotX - this.planetRotX) * 0.08;
-      }
-      this.currentZoomLevel = 18.4;
+    if (this.state === 'LOCKED') {
+      this.updateClawAndPilePhysics(dt);
+      this.renderClawMachineCanvas(timeSec);
     }
 
-    this.planetGroup.rotation.y = this.planetRotY;
-    this.planetGroup.rotation.x = this.planetRotX;
-
-    this.renderer.render(this.scene, this.camera);
-    this.updateSurfacePins();
     this.drawSpaceBackdrop();
-    this.drawAtmosphericDiveFX(this.currentZoomLevel, timeSec);
+    this.drawAtmosphericDiveFX(timeSec);
   }
 }
 
@@ -1976,9 +2783,9 @@ document.addEventListener('DOMContentLoaded', () => {
         if (chip.dataset.spin === 'lock') {
           hudStatusText.textContent = 'LOCKED — OG MAXI (#001)';
         } else if (chip.dataset.spin === 'gyro') {
-          hudStatusText.textContent = 'GYRO SCAN — 36 CITIZENS ACTIVE';
+          hudStatusText.textContent = 'GYRO SCAN — 100 CITIZENS ACTIVE';
         } else {
-          hudStatusText.textContent = 'ORBITAL LOCK — 36 CITIZENS ON SURFACE';
+          hudStatusText.textContent = 'MWO ORBITAL LOCK — 100 CITIZENS ON SURFACE';
         }
       }
     });
@@ -2100,10 +2907,20 @@ class CommunitySuiteController {
     bindOpen('quickOpenRankBtn', 'rankModal');
     bindOpen('bottomOpenRankBtn', 'rankModal');
 
-    // Open active planet citizen directly in PFP Studio
+    // Open active citizen directly in PFP Studio (from Claw Pull Reveal Card or HUD)
     const customizeActiveBtn = document.getElementById('btnCustomizeActive');
     if (customizeActiveBtn) {
       customizeActiveBtn.addEventListener('click', () => {
+        this.selectPfpCitizen(this.planetCtrl.activeCitizenIndex);
+        this.openModal('pfpModal');
+      });
+    }
+
+    const pullToStudioBtn = document.getElementById('pullToStudioBtn');
+    if (pullToStudioBtn) {
+      pullToStudioBtn.addEventListener('click', () => {
+        const pullOverlay = document.getElementById('pullRevealOverlay');
+        if (pullOverlay) pullOverlay.classList.add('hidden');
         this.selectPfpCitizen(this.planetCtrl.activeCitizenIndex);
         this.openModal('pfpModal');
       });
@@ -2119,7 +2936,7 @@ class CommunitySuiteController {
   }
 
   /* -----------------------------------------------------------------------
-     1. 36-CITIZEN VAULT GRID & RAID DOWNLOAD PACK
+     1. 100-CITIZEN VAULT GRID & RAID DOWNLOAD PACK
      ----------------------------------------------------------------------- */
   initVaultGrid() {
     this.renderVaultCards();
@@ -2157,22 +2974,22 @@ class CommunitySuiteController {
             <span>${cit.rank}</span>
             <span class="v-badge-tier">${tierLabel}</span>
           </div>
-          <div class="v-card-stage" title="Click to locate on 3D Planet">
+          <div class="v-card-stage" title="Click to load & claw in the Vault Claw Machine">
             <img src="${cit.src}" alt="${cit.name}" loading="lazy" />
           </div>
           <div class="v-card-name">${cit.name}</div>
         </div>
         <div class="v-card-actions">
-          <button type="button" class="v-act-btn btn-locate">LOCATE</button>
+          <button type="button" class="v-act-btn btn-locate">CLAW IT</button>
           <button type="button" class="v-act-btn btn-studio">STUDIO</button>
           <a href="${cit.src}" download="${cit.name.toLowerCase().replace(/\s+/g, '-')}.png" class="v-act-btn">PNG ⬇</a>
         </div>
       `;
 
-      // Locate on 3D Planet
+      // Load into Claw Machine & Aim Claw at this Citizen
       const locateFn = () => {
         this.closeAllModals();
-        this.planetCtrl.selectCitizen(idx);
+        this.planetCtrl.selectCitizen(idx, true);
       };
       card.querySelector('.v-card-stage').addEventListener('click', locateFn);
       card.querySelector('.btn-locate').addEventListener('click', locateFn);

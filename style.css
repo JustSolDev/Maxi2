@@ -2661,3 +2661,493 @@ body.mwo-overdrive .zoom-progress-fill {
   }
 }
 
+/* =========================================================================
+   SOLANA DEGEN VAULT CLAW MACHINE CABINET & PRIZE EXTRACTION REVEAL
+   ========================================================================= */
+.claw-cabinet-stage {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 20px;
+  transition: opacity 0.65s ease, transform 0.65s cubic-bezier(0.16, 1, 0.3, 1), filter 0.65s ease;
+}
+
+body.intro-locked .claw-cabinet-stage {
+  opacity: 0.22;
+  transform: scale(0.94);
+  filter: blur(5px);
+  pointer-events: none;
+}
+
+.claw-machine-cabinet {
+  width: min(940px, 100%);
+  height: min(760px, 100%);
+  background: linear-gradient(180deg, #0b0e15 0%, #05070b 100%);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 14px;
+  box-shadow:
+    0 28px 90px rgba(0, 0, 0, 0.95),
+    0 0 0 1px rgba(229, 184, 105, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+}
+
+body.mwo-overdrive .claw-machine-cabinet {
+  border-color: rgba(52, 211, 153, 0.55);
+  box-shadow:
+    0 28px 90px rgba(0, 0, 0, 0.95),
+    0 0 42px rgba(52, 211, 153, 0.24);
+}
+
+/* 1. Top Industrial Marquee Bar */
+.claw-marquee-bar {
+  height: 46px;
+  padding: 0 18px;
+  background: #06080d;
+  border-bottom: 1px solid var(--border-hairline);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  font-family: var(--font-mono);
+  flex-shrink: 0;
+}
+
+.marquee-left,
+.marquee-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.marquee-beacon {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--emerald);
+  box-shadow: 0 0 10px var(--emerald);
+}
+
+.marquee-tag {
+  font-size: 0.62rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  letter-spacing: 0.1em;
+}
+
+.marquee-title {
+  font-family: var(--font-sans);
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  color: var(--gold);
+  white-space: nowrap;
+}
+
+.marquee-stat {
+  font-size: 0.64rem;
+  font-weight: 700;
+  color: var(--text-main);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border-hairline);
+  padding: 3px 9px;
+  border-radius: 4px;
+}
+
+.marquee-credits {
+  font-size: 0.62rem;
+  font-weight: 700;
+  color: var(--emerald);
+  background: rgba(52, 211, 153, 0.1);
+  border: 1px solid rgba(52, 211, 153, 0.3);
+  padding: 3px 8px;
+  border-radius: 4px;
+}
+
+/* 2. Armored Glass Tank Bay */
+.claw-glass-bay {
+  position: relative;
+  flex: 1;
+  width: 100%;
+  min-height: 0;
+  background: radial-gradient(circle at 55% 35%, #101726 0%, #05070c 70%, #030407 100%);
+  overflow: hidden;
+  cursor: crosshair;
+  touch-action: none;
+}
+
+#clawMachineCanvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.claw-glass-hud-pill {
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  z-index: 5;
+  background: rgba(5, 7, 12, 0.86);
+  border: 1px solid var(--border-hairline);
+  border-radius: 6px;
+  padding: 5px 11px;
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  pointer-events: none;
+  backdrop-filter: blur(10px);
+}
+
+/* 3. Physical Industrial Arcade Control Deck */
+.claw-control-deck {
+  height: 68px;
+  padding: 0 18px;
+  background: linear-gradient(180deg, #090c13 0%, #05060a 100%);
+  border-top: 1px solid var(--border-hairline);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.deck-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.claw-deck-btn {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border-hairline);
+  border-radius: 7px;
+  padding: 10px 14px;
+  color: var(--text-main);
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.claw-deck-btn:hover,
+.claw-deck-btn:active {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: var(--border-hover);
+}
+
+.claw-deck-btn.gold-outline {
+  border-color: var(--border-gold);
+  color: var(--gold);
+}
+
+.claw-deck-btn.gold-outline:hover {
+  background: rgba(229, 184, 105, 0.14);
+}
+
+.claw-drop-trigger {
+  flex: 1;
+  max-width: 340px;
+  height: 44px;
+  background: var(--emerald);
+  border: 1px solid var(--emerald);
+  border-radius: 8px;
+  color: #030605;
+  font-family: var(--font-mono);
+  font-size: 0.76rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  box-shadow: 0 8px 26px rgba(52, 211, 153, 0.28);
+  transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+  white-space: nowrap;
+}
+
+.claw-drop-trigger:hover {
+  transform: translateY(-1px);
+  background: #4ade80;
+  border-color: #4ade80;
+  box-shadow: 0 12px 32px rgba(52, 211, 153, 0.42);
+}
+
+.claw-drop-trigger:disabled {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: var(--border-hairline);
+  color: var(--text-muted);
+  box-shadow: none;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.drop-led {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #030605;
+}
+
+/* 4. Prize Extraction Reveal Overlay Card */
+.pull-reveal-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 25;
+  background: rgba(3, 5, 9, 0.84);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  animation: fadeInPull 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes fadeInPull {
+  from { opacity: 0; transform: scale(0.94); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.pull-reveal-card {
+  width: min(560px, 100%);
+  background: #080b12;
+  border: 1px solid var(--border-gold);
+  border-radius: 14px;
+  padding: 18px 20px;
+  box-shadow: 0 28px 80px rgba(0, 0, 0, 0.95), 0 0 40px rgba(229, 184, 105, 0.22);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.pull-reveal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--border-hairline);
+  padding-bottom: 10px;
+}
+
+.pull-tier-badge {
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  padding: 4px 10px;
+  border-radius: 5px;
+  background: rgba(229, 184, 105, 0.16);
+  border: 1px solid var(--border-gold);
+  color: var(--gold);
+}
+
+.pull-close-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  border: 1px solid var(--border-hairline);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.pull-close-btn:hover {
+  color: var(--text-main);
+  border-color: var(--border-hover);
+}
+
+.pull-reveal-body {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.pull-reveal-stage {
+  position: relative;
+  width: 150px;
+  height: 150px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pull-aura-ring {
+  position: absolute;
+  inset: 6px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(229, 184, 105, 0.22) 0%, rgba(8, 11, 18, 0.95) 75%);
+  border: 1px solid var(--border-gold);
+  box-shadow: 0 0 28px rgba(229, 184, 105, 0.25);
+}
+
+.pull-reveal-stage img {
+  position: relative;
+  z-index: 2;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 12px 24px rgba(0, 0, 0, 0.95));
+}
+
+.pull-reveal-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.pull-kicker {
+  font-family: var(--font-mono);
+  font-size: 0.64rem;
+  font-weight: 700;
+  color: var(--emerald);
+  letter-spacing: 0.1em;
+  margin-bottom: 4px;
+}
+
+.pull-title {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--text-main);
+  margin-bottom: 8px;
+}
+
+.pull-lore {
+  font-size: 0.82rem;
+  line-height: 1.45;
+  color: var(--text-muted);
+}
+
+.pull- lore strong,
+.pull-lore strong {
+  color: var(--text-main);
+}
+
+.pull-reveal-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  border-top: 1px solid var(--border-hairline);
+  padding-top: 12px;
+}
+
+.pull-reveal-actions > * {
+  flex: 1 0 auto;
+}
+
+/* Mini Bottom-Left Specimen Card */
+.arrived-card-mini {
+  width: 260px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+@media (max-width: 1420px) {
+  .hud-tl,
+  .hud-tr,
+  .hud-bl,
+  .hud-br {
+    display: none;
+  }
+}
+
+@media (max-width: 720px) {
+  .claw-cabinet-stage {
+    padding: 6px 8px;
+  }
+
+  .claw-machine-cabinet {
+    height: 100%;
+    border-radius: 10px;
+  }
+
+  .claw-marquee-bar {
+    height: 38px;
+    padding: 0 10px;
+  }
+
+  .marquee-tag,
+  .marquee-credits {
+    display: none;
+  }
+
+  .marquee-title {
+    font-size: 0.68rem;
+  }
+
+  .marquee-stat {
+    font-size: 0.58rem;
+  }
+
+  .claw-glass-hud-pill {
+    top: 8px;
+    right: 8px;
+    font-size: 0.54rem;
+    padding: 4px 8px;
+  }
+
+  .claw-control-deck {
+    height: auto;
+    padding: 8px 10px;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .deck-dpad {
+    order: 2;
+    flex: 1;
+  }
+
+  .deck-dpad .claw-deck-btn {
+    flex: 1;
+    padding: 9px 8px;
+    font-size: 0.58rem;
+  }
+
+  .claw-drop-trigger {
+    order: 1;
+    width: 100%;
+    max-width: none;
+    flex: 1 0 100%;
+    height: 40px;
+    font-size: 0.7rem;
+  }
+
+  .deck-utils {
+    order: 3;
+  }
+
+  .deck-utils .claw-deck-btn {
+    padding: 9px 8px;
+    font-size: 0.58rem;
+  }
+
+  .pull-reveal-body {
+    flex-direction: column;
+    text-align: center;
+    gap: 10px;
+  }
+
+  .pull-reveal-stage {
+    width: 115px;
+    height: 115px;
+  }
+
+  .pull-title {
+    font-size: 1.2rem;
+  }
+}
+
+
