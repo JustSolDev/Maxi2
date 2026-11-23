@@ -1414,7 +1414,7 @@ class PlanetMaxiController {
     this.reticleHud = document.getElementById('reticleHud');
     this.arrivedCard = document.getElementById('arrivedCard');
 
-    this.state = 'ORBIT'; // 'ORBIT' (Opening Gate) | 'LOCKED' (3D WebGL Claw Machine Active)
+    this.state = 'LOCKED'; // Immediately active 3D WebGL Claw Machine on the Pop-Arcade Storefront
     this.orbitSpinMode = '3d';
     this.paletteIdx = 0;
     this.activeCitizenIndex = 0; // 0 = OG MAXI (#001)
@@ -3144,7 +3144,7 @@ class PlanetMaxiController {
       });
     }
 
-    [aimOgBtn, snapOgBtn, focusOgBtn].forEach((btn) => {
+    [aimOgBtn, snapOgBtn].forEach((btn) => {
       if (btn) {
         btn.addEventListener('click', (e) => {
           e.preventDefault();
@@ -3308,14 +3308,13 @@ class PlanetMaxiController {
 
     const returnToGateBtns = [
       document.getElementById('resetOrbitBtn'),
-      document.getElementById('replay-intro-btn'),
-      document.getElementById('navBrandReset')
+      document.getElementById('replay-intro-btn')
     ];
     returnToGateBtns.forEach((btn) => {
       if (btn) {
         btn.addEventListener('click', (e) => {
           e.preventDefault();
-          this.returnToIntroGate();
+          window.scrollTo({ top: 0, behavior: 'smooth' });
         });
       }
     });
@@ -3489,9 +3488,11 @@ class CommunitySuiteController {
 
   openModal(modalId) {
     sfx.playBeep(820, 0.08, 'triangle');
-    document.querySelectorAll('.suite-modal').forEach((m) => m.classList.add('hidden'));
     const target = document.getElementById(modalId);
-    if (target) target.classList.remove('hidden');
+    if (target) {
+      target.classList.remove('hidden');
+      target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
 
     if (modalId === 'pfpModal') {
       this.renderPfpCanvas();
@@ -3501,28 +3502,12 @@ class CommunitySuiteController {
   }
 
   closeAllModals() {
-    sfx.playBeep(520, 0.07, 'sine');
-    document.querySelectorAll('.suite-modal').forEach((m) => m.classList.add('hidden'));
+    const pullOverlay = document.getElementById('pullRevealOverlay');
+    if (pullOverlay) pullOverlay.classList.add('hidden');
   }
 
   initModals() {
-    const bindOpen = (btnId, modalId) => {
-      const btn = document.getElementById(btnId);
-      if (btn) btn.addEventListener('click', () => this.openModal(modalId));
-    };
-
-    bindOpen('openVaultModalBtn', 'vaultModal');
-    bindOpen('bottomOpenVaultBtn', 'vaultModal');
-    bindOpen('openPfpModalBtn', 'pfpModal');
-    bindOpen('quickOpenPfpBtn', 'pfpModal');
-    bindOpen('openChartModalBtn', 'chartModal');
-    bindOpen('navMarketBtn', 'chartModal');
-    bindOpen('bottomOpenChartBtn', 'chartModal');
-    bindOpen('openRankModalBtn', 'rankModal');
-    bindOpen('quickOpenRankBtn', 'rankModal');
-    bindOpen('bottomOpenRankBtn', 'rankModal');
-
-    // Open active citizen directly in PFP Studio (from Claw Pull Reveal Card or HUD)
+    // Open active citizen directly in On-Page PFP Workbench
     const customizeActiveBtn = document.getElementById('btnCustomizeActive');
     if (customizeActiveBtn) {
       customizeActiveBtn.addEventListener('click', () => {
@@ -3541,17 +3526,13 @@ class CommunitySuiteController {
       });
     }
 
-    document.querySelectorAll('[data-close-modal]').forEach((el) => {
-      el.addEventListener('click', () => this.closeAllModals());
-    });
-
     window.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') this.closeAllModals();
     });
   }
 
   /* -----------------------------------------------------------------------
-     1. 100-CITIZEN VAULT GRID & RAID DOWNLOAD PACK
+     1. 100-CITIZEN GASHAPON CAPSULE COLLECTION SHELF
      ----------------------------------------------------------------------- */
   initVaultGrid() {
     this.renderVaultCards();
@@ -3581,7 +3562,7 @@ class CommunitySuiteController {
 
       const card = document.createElement('div');
       card.className = `vault-item-card ${cit.isOg ? 'og-card' : ''}`;
-      const tierLabel = cit.isOg ? 'SUPREME #001' : cit.isMythic ? '1-OF-1 MASTER' : 'MWO CITIZEN';
+      const tierLabel = cit.isOg ? 'JACKPOT #001' : cit.isMythic ? '1-OF-1 MASTER' : 'GASHAPON SERIES';
 
       card.innerHTML = `
         <div>
@@ -3589,27 +3570,28 @@ class CommunitySuiteController {
             <span>${cit.rank}</span>
             <span class="v-badge-tier">${tierLabel}</span>
           </div>
-          <div class="v-card-stage" title="Click to load & claw in the Vault Claw Machine">
+          <div class="v-card-stage" title="Click to load & claw in the 3D Claw Machine">
             <img src="${cit.src}" alt="${cit.name}" loading="lazy" />
           </div>
           <div class="v-card-name">${cit.name}</div>
         </div>
         <div class="v-card-actions">
-          <button type="button" class="v-act-btn btn-locate">CLAW IT</button>
-          <button type="button" class="v-act-btn btn-studio">STUDIO</button>
+          <button type="button" class="v-act-btn btn-locate">🕹️ CLAW IT</button>
+          <button type="button" class="v-act-btn btn-studio">🎨 MAKE PFP</button>
           <a href="${cit.src}" download="${cit.name.toLowerCase().replace(/\s+/g, '-')}.png" class="v-act-btn">PNG ⬇</a>
         </div>
       `;
 
-      // Load into Claw Machine & Aim Claw at this Citizen
+      // Scroll to 3D Claw Machine, Load Figure & Drop Claw!
       const locateFn = () => {
-        this.closeAllModals();
+        const clawSec = document.getElementById('clawSection');
+        if (clawSec) clawSec.scrollIntoView({ behavior: 'smooth', block: 'center' });
         this.planetCtrl.selectCitizen(idx, true);
       };
       card.querySelector('.v-card-stage').addEventListener('click', locateFn);
       card.querySelector('.btn-locate').addEventListener('click', locateFn);
 
-      // Open in PFP Studio
+      // Load directly into On-Page PFP & Banner Workbench
       card.querySelector('.btn-studio').addEventListener('click', () => {
         this.selectPfpCitizen(idx);
         this.openModal('pfpModal');

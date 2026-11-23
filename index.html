@@ -3,57 +3,79 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <meta name="theme-color" content="#050507" />
-  <title>MAXI ($MAXI) — MAXI WORLD ORDER</title>
+  <meta name="theme-color" content="#F7F4EC" />
+  <title>MAXI ($MAXI) — MAXI WORLD ORDER // GASHAPON &amp; 3D CLAW VAULT</title>
   <link rel="icon" type="image/png" href="maxi Background Removed.png" />
 
-  <!-- Clean Editorial & Technical Typography -->
+  <!-- Pop-Arcade & Designer Toy Editorial Typography -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800;900&family=JetBrains+Mono:wght@500;600;700;800&family=Syne:wght@700;800&display=swap" rel="stylesheet">
 
-  <!-- Three.js r128 (3D WebGL Planet Maxi Engine) -->
+  <!-- Three.js r128 (True 3D WebGL Claw Machine Engine) -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" crossorigin="anonymous"></script>
 
   <link rel="stylesheet" href="style.css" />
 </head>
-<body class="intro-locked">
+<body>
 
   <!-- =======================================================================
-       TOP NAVIGATION BAR (ARCHITECTURAL DARK GLASS)
+       TOP KINETIC ARCADE MARQUEE TICKER
        ======================================================================= -->
-  <header class="navbar nav-hidden" id="mainNavbar">
+  <div class="pop-top-ticker">
+    <div class="ticker-track">
+      <span>★ MAXI WORLD ORDER ($MAXI)</span>
+      <span>● 100 VERIFIED 1-OF-1 GASHAPON CUTOUTS</span>
+      <span>★ CA: EBCpGdXuS34WZuX13thrku2KmuLSe3Tf2gMtMKndpump</span>
+      <span>● PLAY THE 3D CLAW MACHINE &amp; MINT YOUR PFP</span>
+      <span>★ 240 LBS LEAN SOVEREIGNTY</span>
+      <span>● @MAXIWORLDORDER</span>
+      <span>★ MAXI WORLD ORDER ($MAXI)</span>
+      <span>● 100 VERIFIED 1-OF-1 GASHAPON CUTOUTS</span>
+      <span>★ CA: EBCpGdXuS34WZuX13thrku2KmuLSe3Tf2gMtMKndpump</span>
+      <span>● PLAY THE 3D CLAW MACHINE &amp; MINT YOUR PFP</span>
+    </div>
+  </div>
+
+  <!-- =======================================================================
+       POP-ARCADE STOREFRONT NAVBAR (TACTILE PILLS & SMOOTH SCROLL)
+       ======================================================================= -->
+  <header class="navbar" id="mainNavbar">
     <div class="nav-inner">
-      <a href="#hero" class="brand-logo" id="navBrandReset">
+      <a href="#heroSection" class="brand-logo" id="navBrandReset">
         <div class="brand-icon-wrap">
           <img src="maxi Background Removed.png" alt="Maxi" class="brand-icon" />
         </div>
         <div class="brand-text">
           <span class="brand-title">MAXI WORLD ORDER</span>
-          <span class="brand-coords">MWO // 100 CITIZENS</span>
+          <span class="brand-coords">TOKYO-SOLANA GASHAPON // 100 SERIES</span>
         </div>
       </a>
 
-      <!-- Center Feature Navigation -->
+      <!-- Smooth-Scroll Storefront Section Pills (No Popup Modals!) -->
       <nav class="nav-links">
-        <button type="button" class="nav-link active" id="focusOgBtn">01 / CLAW VAULT</button>
-        <button type="button" class="nav-link" id="openVaultModalBtn">02 / 100 VAULT</button>
-        <button type="button" class="nav-link" id="openPfpModalBtn">03 / PFP STUDIO</button>
-        <button type="button" class="nav-link" id="openChartModalBtn">04 / LIVE TERMINAL</button>
-        <button type="button" class="nav-link" id="openRankModalBtn">05 / MWO RANK</button>
+        <a href="#clawSection" class="nav-link active" id="focusOgBtn">01 / 3D CLAW MACHINE</a>
+        <a href="#pfpSection" class="nav-link" id="openPfpModalBtn">02 / PFP &amp; BANNER WORKBENCH</a>
+        <a href="#lookbookSection" class="nav-link" id="openVaultModalBtn">03 / 100 GASHAPON SHELF</a>
+        <a href="#rankSection" class="nav-link" id="openRankModalBtn">04 / MWO RANK &amp; CHART</a>
       </nav>
 
-      <!-- Right Live Market Ticker & Controls -->
+      <!-- Right Live Market & Social Arcade Buttons -->
       <div class="nav-actions">
         <button type="button" class="hud-btn overdrive-toggle-btn" id="overdriveNavBtn" title="Toggle Green-Candle Overdrive Mode">
           <span class="overdrive-dot"></span>
           <span id="overdriveNavLabel">OVERDRIVE</span>
         </button>
-        <button type="button" class="hud-btn market-ticker-btn" id="navMarketBtn" title="Open Live DexScreener Terminal">
+        <a
+          href="#rankSection"
+          class="hud-btn market-ticker-btn"
+          id="navMarketBtn"
+          title="Jump to Live $MAXI Chart"
+        >
           <span class="status-dot"></span>
           <span class="ticker-symbol">$MAXI</span>
-          <span class="ticker-mcap" id="navLiveMcap">CHART</span>
-        </button>
+          <span class="ticker-mcap" id="navLiveMcap">LIVE</span>
+        </a>
         <a
           href="https://x.com/maxiworldorder"
           target="_blank"
@@ -78,780 +100,605 @@
           rel="noopener noreferrer"
           class="hud-btn pump-cta"
         >
-          <span>PUMP.FUN</span>
-          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>
+          <span>BUY ON PUMP.FUN ↗</span>
         </a>
-        <button class="hud-btn" id="cycleBiomeBtn" title="Shuffle & Restock Claw Machine Pile">
-          <span>RESTOCK ↻</span>
-        </button>
-        <button class="hud-btn" id="audioToggleBtn" title="Toggle Audio">
+        <button class="hud-btn" id="audioToggleBtn" title="Toggle Arcade Audio">
           <span class="status-dot" id="audioDot"></span>
           <span id="audioLabel">SFX</span>
-        </button>
-        <button id="replay-intro-btn" class="hud-btn" type="button" title="Return to Opening Gate">
-          <span>GATE</span>
         </button>
       </div>
     </div>
   </header>
 
-  <!-- =======================================================================
-       UNIFIED HERO & INTRO GATE VIEWPORT (3D PLANET + LUXURY VAULT CLAW MACHINE)
-       ======================================================================= -->
-  <section class="hero-viewport" id="hero">
-    <div class="stage-container" id="stageContainer">
-      <!-- 1. Deep Space & Green-Candle Backdrop Canvas -->
-      <canvas id="intro-canvas" class="intro-canvas"></canvas>
+  <main class="pop-storefront-main">
 
-      <!-- 2. 3D WebGL Planet Maxi (Live in Intro Gate + Visible Through Glass Claw Vault) -->
-      <div id="planetWebGLContainer" class="planet-webgl-bg"></div>
-
-      <!-- 3. Flagship Full-3D WebGL Solana Degen Vault Claw Machine & Live PFP Forger -->
-      <div id="clawCabinetStage" class="claw-cabinet-stage">
-        <div class="claw-machine-cabinet" id="clawMachineCabinet">
-          <!-- Beveled Metallic Crown & Top Industrial Marquee Header -->
-          <div class="claw-marquee-bar">
-            <div class="marquee-left">
-              <span class="marquee-beacon"></span>
-              <span class="marquee-tag">3D WEBGL CLAW VAULT // MK.VI</span>
-            </div>
-            <div class="marquee-center">
-              <span class="marquee-title" id="clawStatusReadout">DRAG OR WASD TO AIM 3D GANTRY · SPACE TO DROP CLAW</span>
-            </div>
-            <div class="marquee-right">
-              <span class="marquee-stat" id="clawExtractedCount">EXTRACTED: 0 / 100</span>
-              <span class="marquee-credits">3D PHYSICS // 60FPS</span>
-            </div>
-          </div>
-
-          <!-- Full-Viewport 3D WebGL Claw Machine Viewport -->
-          <div class="claw-glass-bay" id="clawGlassBay">
-            <!-- Three.js WebGL 3D Claw Machine Canvas renders directly here -->
-            <canvas id="clawMachineCanvas"></canvas>
-
-            <!-- Live 3D Laser Lock Readout Pill Floating Inside Glass -->
-            <div class="claw-glass-hud-pill" id="clawLaserReadout">
-              LASER LOCK // #001 OG MAXI · X=50% Z=50%
+    <!-- =====================================================================
+         SECTION 1: JAPANESE GASHAPON / DESIGNER TOY HERO SHOWCASE
+         ===================================================================== -->
+    <section class="pop-hero-section" id="heroSection">
+      <div class="pop-container">
+        <div class="pop-hero-grid">
+          <!-- Left Column: Pop-Arcade Poster Typography, CA Ticket & CTAs -->
+          <div class="pop-hero-copy">
+            <div class="pop-sticker-row">
+              <span class="pop-sticker sticker-red">SERIES 01 // 100 FIGURES</span>
+              <span class="pop-sticker sticker-green">$MAXI ON SOLANA</span>
+              <span class="pop-sticker sticker-yellow">FREE PLAY ∞</span>
             </div>
 
-            <!-- Prize Extraction & Instant PFP Mint Reveal Overlay (Appears when 3D Claw drops a Maxi into Chute) -->
-            <div class="pull-reveal-overlay hidden" id="pullRevealOverlay">
-              <div class="pull-reveal-card">
-                <div class="pull-reveal-header">
-                  <div class="pull-header-left">
-                    <span class="pull-tier-badge" id="pullRevealTier">SOVEREIGN JACKPOT // #001</span>
-                    <span class="pull-kicker-inline" id="pullRevealRank">CITIZEN #001 / 100</span>
-                  </div>
-                  <button type="button" class="pull-close-btn" id="closePullRevealBtn">✕</button>
-                </div>
-
-                <div class="pull-reveal-body">
-                  <!-- Live 1000x1000 High-Res PFP Forger Canvas directly inside the Pull Modal! -->
-                  <div class="pull-pfp-forger-col">
-                    <div class="pull-pfp-canvas-frame">
-                      <canvas id="pullPfpCanvas" width="1000" height="1000"></canvas>
-                      <span class="pull-pfp-res-tag">1000×1000 HD PFP</span>
-                    </div>
-                    <!-- Instant PFP Theme Switcher Pills -->
-                    <div class="pull-pfp-theme-strip" id="pullPfpThemeStrip">
-                      <button type="button" class="pull-theme-chip active" data-pull-bg="OBSIDIAN">OBSIDIAN GOLD</button>
-                      <button type="button" class="pull-theme-chip" data-pull-bg="CANDLE">GREEN CANDLE</button>
-                      <button type="button" class="pull-theme-chip" data-pull-bg="SOLANA">SOLANA CYBER</button>
-                      <button type="button" class="pull-theme-chip" data-pull-bg="ROYAL">SOVEREIGN CRIMSON</button>
-                    </div>
-                  </div>
-
-                  <div class="pull-reveal-info">
-                    <h3 class="pull-title" id="pullRevealName">OG MAXI</h3>
-                    <div class="pull-subtitle" id="pullRevealTitle">SUPREME SOVEREIGN OF MAXI WORLD ORDER</div>
-                    <p class="pull-lore" id="pullRevealLore">
-                      Supreme Sovereign of the Maxi World Order. 240 lbs lean extracted directly from the Genesis Vault.
-                    </p>
-
-                    <!-- Custom PFP Caption Input right inside the pull card -->
-                    <div class="pull-custom-tag-row">
-                      <label for="pullCustomBadgeInput" class="pull-tag-lbl">PFP BADGE TEXT</label>
-                      <input
-                        type="text"
-                        id="pullCustomBadgeInput"
-                        class="pull-tag-input"
-                        value="MAXI WORLD ORDER"
-                        maxlength="24"
-                        placeholder="MAXI WORLD ORDER"
-                      />
-                    </div>
-
-                    <!-- Primary 1-Click Save PFP & Copy PFP Buttons -->
-                    <div class="pull-primary-save-grid">
-                      <button type="button" class="pull-save-pfp-btn" id="pullSavePfpBtn">
-                        <span>⬇ SAVE AS PFP (1000×1000 PNG)</span>
-                      </button>
-                      <button type="button" class="pull-copy-pfp-btn" id="pullCopyPfpBtn">
-                        <span id="pullCopyPfpLabel">📋 COPY PFP IMAGE</span>
-                      </button>
-                    </div>
-
-                    <!-- Secondary Actions: Full Studio, Raw Cutout PNG, Flex on X, Play Again -->
-                    <div class="pull-reveal-actions">
-                      <button type="button" class="suite-secondary-btn compact" id="pullToStudioBtn">
-                        <span>🎨 FULL PFP &amp; BANNER STUDIO</span>
-                      </button>
-                      <a
-                        href="maxi Background Removed.png"
-                        download="maxi-extracted.png"
-                        class="suite-secondary-btn compact"
-                        id="pullDownloadLink"
-                      >
-                        <span>RAW CUTOUT PNG ⬇</span>
-                      </a>
-                      <a
-                        href="https://x.com/intent/tweet?text=Just%20extracted%20OG%20MAXI%20from%20the%20MAXI%20WORLD%20ORDER%20Claw%20Vault%20%24MAXI%20%40maxiworldorder%0ACA%3A%20EBCpGdXuS34WZuX13thrku2KmuLSe3Tf2gMtMKndpump"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        class="suite-secondary-btn compact"
-                        id="pullShareXLink"
-                      >
-                        <span>FLEX ON 𝕏 ↗</span>
-                      </a>
-                      <button type="button" class="suite-primary-btn compact" id="pullAgainBtn">
-                        <span>🦾 DROP CLAW AGAIN</span>
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Physical 3D Brushed-Steel Arcade Control Console (X & Z 3D Gantry + Drop Trigger) -->
-          <div class="claw-control-deck">
-            <div class="deck-group deck-dpad">
-              <button type="button" class="claw-deck-btn tactile-key" id="clawMoveLeftBtn" title="Move Gantry Left (A / Left Arrow)">
-                <span class="key-cap">A / ◀</span>
-                <span class="key-lbl">LEFT</span>
-              </button>
-              <button type="button" class="claw-deck-btn tactile-key" id="clawMoveRightBtn" title="Move Gantry Right (D / Right Arrow)">
-                <span class="key-lbl">RIGHT</span>
-                <span class="key-cap">▶ / D</span>
-              </button>
-              <button type="button" class="claw-deck-btn tactile-key" id="clawMoveBackBtn" title="Move Gantry Deeper (W / Up Arrow)">
-                <span class="key-cap">W / ▲</span>
-                <span class="key-lbl">BACK</span>
-              </button>
-              <button type="button" class="claw-deck-btn tactile-key" id="clawMoveFwdBtn" title="Move Gantry Forward (S / Down Arrow)">
-                <span class="key-cap">S / ▼</span>
-                <span class="key-lbl">FRONT</span>
-              </button>
-            </div>
-
-            <button type="button" class="claw-drop-trigger" id="clawDropBtn" title="Press SPACEBAR or Click to Drop 3D Hydraulic Claw">
-              <span class="drop-led"></span>
-              <span id="clawDropBtnLabel">⬇ DROP 3D CLAW // EXTRACT &amp; MINT PFP</span>
-              <span class="drop-hotkey">[SPACE]</span>
-            </button>
-
-            <div class="deck-group deck-utils">
-              <button type="button" class="claw-deck-btn gold-outline" id="clawAimOgBtn" title="Auto-Lock 3D Gantry on OG Maxi (#001) & Drop">
-                <span>🎯 AUTO-CLAW OG #001</span>
-              </button>
-              <button type="button" class="claw-deck-btn" id="clawShuffleBtn" title="Drop a Fresh 3D Batch of Maxis from the 100-Citizen Vault">
-                <span>RESTOCK 3D PILE ↻</span>
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- 4. Atmospheric Green-Candle FX Canvas -->
-      <canvas id="diveFxCanvas"></canvas>
-
-      <!-- ===================================================================
-           LAYER A: REVAMPED OPENING GATE ("MAXI WORLD ORDER // SOVEREIGN VAULT")
-           =================================================================== -->
-      <div id="intro-screen" class="intro-gate-overlay" aria-label="Maxi World Order Intro Gate">
-        <div class="floodlights" aria-hidden="true">
-          <div class="floodlight-beam beam-left"></div>
-          <div class="floodlight-beam beam-right"></div>
-        </div>
-        <div class="cyber-grid-floor" aria-hidden="true"></div>
-        <div class="radial-vignette" aria-hidden="true"></div>
-
-        <!-- Top Telemetry Bar -->
-        <header class="hud-top">
-          <div class="hud-corner">
-            <span class="hud-dot"></span>
-            <span class="hud-mono">MAXI WORLD ORDER // <strong>$MAXI</strong></span>
-          </div>
-
-          <div class="hud-center-status">
-            <span class="hud-mono" id="hud-status-text">SOVEREIGN CLAW VAULT — 100 VERIFIED CITIZENS ON-CHAIN</span>
-          </div>
-
-          <div class="hud-corner">
-            <span class="hud-mono" id="hud-telemetry">00:00:00.00 UTC</span>
-          </div>
-        </header>
-
-        <!-- Centerpiece: Interactive 3D Planet & Live 100-Citizen Cutout Showcase -->
-        <div class="intro-centerpiece">
-          <div class="intro-showcase-stage" id="logo-stage">
-            <!-- Left Orbiting Mythic Preview Cutout -->
-            <div class="intro-side-cutout side-left" id="introSideLeftCard" title="Click to preview next MWO Citizen">
-              <div class="side-cutout-tag" id="introSideLeftTag">#037 PUMP PILL</div>
-              <img
-                src="Photos/Removed backgrounds /photo_2026-11-23_18-44-33 Background Removed.png"
-                alt="Pump Pill Maxi"
-                id="introSideLeftImg"
-                draggable="false"
-              />
-            </div>
-
-            <!-- Center Sovereign OG Maxi Hero Pedestal over 3D Planet Maxi -->
-            <div class="intro-hero-pedestal">
-              <div class="plasma-core"></div>
-              <div class="holo-ring ring-outer"></div>
-              <div class="holo-ring ring-middle"></div>
-              <div class="holo-ring ring-inner"></div>
-
-              <div class="intro-prime-figure" id="introPrimeCard" title="Click to cycle 100 MWO Citizens">
-                <div class="prime-overhead-pill">
-                  <span class="prime-pill-rank" id="introPrimeRank">👑 #001</span>
-                  <span class="prime-pill-name" id="introPrimeName">OG MAXI</span>
-                </div>
-                <img
-                  id="intro-logo-front"
-                  src="maxi Background Removed.png"
-                  alt="OG Maxi"
-                  class="intro-prime-cutout"
-                  draggable="false"
-                />
-                <div class="prime-base-plate">
-                  <span>CLICK SPECIMEN TO PREVIEW 100 CITIZENS ↻</span>
-                </div>
-              </div>
-            </div>
-
-            <!-- Right Orbiting Mythic Preview Cutout -->
-            <div class="intro-side-cutout side-right" id="introSideRightCard" title="Click to preview next MWO Citizen">
-              <div class="side-cutout-tag" id="introSideRightTag">#002 GOLD</div>
-              <img
-                src="Photos/Removed backgrounds /photo_2026-11-18_22-41-37 Background Removed.png"
-                alt="Golden Bullion Maxi"
-                id="introSideRightImg"
-                draggable="false"
-              />
-            </div>
-          </div>
-
-          <!-- Welcome Headline, Enter CTA & Live Contract Address -->
-          <div class="enter-cta-wrapper">
-            <div class="tagline-pill">
-              <span class="tagline-line"></span>
-              <span class="tagline-text">SOLANA DEGEN CLAW VAULT · 100 1-OF-1 CUTOUTS · $MAXI</span>
-              <span class="tagline-line"></span>
-            </div>
-
-            <h1 class="welcome-headline">
-              <span class="wh-top">SOVEREIGN EXTRACTION PROTOCOL</span>
-              <span class="wh-main">MAXI WORLD ORDER</span>
+            <h1 class="pop-hero-headline">
+              <span class="pop-kicker">OFFICIAL COLLECTIBLE ARCADE</span>
+              <span class="pop-main-title">MAXI WORLD ORDER</span>
             </h1>
 
-            <div class="intro-cta-row">
-              <button id="enter-btn" class="enter-btn" type="button">
-                <span class="btn-label">LAUNCH CLAW MACHINE</span>
-                <svg class="btn-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-                  <path d="M5 12h14M13 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-              </button>
-              <button id="introCycleCitizenBtn" class="intro-secondary-btn" type="button" title="Cycle through all 100 cutouts right on the gate">
-                <span>PREVIEW 100 CUTOUTS ↻</span>
-              </button>
-            </div>
-
-            <!-- Live CA Box -->
-            <div class="intro-ca-box">
-              <span class="intro-ca-badge">CA</span>
-              <code id="intro-ca-value" class="intro-ca-code">EBCpGdXuS34WZuX13thrku2KmuLSe3Tf2gMtMKndpump</code>
-              <button id="intro-copy-ca-btn" class="intro-copy-btn" type="button">
-                <span id="intro-copy-ca-text">COPY</span>
-              </button>
-              <a
-                href="https://x.com/maxiworldorder"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="intro-pump-link"
-              >
-                𝕏 @MAXIWORLDORDER ↗
-              </a>
-              <a
-                href="https://t.me/maxicollective"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="intro-pump-link"
-              >
-                TELEGRAM ↗
-              </a>
-              <a
-                href="https://pump.fun/coin/EBCpGdXuS34WZuX13thrku2KmuLSe3Tf2gMtMKndpump"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="intro-pump-link"
-              >
-                PUMP.FUN ↗
-              </a>
-              <a
-                href="https://dexscreener.com/solana/EBCpGdXuS34WZuX13thrku2KmuLSe3Tf2gMtMKndpump"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="intro-pump-link"
-              >
-                DEXSCREENER ↗
-              </a>
-            </div>
-          </div>
-        </div>
-
-        <!-- Bottom Bar -->
-        <footer class="hud-bottom">
-          <div class="hud-corner">
-            <span class="hud-mono">SUPREME JACKPOT // <strong>#001 OG MAXI (240 LBS LEAN)</strong></span>
-          </div>
-
-          <div class="spin-controls" role="group" aria-label="Vault Modes">
-            <button type="button" class="hud-chip active" data-spin="3d">ORBITAL VIEW</button>
-            <button type="button" class="hud-chip" data-spin="gyro">OVERDRIVE</button>
-            <button type="button" class="hud-chip" data-spin="lock">JACKPOT #001</button>
-          </div>
-
-          <div class="hud-corner">
-            <button type="button" id="intro-sfx-btn" class="intro-sfx-toggle">
-              AUDIO : ON
-            </button>
-          </div>
-        </footer>
-      </div>
-
-      <!-- ===================================================================
-           LAYER B: SIDE TELEMETRY PANELS & ROSTER STRIP
-           =================================================================== -->
-      <div class="dive-hud-layer hud-hidden" id="diveHudLayer">
-        <!-- Top Left Vault Telemetry Readout -->
-        <div class="hud-panel hud-tl">
-          <div class="hud-tag">CLAW VAULT TELEMETRY</div>
-          <div class="hud-metric-row">
-            <span class="hud-label">JACKPOT</span>
-            <span class="hud-val" id="hudRuler">OG MAXI (#001)</span>
-          </div>
-          <div class="hud-metric-row">
-            <span class="hud-label">ROSTER</span>
-            <span class="hud-val highlight" id="hudPop">100 / 100 LOADED</span>
-          </div>
-          <div class="hud-metric-row">
-            <span class="hud-label">LASER LOCK</span>
-            <span class="hud-val" id="hudActiveTarget">#001 OG MAXI</span>
-          </div>
-        </div>
-
-        <!-- Top Right Gantry & Grip Pressure Gauge -->
-        <div class="hud-panel hud-tr">
-          <div class="hud-tag">GANTRY &amp; LASER VECTOR</div>
-          <div class="hud-metric-row">
-            <span class="hud-label">GANTRY X</span>
-            <span class="hud-val" id="hudAltitude">55.0%</span>
-          </div>
-          <div class="hud-metric-row">
-            <span class="hud-label">HYDRAULIC</span>
-            <span class="hud-val highlight" id="hudZoom">99.4 PSI</span>
-          </div>
-          <div class="zoom-progress-track">
-            <div class="zoom-progress-fill" id="hudZoomBar" style="width: 55%"></div>
-          </div>
-          <div class="hud-phase-badge" id="hudPhaseBadge">A/D OR DRAG TO AIM · SPACE TO DROP</div>
-        </div>
-
-        <!-- Bottom Left Mini Collection / Radar -->
-        <div class="hud-panel hud-bl" id="hudMiniInset">
-          <div class="inset-header">
-            <span class="inset-dot"></span>
-            <span>LAST EXTRACTED SPECIMEN</span>
-          </div>
-          <div class="arrived-card-mini" id="arrivedCard">
-            <div class="arrived-card-header">
-              <div class="arrived-avatar-wrap" id="cardAvatarWrap">
-                <img src="maxi Background Removed.png" alt="Active Maxi" class="arrived-logo" id="cardMaxiSprite" />
-              </div>
-              <div class="arrived-title-group">
-                <div class="arrived-kicker" id="cardKicker">JACKPOT TARGET · #001</div>
-                <h2 class="arrived-title" id="cardTitle">OG MAXI</h2>
-              </div>
-              <div class="arrived-header-actions">
-                <button class="arrived-nav-btn" id="btnCustomizeActive" title="Open in PFP Studio">STUDIO</button>
-              </div>
-            </div>
-            <p class="arrived-desc" id="maxiLiveQuote">
-              Supreme Sovereign of the Maxi World Order. Aim the laser sight and drop the claw to extract him.
+            <p class="pop-hero-lead">
+              Step up to the <strong>3D Solana Gashapon Claw Machine</strong>. Drop the hydraulic 3-prong claw into a pile of <strong>100 unique background-removed Maxi figures</strong>, extract your pull, and immediately mint a <strong>1000×1000 HD PFP</strong> in one click.
             </p>
-            <div class="citizen-roster-strip" id="citizenRosterStrip">
-              <!-- Populated by script.js -->
-            </div>
-          </div>
-        </div>
 
-        <!-- Bottom Right Quick Vault & Overdrive Controls -->
-        <div class="hud-panel hud-br">
-          <div class="stage-controls">
-            <button class="stage-ctrl-btn primary" id="snapOgBtn">
-              <span>AIM OG #001</span>
-            </button>
-            <button class="stage-ctrl-btn overdrive-stage-btn" id="overdriveStageBtn" title="Activate Green-Candle Overdrive Mode">
-              <span class="overdrive-dot"></span>
-              <span id="overdriveStageLabel">OVERDRIVE</span>
-            </button>
-            <button class="stage-ctrl-btn" id="quickOpenRankBtn" title="Calculate your MWO Cult Rank">
-              <span>MWO RANK</span>
-            </button>
-            <button class="stage-ctrl-btn" id="triggerZoomBtn" title="Restock & Shuffle Claw Tank">
-              <span id="triggerZoomLabel">RESTOCK ↻</span>
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Bottom Contract Address Command Bar -->
-    <div class="ca-command-bar hud-hidden" id="bottomCaBar">
-      <div class="ca-bar-inner">
-        <div class="ca-status">
-          <span class="live-beacon"></span>
-          <span class="ca-tag">MWO // $MAXI CA</span>
-        </div>
-
-        <div class="ca-box" id="copyCaBtn" title="Click to copy Contract Address">
-          <code id="caText">EBCpGdXuS34WZuX13thrku2KmuLSe3Tf2gMtMKndpump</code>
-          <span class="copy-chip" id="copyBadge">COPY CA</span>
-        </div>
-
-        <div class="social-pills">
-          <a
-            href="https://x.com/maxiworldorder"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="social-pill"
-          >
-            <span>𝕏 @MAXIWORLDORDER ↗</span>
-          </a>
-          <a
-            href="https://t.me/maxicollective"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="social-pill"
-          >
-            <span>TELEGRAM ↗</span>
-          </a>
-          <a
-            href="https://pump.fun/coin/EBCpGdXuS34WZuX13thrku2KmuLSe3Tf2gMtMKndpump"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="social-pill active-pill"
-          >
-            <span>PUMP.FUN ↗</span>
-          </a>
-          <a
-            href="https://dexscreener.com/solana/EBCpGdXuS34WZuX13thrku2KmuLSe3Tf2gMtMKndpump"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="social-pill"
-          >
-            <span>DEXSCREENER ↗</span>
-          </a>
-          <button type="button" class="social-pill" id="bottomOpenRankBtn">
-            <span>MWO RANK</span>
-          </button>
-          <button type="button" class="social-pill" id="bottomOpenVaultBtn">
-            <span>100 VAULT</span>
-          </button>
-          <button type="button" class="social-pill" id="bottomOpenChartBtn">
-            <span>LIVE CHART</span>
-          </button>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- =======================================================================
-       MODAL 1: 100-CITIZEN VAULT GRID & RAID DOWNLOAD PACK
-       ======================================================================= -->
-  <div class="suite-modal hidden" id="vaultModal" aria-hidden="true">
-    <div class="suite-backdrop" data-close-modal="vaultModal"></div>
-    <div class="suite-dialog suite-xl">
-      <div class="suite-header">
-        <div class="suite-title-block">
-          <span class="suite-kicker">02 // MAXI WORLD ORDER ROSTER</span>
-          <h2 class="suite-title">THE 100 MWO CITIZEN VAULT</h2>
-        </div>
-
-        <div class="suite-header-controls">
-          <div class="filter-group" id="vaultFilterGroup">
-            <button type="button" class="suite-tab active" data-filter="ALL">ALL (100)</button>
-            <button type="button" class="suite-tab" data-filter="MYTHIC">1-OF-1 MASTERS (8)</button>
-            <button type="button" class="suite-tab" data-filter="CITIZEN">MWO CITIZENS (92)</button>
-          </div>
-          <button type="button" class="suite-close-btn" data-close-modal="vaultModal">✕</button>
-        </div>
-      </div>
-
-      <div class="vault-grid-scroll">
-        <div class="vault-cards-grid" id="vaultCardsGrid">
-          <!-- Populated dynamically by script.js -->
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- =======================================================================
-       MODAL 2: CUSTOM MAXI PFP & X BANNER STUDIO
-       ======================================================================= -->
-  <div class="suite-modal hidden" id="pfpModal" aria-hidden="true">
-    <div class="suite-backdrop" data-close-modal="pfpModal"></div>
-    <div class="suite-dialog suite-lg">
-      <div class="suite-header">
-        <div class="suite-title-block">
-          <span class="suite-kicker">03 // MWO PROPAGANDA &amp; PFP GENERATOR</span>
-          <h2 class="suite-title">MAXI WORLD ORDER PFP &amp; BANNER STUDIO</h2>
-        </div>
-        <button type="button" class="suite-close-btn" data-close-modal="pfpModal">✕</button>
-      </div>
-
-      <div class="pfp-studio-layout">
-        <!-- Left Canvas Preview -->
-        <div class="pfp-preview-col">
-          <div class="pfp-canvas-frame">
-            <canvas id="pfpStudioCanvas" width="1000" height="1000"></canvas>
-          </div>
-          <div class="pfp-export-bar">
-            <button type="button" class="suite-primary-btn" id="downloadPfpBtn">
-              <span>⬇ EXPORT HIGH-RES PNG</span>
-            </button>
-            <button type="button" class="suite-secondary-btn" id="copyPfpBtn">
-              <span id="copyPfpLabel">COPY IMAGE TO CLIPBOARD</span>
-            </button>
-          </div>
-        </div>
-
-        <!-- Right Studio Controls -->
-        <div class="pfp-controls-col">
-          <div class="control-block">
-            <label class="control-label">01 / FORMAT</label>
-            <div class="segmented-row" id="pfpFormatGroup">
-              <button type="button" class="seg-btn active" data-format="pfp">1:1 PFP (1000×1000)</button>
-              <button type="button" class="seg-btn" data-format="banner">3:1 X BANNER (1500×500)</button>
-            </div>
-          </div>
-
-          <div class="control-block">
-            <label class="control-label">02 / SELECT MWO CITIZEN CUTOUT (100)</label>
-            <div class="pfp-citizen-picker" id="pfpCitizenPicker">
-              <!-- Populated by script.js -->
-            </div>
-          </div>
-
-          <div class="control-block">
-            <label class="control-label">03 / STUDIO BACKDROP</label>
-            <div class="segmented-row" id="pfpBgGroup">
-              <button type="button" class="seg-btn active" data-bg="obsidian">OBSIDIAN</button>
-              <button type="button" class="seg-btn" data-bg="gold">SOVEREIGN GOLD</button>
-              <button type="button" class="seg-btn" data-bg="emerald">GREEN CANDLE</button>
-              <button type="button" class="seg-btn" data-bg="sapphire">SAPPHIRE</button>
-              <button type="button" class="seg-btn" data-bg="crimson">CRIMSON</button>
-            </div>
-          </div>
-
-          <div class="control-block">
-            <label class="control-label">04 / MWO OVERLAY &amp; PROPAGANDA STAMP</label>
-            <div class="segmented-row" id="pfpOverlayGroup">
-              <button type="button" class="seg-btn active" data-overlay="mwo">MWO CULT SEAL</button>
-              <button type="button" class="seg-btn" data-overlay="halo">ORBIT HALO</button>
-              <button type="button" class="seg-btn" data-overlay="grid">TELEMETRY</button>
-              <button type="button" class="seg-btn" data-overlay="clean">CLEAN STUDIO</button>
-            </div>
-            <input
-              type="text"
-              id="pfpCustomText"
-              class="suite-input"
-              placeholder="Custom Tagline (e.g. MAXI WORLD ORDER)"
-              value="MAXI WORLD ORDER"
-              maxlength="32"
-            />
-            <div class="preset-chips-row" id="pfpPresetChips">
-              <button type="button" class="preset-chip" data-text="MAXI WORLD ORDER">MAXI WORLD ORDER</button>
-              <button type="button" class="preset-chip" data-text="$MAXI · 240 LBS">$MAXI · 240 LBS</button>
-              <button type="button" class="preset-chip" data-text="MWO SUPREME">MWO SUPREME</button>
-              <button type="button" class="preset-chip" data-text="SEND IT TO $1B">SEND IT TO $1B</button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- =======================================================================
-       MODAL 3: LIVE MARKET & DEXSCREENER TERMINAL DRAWER
-       ======================================================================= -->
-  <div class="suite-modal hidden" id="chartModal" aria-hidden="true">
-    <div class="suite-backdrop" data-close-modal="chartModal"></div>
-    <div class="suite-dialog suite-xl">
-      <div class="suite-header">
-        <div class="suite-title-block">
-          <span class="suite-kicker">04 // SOLANA MAINNET TELEMETRY</span>
-          <h2 class="suite-title">$MAXI LIVE MARKET TERMINAL</h2>
-        </div>
-
-        <div class="suite-header-controls">
-          <div class="market-metrics-strip">
-            <div class="m-pill">
-              <span class="m-k">PRICE</span>
-              <span class="m-v" id="termPrice">LIVE</span>
-            </div>
-            <div class="m-pill">
-              <span class="m-k">MCAP</span>
-              <span class="m-v gold" id="termMcap">LIVE</span>
-            </div>
-            <div class="m-pill">
-              <span class="m-k">24H VOL</span>
-              <span class="m-v" id="termVol">—</span>
-            </div>
-            <div class="m-pill">
-              <span class="m-k">LIQUIDITY</span>
-              <span class="m-v" id="termLiq">—</span>
-            </div>
-          </div>
-          <a
-            href="https://pump.fun/coin/EBCpGdXuS34WZuX13thrku2KmuLSe3Tf2gMtMKndpump"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="suite-primary-btn compact"
-          >
-            <span>TRADE ON PUMP.FUN ↗</span>
-          </a>
-          <button type="button" class="suite-close-btn" data-close-modal="chartModal">✕</button>
-        </div>
-      </div>
-
-      <div class="terminal-chart-wrap">
-        <iframe
-          id="dexScreenerIframe"
-          src="https://dexscreener.com/solana/EBCpGdXuS34WZuX13thrku2KmuLSe3Tf2gMtMKndpump?embed=1&theme=dark&trades=1&info=0"
-          title="$MAXI DexScreener Live Chart"
-          frameborder="0"
-          allowfullscreen
-        ></iframe>
-      </div>
-    </div>
-  </div>
-
-  <!-- =======================================================================
-       MODAL 4: MWO CULT RANK & CONVICTION CALCULATOR
-       ======================================================================= -->
-  <div class="suite-modal hidden" id="rankModal" aria-hidden="true">
-    <div class="suite-backdrop" data-close-modal="rankModal"></div>
-    <div class="suite-dialog suite-lg">
-      <div class="suite-header">
-        <div class="suite-title-block">
-          <span class="suite-kicker">05 // SOVEREIGN DOSSIER &amp; BAG PROJECTION</span>
-          <h2 class="suite-title">MWO CULT RANK &amp; CONVICTION CALCULATOR</h2>
-        </div>
-        <button type="button" class="suite-close-btn" data-close-modal="rankModal">✕</button>
-      </div>
-
-      <div class="pfp-studio-layout rank-studio-layout">
-        <!-- Left: Live Rendered MWO Sovereign Rank Dossier Card -->
-        <div class="pfp-preview-col">
-          <div class="rank-canvas-frame">
-            <canvas id="rankCardCanvas" width="1000" height="640"></canvas>
-          </div>
-          <div class="pfp-export-bar">
-            <button type="button" class="suite-primary-btn" id="downloadRankCardBtn">
-              <span>⬇ EXPORT MWO DOSSIER PNG</span>
-            </button>
-            <button type="button" class="suite-secondary-btn" id="copyRankCardBtn">
-              <span id="copyRankCardLabel">COPY DOSSIER TO CLIPBOARD</span>
-            </button>
-          </div>
-        </div>
-
-        <!-- Right: Bag Size, Target Market Cap & Callsign Controls -->
-        <div class="pfp-controls-col">
-          <div class="control-block">
-            <label class="control-label">01 / YOUR $MAXI BAG SIZE (1B TOTAL SUPPLY)</label>
-            <input
-              type="number"
-              id="rankBagInput"
-              class="suite-input"
-              placeholder="Enter $MAXI tokens (e.g. 2500000)"
-              value="2500000"
-              min="1"
-              max="1000000000"
-            />
-            <div class="preset-chips-row" id="rankBagPresets">
-              <button type="button" class="preset-chip" data-bag="250000">250K $MAXI</button>
-              <button type="button" class="preset-chip" data-bag="1000000">1M $MAXI (0.1%)</button>
-              <button type="button" class="preset-chip active" data-bag="2500000">2.5M $MAXI</button>
-              <button type="button" class="preset-chip" data-bag="10000000">10M WHALE (1%)</button>
-              <button type="button" class="preset-chip" data-bag="25000000">25M SOVEREIGN</button>
-            </div>
-          </div>
-
-          <div class="control-block">
-            <label class="control-label">02 / TARGET MARKET CAP CONVICTION</label>
-            <div class="segmented-row" id="rankTargetMcapGroup">
-              <button type="button" class="seg-btn" data-mcap="10000000">$10M</button>
-              <button type="button" class="seg-btn" data-mcap="50000000">$50M</button>
-              <button type="button" class="seg-btn active" data-mcap="100000000">$100M</button>
-              <button type="button" class="seg-btn" data-mcap="500000000">$500M</button>
-              <button type="button" class="seg-btn" data-mcap="1000000000">$1B MWO</button>
-            </div>
-          </div>
-
-          <div class="control-block">
-            <label class="control-label">03 / OPERATIVE CALLSIGN &amp; AVATAR</label>
-            <div class="rank-callsign-row">
-              <input
-                type="text"
-                id="rankCallsignInput"
-                class="suite-input"
-                placeholder="Your X / TG Handle (e.g. @MAXI_SOVEREIGN)"
-                value="MWO OPERATIVE #001"
-                maxlength="24"
-              />
-              <button type="button" class="suite-secondary-btn compact" id="rankCycleCitizenBtn" title="Cycle Citizen Avatar">
-                <span>AVATAR ↻</span>
+            <!-- Primary Arcade Action Buttons -->
+            <div class="pop-hero-cta-row">
+              <a href="#clawSection" class="pop-btn pop-btn-primary">
+                <span>🕹️ PLAY 3D CLAW MACHINE</span>
+              </a>
+              <a href="#pfpSection" class="pop-btn pop-btn-yellow">
+                <span>🎨 PFP &amp; BANNER WORKBENCH</span>
+              </a>
+              <button type="button" id="introCycleCitizenBtn" class="pop-btn pop-btn-white">
+                <span>🎲 SHUFFLE SHOWCASE (100)</span>
               </button>
             </div>
+
+            <!-- Tactile Arcade Prize Ticket: Official Contract Address -->
+            <div class="pop-ca-ticket">
+              <div class="ticket-top-row">
+                <span class="ticket-badge">OFFICIAL SOLANA CONTRACT ADDRESS</span>
+                <span class="ticket-serial">SERIES #001–#100</span>
+              </div>
+              <div class="ticket-code-row">
+                <code id="intro-ca-value" class="ticket-ca-code">EBCpGdXuS34WZuX13thrku2KmuLSe3Tf2gMtMKndpump</code>
+                <button id="intro-copy-ca-btn" class="ticket-copy-btn" type="button">
+                  <span id="intro-copy-ca-text">COPY CA</span>
+                </button>
+              </div>
+              <div class="ticket-links-row">
+                <a href="https://pump.fun/coin/EBCpGdXuS34WZuX13thrku2KmuLSe3Tf2gMtMKndpump" target="_blank" rel="noopener noreferrer" class="ticket-link">PUMP.FUN ↗</a>
+                <a href="https://dexscreener.com/solana/EBCpGdXuS34WZuX13thrku2KmuLSe3Tf2gMtMKndpump" target="_blank" rel="noopener noreferrer" class="ticket-link">DEXSCREENER ↗</a>
+                <a href="https://x.com/maxiworldorder" target="_blank" rel="noopener noreferrer" class="ticket-link">𝕏 @MAXIWORLDORDER ↗</a>
+                <a href="https://t.me/maxicollective" target="_blank" rel="noopener noreferrer" class="ticket-link">TELEGRAM ↗</a>
+              </div>
+            </div>
           </div>
 
-          <!-- Live Conviction Projection Matrix -->
-          <div class="rank-projection-matrix">
-            <div class="rpm-box">
-              <span class="rpm-label">ASSIGNED CULT RANK</span>
-              <span class="rpm-value gold" id="rpmRankTitle">SECTOR WARLORD</span>
-            </div>
-            <div class="rpm-box">
-              <span class="rpm-label">SUPPLY OWNERSHIP</span>
-              <span class="rpm-value" id="rpmSupplyPct">0.250% OF 1B</span>
-            </div>
-            <div class="rpm-box">
-              <span class="rpm-label">PROJECTED BAG VALUE</span>
-              <span class="rpm-value emerald" id="rpmProjectedUsd">$250,000</span>
-            </div>
-            <div class="rpm-box">
-              <span class="rpm-label">MULTIPLE VS LIVE MCAP</span>
-              <span class="rpm-value" id="rpmMultiplier">LIVE</span>
+          <!-- Right Column: Interactive 3-Card Designer Toy Blister Pack Showcase -->
+          <div class="pop-hero-showcase">
+            <div class="toy-blister-stage" id="logo-stage">
+              <!-- Left Blister Card -->
+              <div class="toy-card toy-card-left" id="introSideLeftCard" title="Click to preview previous figure">
+                <div class="toy-card-header">
+                  <span class="toy-series-pill" id="introSideLeftTag">#037 PUMP PILL</span>
+                  <span class="toy-dot"></span>
+                </div>
+                <div class="toy-figure-window">
+                  <img
+                    src="Photos/Removed backgrounds /photo_2026-11-23_18-44-33 Background Removed.png"
+                    alt="Pump Pill Maxi"
+                    id="introSideLeftImg"
+                    draggable="false"
+                  />
+                </div>
+                <div class="toy-card-footer">1-OF-1 EDITION</div>
+              </div>
+
+              <!-- Center Sovereign Jackpot Blister Box -->
+              <div class="toy-card toy-card-center" id="introPrimeCard" title="Click to cycle through all 100 Maxi figures">
+                <div class="toy-card-header">
+                  <span class="toy-series-pill pill-jackpot" id="introPrimeRank">👑 #001 JACKPOT</span>
+                  <span class="toy-rarity-tag">SOVEREIGN EDITION</span>
+                </div>
+                <div class="toy-figure-window window-main">
+                  <div class="window-burst-bg"></div>
+                  <img
+                    id="intro-logo-front"
+                    src="maxi Background Removed.png"
+                    alt="OG Maxi"
+                    class="toy-main-cutout"
+                    draggable="false"
+                  />
+                </div>
+                <div class="toy-card-meta">
+                  <div class="toy-main-name" id="introPrimeName">OG MAXI</div>
+                  <div class="toy-tap-hint">TAP CARD TO PREVIEW 100 FIGURES ↻</div>
+                </div>
+              </div>
+
+              <!-- Right Blister Card -->
+              <div class="toy-card toy-card-right" id="introSideRightCard" title="Click to preview next figure">
+                <div class="toy-card-header">
+                  <span class="toy-series-pill" id="introSideRightTag">#002 GOLD</span>
+                  <span class="toy-dot"></span>
+                </div>
+                <div class="toy-figure-window">
+                  <img
+                    src="Photos/Removed backgrounds /photo_2026-11-18_22-41-37 Background Removed.png"
+                    alt="Golden Bullion Maxi"
+                    id="introSideRightImg"
+                    draggable="false"
+                  />
+                </div>
+                <div class="toy-card-footer">1-OF-1 EDITION</div>
+              </div>
             </div>
           </div>
         </div>
       </div>
+    </section>
+
+    <!-- =====================================================================
+         SECTION 2: PLAYABLE 3D WEBGL CLAW MACHINE & INSTANT PFP FORGER
+         ===================================================================== -->
+    <section class="pop-claw-section" id="clawSection">
+      <div class="pop-container">
+        <div class="section-banner-header">
+          <div class="section-title-group">
+            <span class="pop-section-badge badge-red">01 // INTERACTIVE 3D ARCADE CENTERPIECE</span>
+            <h2 class="pop-section-title">THE 3D MAXI CLAW MACHINE</h2>
+          </div>
+          <div class="section-controls-group">
+            <div class="roster-mini-pill">
+              <span>LAST PULLED:</span>
+              <strong id="cardTitle">OG MAXI (#001)</strong>
+            </div>
+            <button type="button" class="pop-chip-btn chip-yellow" id="snapOgBtn">🎯 AUTO-CLAW OG #001</button>
+            <button type="button" class="pop-chip-btn chip-white" id="triggerZoomBtn">🔄 RESTOCK 3D PILE</button>
+          </div>
+        </div>
+
+        <!-- Hidden legacy canvases kept lightweight so controller never errors -->
+        <canvas id="intro-canvas" class="hidden-util-canvas" width="320" height="200"></canvas>
+        <canvas id="diveFxCanvas" class="hidden-util-canvas" width="320" height="200"></canvas>
+
+        <!-- Flagship Full-3D WebGL Claw Machine Cabinet -->
+        <div id="clawCabinetStage" class="claw-cabinet-stage">
+          <div class="claw-machine-cabinet" id="clawMachineCabinet">
+            <!-- Top Pop-Arcade Marquee Header -->
+            <div class="claw-marquee-bar">
+              <div class="marquee-left">
+                <span class="marquee-beacon"></span>
+                <span class="marquee-tag">MWO GASHAPON CLAW // MK.VI</span>
+              </div>
+              <div class="marquee-center">
+                <span class="marquee-title" id="clawStatusReadout">DRAG OR WASD TO AIM 3D GANTRY · SPACE TO DROP CLAW</span>
+              </div>
+              <div class="marquee-right">
+                <span class="marquee-stat" id="clawExtractedCount">EXTRACTED: 0 / 100</span>
+                <span class="marquee-credits">FREE PLAY // ∞</span>
+              </div>
+            </div>
+
+            <!-- 3D WebGL Glass Tank Bay -->
+            <div class="claw-glass-bay" id="clawGlassBay">
+              <canvas id="clawMachineCanvas"></canvas>
+
+              <!-- Live 3D Laser Lock Readout Pill Floating Inside Glass -->
+              <div class="claw-glass-hud-pill" id="clawLaserReadout">
+                3D LASER LOCK // #001 OG MAXI · X=50% Z=50%
+              </div>
+
+              <!-- Prize Extraction & Instant 1000x1000 PFP Mint Overlay (Pops open on every claw pull!) -->
+              <div class="pull-reveal-overlay hidden" id="pullRevealOverlay">
+                <div class="pull-reveal-card">
+                  <div class="pull-reveal-header">
+                    <div class="pull-header-left">
+                      <span class="pull-tier-badge" id="pullRevealTier">SOVEREIGN JACKPOT // #001</span>
+                      <span class="pull-kicker-inline" id="pullRevealRank">CITIZEN #001 / 100</span>
+                    </div>
+                    <button type="button" class="pull-close-btn" id="closePullRevealBtn">✕</button>
+                  </div>
+
+                  <div class="pull-reveal-body">
+                    <!-- Live 1000x1000 High-Res PFP Forger Canvas directly inside the Pull Modal -->
+                    <div class="pull-pfp-forger-col">
+                      <div class="pull-pfp-canvas-frame">
+                        <canvas id="pullPfpCanvas" width="1000" height="1000"></canvas>
+                        <span class="pull-pfp-res-tag">1000×1000 HD PFP</span>
+                      </div>
+                      <div class="pull-pfp-theme-strip" id="pullPfpThemeStrip">
+                        <button type="button" class="pull-theme-chip active" data-pull-bg="OBSIDIAN">OBSIDIAN GOLD</button>
+                        <button type="button" class="pull-theme-chip" data-pull-bg="CANDLE">GREEN CANDLE</button>
+                        <button type="button" class="pull-theme-chip" data-pull-bg="SOLANA">POP ARCADE</button>
+                        <button type="button" class="pull-theme-chip" data-pull-bg="ROYAL">CRIMSON HYPE</button>
+                      </div>
+                    </div>
+
+                    <div class="pull-reveal-info">
+                      <h3 class="pull-title" id="pullRevealName">OG MAXI</h3>
+                      <div class="pull-subtitle" id="pullRevealTitle">SUPREME SOVEREIGN OF MAXI WORLD ORDER</div>
+                      <p class="pull-lore" id="pullRevealLore">
+                        Supreme Sovereign of the Maxi World Order. 240 lbs lean extracted directly from the Genesis Vault.
+                      </p>
+
+                      <!-- Custom PFP Caption Input right inside the pull card -->
+                      <div class="pull-custom-tag-row">
+                        <label for="pullCustomBadgeInput" class="pull-tag-lbl">PFP BADGE TEXT</label>
+                        <input
+                          type="text"
+                          id="pullCustomBadgeInput"
+                          class="pull-tag-input"
+                          value="MAXI WORLD ORDER"
+                          maxlength="24"
+                          placeholder="MAXI WORLD ORDER"
+                        />
+                      </div>
+
+                      <!-- Primary 1-Click Save PFP & Copy PFP Buttons -->
+                      <div class="pull-primary-save-grid">
+                        <button type="button" class="pull-save-pfp-btn" id="pullSavePfpBtn">
+                          <span>⬇ SAVE AS PFP (1000×1000 PNG)</span>
+                        </button>
+                        <button type="button" class="pull-copy-pfp-btn" id="pullCopyPfpBtn">
+                          <span id="pullCopyPfpLabel">📋 COPY PFP IMAGE</span>
+                        </button>
+                      </div>
+
+                      <!-- Secondary Actions -->
+                      <div class="pull-reveal-actions">
+                        <button type="button" class="suite-secondary-btn compact" id="pullToStudioBtn">
+                          <span>🎨 customize in full workbench ↓</span>
+                        </button>
+                        <a
+                          href="maxi Background Removed.png"
+                          download="maxi-extracted.png"
+                          class="suite-secondary-btn compact"
+                          id="pullDownloadLink"
+                        >
+                          <span>RAW CUTOUT PNG ⬇</span>
+                        </a>
+                        <a
+                          href="https://x.com/intent/tweet?text=Just%20extracted%20OG%20MAXI%20from%20the%20MAXI%20WORLD%20ORDER%20Claw%20Vault%20%24MAXI%20%40maxiworldorder%0ACA%3A%20EBCpGdXuS34WZuX13thrku2KmuLSe3Tf2gMtMKndpump"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          class="suite-secondary-btn compact"
+                          id="pullShareXLink"
+                        >
+                          <span>FLEX ON 𝕏 ↗</span>
+                        </a>
+                        <button type="button" class="suite-primary-btn compact" id="pullAgainBtn">
+                          <span>🦾 DROP CLAW AGAIN</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Physical Pop-Arcade 3D Control Console -->
+            <div class="claw-control-deck">
+              <div class="deck-group deck-dpad">
+                <button type="button" class="claw-deck-btn tactile-key" id="clawMoveLeftBtn" title="Move Gantry Left (A / Left Arrow)">
+                  <span class="key-cap">A / ◀</span>
+                  <span class="key-lbl">LEFT</span>
+                </button>
+                <button type="button" class="claw-deck-btn tactile-key" id="clawMoveRightBtn" title="Move Gantry Right (D / Right Arrow)">
+                  <span class="key-lbl">RIGHT</span>
+                  <span class="key-cap">▶ / D</span>
+                </button>
+                <button type="button" class="claw-deck-btn tactile-key" id="clawMoveBackBtn" title="Move Gantry Deeper (W / Up Arrow)">
+                  <span class="key-cap">W / ▲</span>
+                  <span class="key-lbl">BACK</span>
+                </button>
+                <button type="button" class="claw-deck-btn tactile-key" id="clawMoveFwdBtn" title="Move Gantry Forward (S / Down Arrow)">
+                  <span class="key-cap">S / ▼</span>
+                  <span class="key-lbl">FRONT</span>
+                </button>
+              </div>
+
+              <button type="button" class="claw-drop-trigger" id="clawDropBtn" title="Press SPACEBAR or Click to Drop 3D Hydraulic Claw">
+                <span class="drop-led"></span>
+                <span id="clawDropBtnLabel">⬇ DROP 3D CLAW // EXTRACT &amp; MINT PFP</span>
+                <span class="drop-hotkey">[SPACE]</span>
+              </button>
+
+              <div class="deck-group deck-utils">
+                <button type="button" class="claw-deck-btn gold-outline" id="clawAimOgBtn" title="Auto-Lock 3D Gantry on OG Maxi (#001) & Drop">
+                  <span>🎯 AUTO-CLAW OG #001</span>
+                </button>
+                <button type="button" class="claw-deck-btn" id="clawShuffleBtn" title="Drop a Fresh 3D Batch of Maxis from the 100-Citizen Vault">
+                  <span>RESTOCK 3D PILE ↻</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Scrollable 100-Figure Picker Strip right below the Claw Machine -->
+        <div class="claw-roster-bar">
+          <div class="roster-bar-label">QUICK-LOAD FIGURE INTO CLAW MACHINE (100):</div>
+          <div class="citizen-roster-strip" id="citizenRosterStrip">
+            <!-- Populated by script.js -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         SECTION 3: ON-PAGE CUSTOM PFP & X-BANNER WORKBENCH (NO MODAL)
+         ===================================================================== -->
+    <section class="pop-workbench-section" id="pfpSection">
+      <div class="pop-container">
+        <div class="section-banner-header">
+          <div class="section-title-group">
+            <span class="pop-section-badge badge-yellow">02 // INSTANT PFP &amp; X-BANNER FACTORY</span>
+            <h2 class="pop-section-title">CUSTOM MAXI PFP &amp; BANNER WORKBENCH</h2>
+          </div>
+          <p class="section-subtitle-copy">
+            Every Maxi you claw—or any of the 100 figures below—can be customized here into a <strong>1000×1000 Square PFP</strong> or <strong>1500×500 X Header Banner</strong> and downloaded in one click.
+          </p>
+        </div>
+
+        <div class="pop-workbench-card" id="pfpModal">
+          <div class="pfp-studio-layout">
+            <!-- Left Canvas Preview & 1-Click Save Buttons -->
+            <div class="pfp-preview-col">
+              <div class="pfp-canvas-frame">
+                <canvas id="pfpStudioCanvas" width="1000" height="1000"></canvas>
+              </div>
+              <div class="pfp-export-bar">
+                <button type="button" class="pop-btn pop-btn-green full-w" id="downloadPfpBtn">
+                  <span>⬇ SAVE HIGH-RES PNG</span>
+                </button>
+                <button type="button" class="pop-btn pop-btn-yellow full-w" id="copyPfpBtn">
+                  <span id="copyPfpLabel">📋 COPY IMAGE TO CLIPBOARD</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Right Workbench Controls -->
+            <div class="pfp-controls-col">
+              <div class="control-block">
+                <label class="control-label">01 / CHOOSE OUTPUT FORMAT</label>
+                <div class="segmented-row" id="pfpFormatGroup">
+                  <button type="button" class="seg-btn active" data-format="pfp">1:1 SQUARE PFP (1000×1000)</button>
+                  <button type="button" class="seg-btn" data-format="banner">3:1 X BANNER (1500×500)</button>
+                </div>
+              </div>
+
+              <div class="control-block">
+                <label class="control-label">02 / PICK ANY OF THE 100 MAXI FIGURES</label>
+                <div class="pfp-citizen-picker" id="pfpCitizenPicker">
+                  <!-- Populated by script.js -->
+                </div>
+              </div>
+
+              <div class="control-block">
+                <label class="control-label">03 / COLORWAY &amp; BACKDROP</label>
+                <div class="segmented-row" id="pfpBgGroup">
+                  <button type="button" class="seg-btn active" data-bg="obsidian">OBSIDIAN</button>
+                  <button type="button" class="seg-btn" data-bg="gold">SOVEREIGN GOLD</button>
+                  <button type="button" class="seg-btn" data-bg="emerald">GREEN CANDLE</button>
+                  <button type="button" class="seg-btn" data-bg="sapphire">ARCADE BLUE</button>
+                  <button type="button" class="seg-btn" data-bg="crimson">POP RED</button>
+                </div>
+              </div>
+
+              <div class="control-block">
+                <label class="control-label">04 / BADGE STAMP &amp; CUSTOM CAPTION</label>
+                <div class="segmented-row" id="pfpOverlayGroup">
+                  <button type="button" class="seg-btn active" data-overlay="mwo">MWO CULT SEAL</button>
+                  <button type="button" class="seg-btn" data-overlay="halo">ARCADE HALO</button>
+                  <button type="button" class="seg-btn" data-overlay="grid">GRID EDITION</button>
+                  <button type="button" class="seg-btn" data-overlay="clean">CLEAN FIGURE</button>
+                </div>
+                <input
+                  type="text"
+                  id="pfpCustomText"
+                  class="suite-input"
+                  placeholder="Type custom badge text (e.g. MAXI WORLD ORDER)"
+                  value="MAXI WORLD ORDER"
+                  maxlength="32"
+                />
+                <div class="preset-chips-row" id="pfpPresetChips">
+                  <button type="button" class="preset-chip" data-text="MAXI WORLD ORDER">MAXI WORLD ORDER</button>
+                  <button type="button" class="preset-chip" data-text="$MAXI · 240 LBS">$MAXI · 240 LBS</button>
+                  <button type="button" class="preset-chip" data-text="MWO SUPREME">MWO SUPREME</button>
+                  <button type="button" class="preset-chip" data-text="SEND IT TO $1B">SEND IT TO $1B</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         SECTION 4: THE 100 GASHAPON CAPSULE COLLECTION SHELF (ON-PAGE)
+         ===================================================================== -->
+    <section class="pop-lookbook-section" id="lookbookSection">
+      <div class="pop-container">
+        <div class="section-banner-header">
+          <div class="section-title-group">
+            <span class="pop-section-badge badge-green">03 // COMPLETE 100-FIGURE SERIES</span>
+            <h2 class="pop-section-title">100 GASHAPON CAPSULE COLLECTION</h2>
+          </div>
+
+          <div class="filter-group" id="vaultFilterGroup">
+            <button type="button" class="suite-tab active" data-filter="ALL">ALL FIGURES (100)</button>
+            <button type="button" class="suite-tab" data-filter="MYTHIC">1-OF-1 MASTERS</button>
+            <button type="button" class="suite-tab" data-filter="CITIZEN">SERIES CITIZENS</button>
+          </div>
+        </div>
+
+        <div class="pop-lookbook-shelf" id="vaultModal">
+          <div class="vault-cards-grid" id="vaultCardsGrid">
+            <!-- All 100 unique citizen cards populated by script.js -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         SECTION 5: MWO CONVICTION CALCULATOR & LIVE DEXSCREENER CHART
+         ===================================================================== -->
+    <section class="pop-rank-chart-section" id="rankSection">
+      <div class="pop-container">
+        <div class="section-banner-header">
+          <div class="section-title-group">
+            <span class="pop-section-badge badge-blue">04 // CONVICTION &amp; LIVE SOLANA TELEMETRY</span>
+            <h2 class="pop-section-title">MWO RANK CARD &amp; LIVE $MAXI TERMINAL</h2>
+          </div>
+        </div>
+
+        <!-- Part A: MWO Cult Rank & Bag Calculator Card -->
+        <div class="pop-workbench-card" id="rankModal">
+          <div class="pfp-studio-layout rank-studio-layout">
+            <div class="pfp-preview-col">
+              <div class="rank-canvas-frame">
+                <canvas id="rankCardCanvas" width="1000" height="640"></canvas>
+              </div>
+              <div class="pfp-export-bar">
+                <button type="button" class="pop-btn pop-btn-green full-w" id="downloadRankCardBtn">
+                  <span>⬇ SAVE MWO DOSSIER PNG</span>
+                </button>
+                <button type="button" class="pop-btn pop-btn-yellow full-w" id="copyRankCardBtn">
+                  <span id="copyRankCardLabel">📋 COPY DOSSIER IMAGE</span>
+                </button>
+              </div>
+            </div>
+
+            <div class="pfp-controls-col">
+              <div class="control-block">
+                <label class="control-label">01 / YOUR $MAXI BAG SIZE (1B TOTAL SUPPLY)</label>
+                <input
+                  type="number"
+                  id="rankBagInput"
+                  class="suite-input"
+                  placeholder="Enter $MAXI tokens (e.g. 2500000)"
+                  value="2500000"
+                  min="1"
+                  max="1000000000"
+                />
+                <div class="preset-chips-row" id="rankBagPresets">
+                  <button type="button" class="preset-chip" data-bag="250000">250K $MAXI</button>
+                  <button type="button" class="preset-chip" data-bag="1000000">1M $MAXI (0.1%)</button>
+                  <button type="button" class="preset-chip active" data-bag="2500000">2.5M $MAXI</button>
+                  <button type="button" class="preset-chip" data-bag="10000000">10M WHALE (1%)</button>
+                  <button type="button" class="preset-chip" data-bag="25000000">25M SOVEREIGN</button>
+                </div>
+              </div>
+
+              <div class="control-block">
+                <label class="control-label">02 / TARGET MARKET CAP CONVICTION</label>
+                <div class="segmented-row" id="rankTargetMcapGroup">
+                  <button type="button" class="seg-btn" data-mcap="10000000">$10M</button>
+                  <button type="button" class="seg-btn" data-mcap="50000000">$50M</button>
+                  <button type="button" class="seg-btn active" data-mcap="100000000">$100M</button>
+                  <button type="button" class="seg-btn" data-mcap="500000000">$500M</button>
+                  <button type="button" class="seg-btn" data-mcap="1000000000">$1B MWO</button>
+                </div>
+              </div>
+
+              <div class="control-block">
+                <label class="control-label">03 / OPERATIVE CALLSIGN &amp; AVATAR</label>
+                <div class="rank-callsign-row">
+                  <input
+                    type="text"
+                    id="rankCallsignInput"
+                    class="suite-input"
+                    placeholder="Callsign (e.g. SOVEREIGN WHALE)"
+                    value="MWO OPERATIVE"
+                    maxlength="22"
+                  />
+                  <button type="button" class="pop-chip-btn chip-yellow" id="rankRandomAvatarBtn">
+                    <span>AVATAR ↻</span>
+                  </button>
+                </div>
+              </div>
+
+              <div class="rank-projection-grid">
+                <div class="proj-box">
+                  <span class="proj-k">ASSIGNED CULT RANK</span>
+                  <span class="proj-v gold" id="rankTierReadout">SUPREME ARCHITECT</span>
+                </div>
+                <div class="proj-box">
+                  <span class="proj-k">SUPPLY CONTROLLED</span>
+                  <span class="proj-v" id="rankSupplyPctReadout">0.2500%</span>
+                </div>
+                <div class="proj-box">
+                  <span class="proj-k">CURRENT BAG VALUE</span>
+                  <span class="proj-v" id="rankCurrentValReadout">LIVE</span>
+                </div>
+                <div class="proj-box highlight-emerald">
+                  <span class="proj-k">PROJECTED TARGET VALUE</span>
+                  <span class="proj-v emerald" id="rankTargetValReadout">$250,000</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Part B: Live Embedded DexScreener Chart & Metrics -->
+        <div class="pop-chart-card" id="chartModal">
+          <div class="pop-chart-header">
+            <div class="chart-title-wrap">
+              <span class="live-beacon"></span>
+              <h3>$MAXI / SOLANA LIVE DEXSCREENER CHART</h3>
+            </div>
+            <div class="market-metrics-strip">
+              <div class="m-pill">
+                <span class="m-k">PRICE</span>
+                <span class="m-v" id="termPrice">LIVE</span>
+              </div>
+              <div class="m-pill">
+                <span class="m-k">MCAP</span>
+                <span class="m-v gold" id="termMcap">LIVE</span>
+              </div>
+              <div class="m-pill">
+                <span class="m-k">24H VOL</span>
+                <span class="m-v" id="termVol">—</span>
+              </div>
+              <div class="m-pill">
+                <span class="m-k">LIQUIDITY</span>
+                <span class="m-v" id="termLiq">—</span>
+              </div>
+            </div>
+          </div>
+          <div class="terminal-chart-wrap">
+            <iframe
+              id="dexScreenerIframe"
+              src="https://dexscreener.com/solana/EBCpGdXuS34WZuX13thrku2KmuLSe3Tf2gMtMKndpump?embed=1&theme=dark&trades=1&info=0"
+              title="$MAXI DexScreener Live Chart"
+              frameborder="0"
+              allowfullscreen
+            ></iframe>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- =======================================================================
+       POP-ARCADE FOOTER & STICKY CONTRACT ADDRESS BAR
+       ======================================================================= -->
+  <footer class="pop-footer" id="bottomCaBar">
+    <div class="pop-container pop-footer-inner">
+      <div class="footer-brand-col">
+        <span class="footer-brand-name">MAXI WORLD ORDER ($MAXI)</span>
+        <span class="footer-brand-sub">100 1-of-1 Gashapon Cutouts · 3D Claw Vault · Built on Solana</span>
+      </div>
+
+      <div class="ca-box" id="copyCaBtn" title="Click to copy Contract Address">
+        <code id="caText">EBCpGdXuS34WZuX13thrku2KmuLSe3Tf2gMtMKndpump</code>
+        <span class="copy-chip" id="copyBadge">COPY CA</span>
+      </div>
+
+      <div class="footer-socials">
+        <a href="https://x.com/maxiworldorder" target="_blank" rel="noopener noreferrer" class="pop-chip-btn chip-white">𝕏 @MAXIWORLDORDER ↗</a>
+        <a href="https://t.me/maxicollective" target="_blank" rel="noopener noreferrer" class="pop-chip-btn chip-white">TELEGRAM ↗</a>
+        <a href="https://pump.fun/coin/EBCpGdXuS34WZuX13thrku2KmuLSe3Tf2gMtMKndpump" target="_blank" rel="noopener noreferrer" class="pop-chip-btn chip-yellow">PUMP.FUN ↗</a>
+      </div>
     </div>
-  </div>
+  </footer>
 
   <script src="script.js"></script>
 </body>
