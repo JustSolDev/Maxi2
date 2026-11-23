@@ -1483,7 +1483,20 @@ class PlanetMaxiController {
       moveDirZ: 0       // -1 back, +1 front
     };
 
-    // 3D Camera Parallax & Orbit
+    // 3D Stage Experience Mode ('COUNCIL' = The 3D Council Table War Room, 'CLAW' = 3D Claw Machine)
+    this.stage3DMode = 'COUNCIL';
+    this.councilSeatCount = 12;
+    this.councilBatchIndex = 0;       // Which batch of 12 Maxis (0..8)
+    this.activeSeatSlot = 0;          // 0..11 around the circular table
+    this.councilOrbitAngle = 0;       // Current camera orbit angle around the Council Table
+    this.targetCouncilOrbitAngle = 0; // Target orbit angle
+    this.councilZoomDist = 204;       // Camera distance from center of Council Table
+    this.targetCouncilZoomDist = 204;
+    this.councilCamHeight = 52;
+    this.targetCouncilCamHeight = 52;
+    this.councilSeats = [];
+
+    // 3D Camera Parallax & Orbit (for Claw Mode)
     this.camYaw = 0;
     this.targetCamYaw = 0;
     this.camPitch = 0.16;
@@ -1494,8 +1507,11 @@ class PlanetMaxiController {
     this.initWarpParticles();
     this.initThreePlanet();
     this.initThreeClawMachine();
+    this.initThreeCouncilTable();
     this.resizeCanvases();
     this.spawnClawPile(false);
+    this.populateCouncilSeats(0, false);
+    this.setStage3DMode('COUNCIL', false);
     this.loadCaughtLockerFromStorage();
     this.bindEvents();
 
@@ -1703,6 +1719,10 @@ class PlanetMaxiController {
     this.clawRenderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
     this.clawRenderer.outputEncoding = THREE.sRGBEncoding;
 
+    // Master Root Group for the 3D Claw Machine Mode
+    this.clawWorldGroup = new THREE.Group();
+    this.clawScene.add(this.clawWorldGroup);
+
     // 1. Studio PBR Lighting Inside the 3D Glass Vault
     const ambient = new THREE.AmbientLight(0xe2e8f0, 0.92);
     this.clawScene.add(ambient);
@@ -1713,11 +1733,11 @@ class PlanetMaxiController {
 
     this.vaultGoldLight = new THREE.PointLight(0xe5b869, 1.6, 420);
     this.vaultGoldLight.position.set(55, 70, 60);
-    this.clawScene.add(this.vaultGoldLight);
+    this.clawWorldGroup.add(this.vaultGoldLight);
 
     this.chuteEmeraldLight = new THREE.PointLight(0x34d399, 1.8, 320);
     this.chuteEmeraldLight.position.set(-80, -15, 30);
-    this.clawScene.add(this.chuteEmeraldLight);
+    this.clawWorldGroup.add(this.chuteEmeraldLight);
 
     const rimBackLight = new THREE.DirectionalLight(0x38bdf8, 0.75);
     rimBackLight.position.set(-60, 80, -140);
@@ -1725,7 +1745,7 @@ class PlanetMaxiController {
 
     // 2. Build 3D Vault Architecture (Floor Deck, Extraction Chute, Neon Rails, Glass Pillars)
     this.vaultStructGroup = new THREE.Group();
-    this.clawScene.add(this.vaultStructGroup);
+    this.clawWorldGroup.add(this.vaultStructGroup);
 
     const b = this.tankBounds;
 
@@ -1813,7 +1833,7 @@ class PlanetMaxiController {
     // 3. Moving Z-Axis Gantry Bridge (Slides Left/Right along X)
     this.gantryBridgeGroup = new THREE.Group();
     this.gantryBridgeGroup.position.set(this.claw.x, b.railY, 0);
-    this.clawScene.add(this.gantryBridgeGroup);
+    this.clawWorldGroup.add(this.gantryBridgeGroup);
 
     const zRailGeo = new THREE.CylinderGeometry(1.5, 1.5, pitD + 6, 16);
     zRailGeo.rotateX(Math.PI * 0.5);
@@ -1826,7 +1846,7 @@ class PlanetMaxiController {
     // 4. Moving 3D Trolley Carriage (Slides Front/Back along Z on the Bridge)
     this.trolleyGroup = new THREE.Group();
     this.trolleyGroup.position.set(this.claw.x, b.railY, this.claw.z);
-    this.clawScene.add(this.trolleyGroup);
+    this.clawWorldGroup.add(this.trolleyGroup);
 
     const carriageGeo = new THREE.BoxGeometry(16, 7, 16);
     const darkSteelMat = new THREE.MeshStandardMaterial({
@@ -1844,7 +1864,7 @@ class PlanetMaxiController {
     // 5. Braided Steel Hoist Cable & Vertical Volumetric Laser Beam
     const cableGeo = new THREE.CylinderGeometry(0.65, 0.65, 1, 12);
     this.cableMesh = new THREE.Mesh(cableGeo, chromeMat);
-    this.clawScene.add(this.cableMesh);
+    this.clawWorldGroup.add(this.cableMesh);
 
     // Vertical Laser Aiming Line + Floor Target Reticle Ring
     const laserGeo = new THREE.CylinderGeometry(0.32, 0.32, 120, 8);
@@ -1854,7 +1874,7 @@ class PlanetMaxiController {
       opacity: 0.55
     });
     this.laserBeamMesh = new THREE.Mesh(laserGeo, this.laserMat);
-    this.clawScene.add(this.laserBeamMesh);
+    this.clawWorldGroup.add(this.laserBeamMesh);
 
     const reticleRingGeo = new THREE.RingGeometry(8.5, 11.2, 32);
     reticleRingGeo.rotateX(-Math.PI * 0.5);
@@ -1866,12 +1886,12 @@ class PlanetMaxiController {
     });
     this.floorReticleMesh = new THREE.Mesh(reticleRingGeo, this.reticleMat);
     this.floorReticleMesh.position.y = b.floorY + 0.4;
-    this.clawScene.add(this.floorReticleMesh);
+    this.clawWorldGroup.add(this.floorReticleMesh);
 
     // 6. Articulated 3-Prong Hydraulic 3D Claw Head (120-degree radial symmetry)
     this.clawHeadGroup = new THREE.Group();
     this.clawHeadGroup.position.set(this.claw.x, this.claw.y, this.claw.z);
-    this.clawScene.add(this.clawHeadGroup);
+    this.clawWorldGroup.add(this.clawHeadGroup);
 
     // Motor Hub Cylinder
     const hubCyl = new THREE.Mesh(
@@ -1929,7 +1949,7 @@ class PlanetMaxiController {
 
     // Group to hold all 3D Maxi Collectible Standees inside the pit
     this.pileGroup = new THREE.Group();
-    this.clawScene.add(this.pileGroup);
+    this.clawWorldGroup.add(this.pileGroup);
 
     // Shared Geometry for 3D Collector Standee Bases
     this.pedestalCylGeo = new THREE.CylinderGeometry(9.5, 10.6, 3.2, 28);
@@ -2555,8 +2575,623 @@ class PlanetMaxiController {
     }, 'image/png');
   }
 
+  /* -----------------------------------------------------------------------
+     B2. 3D MAXI WORLD ORDER COUNCIL TABLE & OBSIDIAN MONOLITH CORE
+     ----------------------------------------------------------------------- */
+  initThreeCouncilTable() {
+    if (!this.clawScene || typeof THREE === 'undefined') return;
+
+    this.councilWorldGroup = new THREE.Group();
+    this.clawScene.add(this.councilWorldGroup);
+
+    const floorY = -44;
+    this.councilFloorY = floorY;
+
+    // 1. Brutalist War Room Outer Floor & Radial Concentric Rings
+    const roomFloorGeo = new THREE.CylinderGeometry(240, 240, 4, 64);
+    const roomFloorMat = new THREE.MeshStandardMaterial({
+      color: 0x050608,
+      roughness: 0.42,
+      metalness: 0.78
+    });
+    const roomFloorMesh = new THREE.Mesh(roomFloorGeo, roomFloorMat);
+    roomFloorMesh.position.y = floorY - 2;
+    this.councilWorldGroup.add(roomFloorMesh);
+
+    // Subtle Architectural Concentric Brass/Steel Floor Rings
+    [138, 175, 215].forEach((rad, idx) => {
+      const rGeo = new THREE.RingGeometry(rad - 0.5, rad + 0.5, 96);
+      rGeo.rotateX(-Math.PI * 0.5);
+      const rMat = new THREE.MeshBasicMaterial({
+        color: idx === 0 ? 0xe5b869 : 0x334155,
+        side: THREE.DoubleSide,
+        transparent: true,
+        opacity: idx === 0 ? 0.35 : 0.22
+      });
+      const rMesh = new THREE.Mesh(rGeo, rMat);
+      rMesh.position.y = floorY + 0.2;
+      this.councilWorldGroup.add(rMesh);
+    });
+
+    // 2. Massive Circular Black-Obsidian High Council Table (Outer R=96, Inner Pit R=40)
+    const tableGroup = new THREE.Group();
+    this.councilWorldGroup.add(tableGroup);
+
+    // Outer Obsidian Table Cylinder Block
+    const tableOuterGeo = new THREE.CylinderGeometry(96, 91, 14, 64, 1, false);
+    const obsidianTableMat = new THREE.MeshStandardMaterial({
+      color: 0x0a0c10,
+      roughness: 0.16,
+      metalness: 0.92
+    });
+    const tableOuterMesh = new THREE.Mesh(tableOuterGeo, obsidianTableMat);
+    tableOuterMesh.position.y = floorY + 14;
+    tableGroup.add(tableOuterMesh);
+
+    // Brushed Gold / Titanium Bezel Inlay Ring around the Table Perimeter
+    const outerRimGeo = new THREE.RingGeometry(93.8, 96.2, 64);
+    outerRimGeo.rotateX(-Math.PI * 0.5);
+    const goldInlayMat = new THREE.MeshBasicMaterial({
+      color: 0xe5b869,
+      side: THREE.DoubleSide,
+      transparent: true,
+      opacity: 0.75
+    });
+    const outerRimMesh = new THREE.Mesh(outerRimGeo, goldInlayMat);
+    outerRimMesh.position.y = floorY + 21.15;
+    tableGroup.add(outerRimMesh);
+
+    const innerPitRimGeo = new THREE.RingGeometry(40.0, 42.2, 64);
+    innerPitRimGeo.rotateX(-Math.PI * 0.5);
+    const innerPitRimMesh = new THREE.Mesh(innerPitRimGeo, goldInlayMat);
+    innerPitRimMesh.position.y = floorY + 21.2;
+    tableGroup.add(innerPitRimMesh);
+
+    // 12 Radial Sector Divider Lines & Illuminated Dossier Slabs on the Table
+    for (let s = 0; s < 12; s++) {
+      const ang = (s * Math.PI * 2) / 12;
+      const lineAng = ang + Math.PI / 12;
+
+      // Radial sector line
+      const lineGeo = new THREE.PlaneGeometry(0.6, 51);
+      lineGeo.rotateX(-Math.PI * 0.5);
+      const lineMat = new THREE.MeshBasicMaterial({
+        color: 0x334155,
+        transparent: true,
+        opacity: 0.45,
+        side: THREE.DoubleSide
+      });
+      const lineMesh = new THREE.Mesh(lineGeo, lineMat);
+      lineMesh.position.set(Math.sin(lineAng) * 67, floorY + 21.18, Math.cos(lineAng) * 67);
+      lineMesh.rotation.y = lineAng;
+      tableGroup.add(lineMesh);
+    }
+
+    // 3. Recessed Bottomless Light Well Pit in the Center of the Table (Option 2)
+    const wellDarkCapGeo = new THREE.CircleGeometry(40, 64);
+    wellDarkCapGeo.rotateX(-Math.PI * 0.5);
+    const wellDarkCapMat = new THREE.MeshBasicMaterial({ color: 0x010103 });
+    const wellDarkCap = new THREE.Mesh(wellDarkCapGeo, wellDarkCapMat);
+    wellDarkCap.position.y = floorY + 21.12;
+    tableGroup.add(wellDarkCap);
+
+    // Concentric Descending Infinity Light Rings inside the Bottomless Well
+    this.wellRings = [];
+    for (let d = 0; d < 7; d++) {
+      const ringRadius = 38.5 - d * 3.8;
+      const wRingGeo = new THREE.RingGeometry(ringRadius - 0.55, ringRadius, 64);
+      wRingGeo.rotateX(-Math.PI * 0.5);
+      const wRingMat = new THREE.MeshBasicMaterial({
+        color: d % 2 === 0 ? 0x10b981 : 0xe5b869,
+        side: THREE.DoubleSide,
+        transparent: true,
+        opacity: Math.max(0.12, 0.72 - d * 0.085)
+      });
+      const wRing = new THREE.Mesh(wRingGeo, wRingMat);
+      wRing.position.y = floorY + 21.14 - d * 0.01;
+      tableGroup.add(wRing);
+      this.wellRings.push(wRing);
+    }
+
+    // Engraved Sovereign Seal Star / Octagram Ring floating over the Well
+    this.sovereignSealGroup = new THREE.Group();
+    this.sovereignSealGroup.position.set(0, floorY + 22.2, 0);
+    this.councilWorldGroup.add(this.sovereignSealGroup);
+
+    for (let k = 0; k < 2; k++) {
+      const sqGeo = new THREE.RingGeometry(27, 28.4, 4);
+      sqGeo.rotateX(-Math.PI * 0.5);
+      sqGeo.rotateY((k * Math.PI) / 4);
+      const sqMat = new THREE.MeshBasicMaterial({
+        color: k === 0 ? 0xe5b869 : 0x10b981,
+        side: THREE.DoubleSide,
+        transparent: true,
+        opacity: 0.65
+      });
+      this.sovereignSealGroup.add(new THREE.Mesh(sqGeo, sqMat));
+    }
+
+    // 4. Rotating 3D $MAXI Obsidian Monolith Floating Over the Light Well
+    this.monolithGroup = new THREE.Group();
+    this.monolithGroup.position.set(0, floorY + 46, 0);
+    this.councilWorldGroup.add(this.monolithGroup);
+
+    // Sculpted Obsidian Monolith Slab (2001 Space Odyssey / Brutalist Sovereign Slab)
+    const monolithGeo = new THREE.BoxGeometry(16, 40, 5.2);
+    const monolithMat = new THREE.MeshStandardMaterial({
+      color: 0x07080c,
+      roughness: 0.12,
+      metalness: 0.96
+    });
+    const monolithSlab = new THREE.Mesh(monolithGeo, monolithMat);
+    this.monolithGroup.add(monolithSlab);
+
+    // Glowing Gold & Emerald Wireframe Bezel around the Obsidian Monolith
+    const monoEdgeGeo = new THREE.EdgesGeometry(new THREE.BoxGeometry(16.3, 40.3, 5.4));
+    const monoEdgeMat = new THREE.LineBasicMaterial({
+      color: 0xe5b869,
+      transparent: true,
+      opacity: 0.85
+    });
+    const monoEdges = new THREE.LineSegments(monoEdgeGeo, monoEdgeMat);
+    this.monolithGroup.add(monoEdges);
+
+    // Front & Back Embossed $MAXI Sovereign Crest on the Obsidian Monolith
+    const ogTex = this.getCitizenThreeTexture(MAXI_CITIZENS[0].src);
+    const crestGeo = new THREE.PlaneGeometry(13.5, 13.5);
+    const crestMat = new THREE.MeshBasicMaterial({
+      map: ogTex,
+      transparent: true,
+      alphaTest: 0.06,
+      side: THREE.DoubleSide
+    });
+    const crestFront = new THREE.Mesh(crestGeo, crestMat);
+    crestFront.position.set(0, 3, 2.8);
+    const crestBack = new THREE.Mesh(crestGeo, crestMat);
+    crestBack.position.set(0, 3, -2.8);
+    crestBack.rotation.y = Math.PI;
+    this.monolithGroup.add(crestFront, crestBack);
+
+    // Orbiting Gyroscopic Sovereign Seal Ring around the Obsidian Monolith
+    const gyroRingGeo = new THREE.TorusGeometry(23, 0.45, 16, 80);
+    const gyroRingMat = new THREE.MeshBasicMaterial({
+      color: 0xe5b869,
+      transparent: true,
+      opacity: 0.72
+    });
+    this.monolithGyroRing = new THREE.Mesh(gyroRingGeo, gyroRingMat);
+    this.monolithGyroRing.rotation.x = Math.PI * 0.35;
+    this.monolithGroup.add(this.monolithGyroRing);
+
+    const gyroRing2Geo = new THREE.TorusGeometry(26, 0.35, 16, 80);
+    const gyroRing2Mat = new THREE.MeshBasicMaterial({
+      color: 0x10b981,
+      transparent: true,
+      opacity: 0.48
+    });
+    this.monolithGyroRing2 = new THREE.Mesh(gyroRing2Geo, gyroRing2Mat);
+    this.monolithGyroRing2.rotation.y = Math.PI * 0.25;
+    this.monolithGroup.add(this.monolithGyroRing2);
+
+    // 5. Iconic Suspended Dr. Strangelove Overhead Architectural Halo Light Ring
+    this.haloChandelierGroup = new THREE.Group();
+    this.haloChandelierGroup.position.set(0, floorY + 114, 0);
+    this.councilWorldGroup.add(this.haloChandelierGroup);
+
+    const haloOuterGeo = new THREE.TorusGeometry(84, 2.2, 20, 96);
+    haloOuterGeo.rotateX(Math.PI * 0.5);
+    const haloHousingMat = new THREE.MeshStandardMaterial({
+      color: 0x161922,
+      roughness: 0.28,
+      metalness: 0.9
+    });
+    this.haloChandelierGroup.add(new THREE.Mesh(haloOuterGeo, haloHousingMat));
+
+    const haloGlowGeo = new THREE.TorusGeometry(84, 1.35, 16, 96);
+    haloGlowGeo.rotateX(Math.PI * 0.5);
+    const haloGlowMat = new THREE.MeshBasicMaterial({
+      color: 0xf8fafc
+    });
+    const haloGlowMesh = new THREE.Mesh(haloGlowGeo, haloGlowMat);
+    haloGlowMesh.position.y = -1.1;
+    this.haloChandelierGroup.add(haloGlowMesh);
+
+    // 4 Suspension Tension Cables holding the Halo Light Ring
+    for (let c = 0; c < 4; c++) {
+      const cAng = (c * Math.PI) / 2 + Math.PI / 4;
+      const rodGeo = new THREE.CylinderGeometry(0.4, 0.4, 70, 8);
+      const rodMesh = new THREE.Mesh(rodGeo, haloHousingMat);
+      rodMesh.position.set(Math.sin(cAng) * 84, 35, Math.cos(cAng) * 84);
+      this.haloChandelierGroup.add(rodMesh);
+    }
+
+    // Vertical Light Well Core PointLight & Active Seat Inspection Spotlight
+    this.monolithCoreLight = new THREE.PointLight(0x10b981, 2.2, 240);
+    this.monolithCoreLight.position.set(0, floorY + 32, 0);
+    this.councilWorldGroup.add(this.monolithCoreLight);
+
+    this.seatInspectionLight = new THREE.PointLight(0xf3d285, 2.4, 160);
+    this.seatInspectionLight.position.set(0, floorY + 55, 118);
+    this.councilWorldGroup.add(this.seatInspectionLight);
+
+    // Group holding the 12 Seated Council Members & High-Back Monolith Thrones
+    this.councilSeatsGroup = new THREE.Group();
+    this.councilWorldGroup.add(this.councilSeatsGroup);
+  }
+
+  createCouncilSeatCaptionTexture(romanNum, cit) {
+    const cvs = document.createElement('canvas');
+    cvs.width = 256;
+    cvs.height = 96;
+    const ctx = cvs.getContext('2d');
+
+    ctx.fillStyle = '#07080C';
+    ctx.fillRect(0, 0, 256, 96);
+    ctx.strokeStyle = cit.isOg ? '#F3D285' : cit.isMythic ? '#10B981' : '#475569';
+    ctx.lineWidth = 4;
+    ctx.strokeRect(3, 3, 250, 90);
+
+    ctx.fillStyle = cit.isOg ? '#F3D285' : '#10B981';
+    ctx.font = '700 18px "JetBrains Mono", monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText(`SEAT ${romanNum} // ${cit.rank}`, 128, 34);
+
+    ctx.fillStyle = '#FFFFFF';
+    ctx.font = '800 22px "Inter", sans-serif';
+    ctx.fillText(cit.name.replace(' MAXI', '').slice(0, 16), 128, 70);
+
+    const tex = new THREE.CanvasTexture(cvs);
+    tex.encoding = THREE.sRGBEncoding;
+    return tex;
+  }
+
+  populateCouncilSeats(batchIdx = 0, playSfx = true) {
+    if (!this.councilSeatsGroup) return;
+
+    while (this.councilSeatsGroup.children.length > 0) {
+      this.councilSeatsGroup.remove(this.councilSeatsGroup.children[0]);
+    }
+
+    const totalBatches = Math.ceil(MAXI_CITIZENS.length / 12);
+    this.councilBatchIndex = ((batchIdx % totalBatches) + totalBatches) % totalBatches;
+
+    const romans = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII'];
+    const seatRadius = 120;
+    const plaqueRadius = 74;
+    const floorY = this.councilFloorY || -44;
+
+    this.councilSeats = [];
+
+    for (let s = 0; s < 12; s++) {
+      // Seat I in Batch 0 is always #001 OG MAXI; other batches cycle all 100 citizens
+      const citIdx = (this.councilBatchIndex * 12 + s) % MAXI_CITIZENS.length;
+      const cit = MAXI_CITIZENS[citIdx];
+      const angle = (s * Math.PI * 2) / 12; // Seat 0 is at angle 0 (front +Z)
+
+      const seatNode = new THREE.Group();
+      this.councilSeatsGroup.add(seatNode);
+
+      // 1. High-Back Brutalist Monolith Throne Chair behind the Maxi
+      const throneDist = seatRadius + 11;
+      const isOg = Boolean(cit.isOg);
+      const isMythic = Boolean(cit.isMythic);
+
+      const throneBackGeo = new THREE.BoxGeometry(24, isOg ? 52 : 44, 3.2);
+      const throneMat = new THREE.MeshStandardMaterial({
+        color: isOg ? 0x1a150b : 0x0c0e14,
+        roughness: 0.25,
+        metalness: 0.88
+      });
+      const throneBack = new THREE.Mesh(throneBackGeo, throneMat);
+      throneBack.position.set(
+        Math.sin(angle) * throneDist,
+        floorY + (isOg ? 26 : 22),
+        Math.cos(angle) * throneDist
+      );
+      throneBack.rotation.y = angle;
+      seatNode.add(throneBack);
+
+      // Brushed Metallic Trim Edge on the Throne Monolith
+      const throneEdgeGeo = new THREE.EdgesGeometry(throneBackGeo);
+      const throneEdgeMat = new THREE.LineBasicMaterial({
+        color: isOg ? 0xf3d285 : isMythic ? 0x10b981 : 0x334155,
+        transparent: true,
+        opacity: isOg ? 0.9 : 0.55
+      });
+      const throneEdges = new THREE.LineSegments(throneEdgeGeo, throneEdgeMat);
+      throneBack.add(throneEdges);
+
+      // 2. 3D Maxi Cutout Seated at the High Table
+      const standeeScale = isOg ? 1.32 : isMythic ? 1.18 : 1.12;
+      const standeeMesh = this.create3DMaxiStandeeMesh(cit, standeeScale);
+      standeeMesh.position.set(
+        Math.sin(angle) * seatRadius,
+        floorY + 18,
+        Math.cos(angle) * seatRadius
+      );
+      standeeMesh.rotation.y = angle;
+      seatNode.add(standeeMesh);
+
+      // 3. Illuminated Dossier Plaque on the Black Obsidian Table in front of Seat
+      const plaqueTex = this.createCouncilSeatCaptionTexture(romans[s], cit);
+      const plaqueGeo = new THREE.PlaneGeometry(18, 6.8);
+      plaqueGeo.rotateX(-Math.PI * 0.5);
+      const plaqueMat = new THREE.MeshBasicMaterial({
+        map: plaqueTex,
+        side: THREE.DoubleSide
+      });
+      const plaqueMesh = new THREE.Mesh(plaqueGeo, plaqueMat);
+      plaqueMesh.position.set(
+        Math.sin(angle) * plaqueRadius,
+        floorY + 21.35,
+        Math.cos(angle) * plaqueRadius
+      );
+      plaqueMesh.rotation.y = angle;
+      seatNode.add(plaqueMesh);
+
+      // 4. Spotlight Floor Halo Ring under the Active Seat
+      const ringGeo = new THREE.RingGeometry(13.5, 15.8, 32);
+      ringGeo.rotateX(-Math.PI * 0.5);
+      const ringMat = new THREE.MeshBasicMaterial({
+        color: isOg ? 0xf3d285 : 0x10b981,
+        side: THREE.DoubleSide,
+        transparent: true,
+        opacity: s === this.activeSeatSlot ? 0.85 : 0.15
+      });
+      const ringMesh = new THREE.Mesh(ringGeo, ringMat);
+      ringMesh.position.set(
+        Math.sin(angle) * seatRadius,
+        floorY + 0.5,
+        Math.cos(angle) * seatRadius
+      );
+      seatNode.add(ringMesh);
+
+      this.councilSeats.push({
+        slotIndex: s,
+        roman: romans[s],
+        citizenIndex: citIdx,
+        cit,
+        angle,
+        standeeMesh,
+        throneBack,
+        throneEdgeMat,
+        plaqueMesh,
+        ringMesh,
+        ringMat
+      });
+    }
+
+    // Update Delegation Header Meta
+    const startNum = String(this.councilBatchIndex * 12 + 1).padStart(3, '0');
+    const endNum = String(Math.min(100, this.councilBatchIndex * 12 + 12)).padStart(3, '0');
+    const metaVal = document.getElementById('metaPrimaryVal');
+    if (metaVal && this.stage3DMode === 'COUNCIL') {
+      metaVal.textContent = `TABLE ${romans[this.councilBatchIndex] || 'I'} (#${startNum}–#${endNum})`;
+    }
+
+    this.focusCouncilSeatSlot(0, false);
+
+    if (playSfx) {
+      sfx.playBeep(420, 0.08, 'triangle');
+      setTimeout(() => sfx.playBeep(680, 0.1, 'triangle'), 70);
+    }
+  }
+
+  focusCouncilSeatSlot(slotIndex, playSfx = true) {
+    if (!this.councilSeats.length) return;
+    const normalized = ((slotIndex % 12) + 12) % 12;
+    this.activeSeatSlot = normalized;
+    const seat = this.councilSeats[normalized];
+    if (!seat) return;
+
+    this.activeCitizenIndex = seat.citizenIndex;
+
+    // Shortest angular path for smooth 360° camera orbit around the Council Table
+    const targetAng = seat.angle;
+    const diff = Math.atan2(
+      Math.sin(targetAng - this.targetCouncilOrbitAngle),
+      Math.cos(targetAng - this.targetCouncilOrbitAngle)
+    );
+    this.targetCouncilOrbitAngle += diff;
+
+    // Highlight active seat halo & dim others
+    this.councilSeats.forEach((s, idx) => {
+      const isFocused = idx === normalized;
+      if (s.ringMat) {
+        s.ringMat.opacity = isFocused ? 0.9 : 0.14;
+      }
+      if (s.throneEdgeMat) {
+        s.throneEdgeMat.opacity = isFocused ? 1.0 : 0.4;
+      }
+    });
+
+    // Update Floating Council Seat HUD Plaque & Top Bar
+    const seatNumEl = document.getElementById('councilHudSeatNum');
+    const rankEl = document.getElementById('councilHudRank');
+    const nameEl = document.getElementById('councilHudName');
+    const roleEl = document.getElementById('councilHudRole');
+    const laserEl = document.getElementById('clawLaserReadout');
+
+    if (seatNumEl) seatNumEl.textContent = `SEAT ${seat.roman} OF XII`;
+    if (rankEl) rankEl.textContent = `${seat.cit.rank} / 100`;
+    if (nameEl) nameEl.textContent = seat.cit.name;
+    if (roleEl) roleEl.textContent = seat.cit.title.replace(/^[👑★]\s*/, '');
+    if (laserEl && this.stage3DMode === 'COUNCIL') {
+      laserEl.textContent = `SEAT ${seat.roman} // ${seat.cit.rank} ${seat.cit.name}`;
+    }
+
+    this.updateSideHudReadouts(seat.cit);
+    if (playSfx) {
+      sfx.playBeep(seat.cit.isOg ? 920 : 660, 0.06, 'triangle');
+    }
+  }
+
+  stepCouncilSeat(delta) {
+    this.focusCouncilSeatSlot(this.activeSeatSlot + delta, true);
+  }
+
+  cycleCouncilDelegation() {
+    this.populateCouncilSeats(this.councilBatchIndex + 1, true);
+    this.updateMarqueeStatus('COUNCIL ROTATED // NEXT 12 SOVEREIGN OPERATIVES SEATED');
+  }
+
+  summonActiveCouncilSeat() {
+    const seat = this.councilSeats[this.activeSeatSlot];
+    const citIdx = seat ? seat.citizenIndex : this.activeCitizenIndex;
+    this.openCaughtCardForCitizen(citIdx, true);
+  }
+
+  setStage3DMode(mode, playSfx = true) {
+    this.stage3DMode = mode === 'CLAW' ? 'CLAW' : 'COUNCIL';
+    const isCouncil = this.stage3DMode === 'COUNCIL';
+
+    if (this.councilWorldGroup) this.councilWorldGroup.visible = isCouncil;
+    if (this.clawWorldGroup) this.clawWorldGroup.visible = !isCouncil;
+
+    const councilHud = document.getElementById('councilSeatHud');
+    if (councilHud) councilHud.classList.toggle('hidden', !isCouncil);
+
+    const modeCouncilBtn = document.getElementById('modeCouncilBtn');
+    const modeClawBtn = document.getElementById('modeClawBtn');
+    if (modeCouncilBtn) modeCouncilBtn.classList.toggle('active', isCouncil);
+    if (modeClawBtn) modeClawBtn.classList.toggle('active', !isCouncil);
+
+    const kickerEl = document.getElementById('stageKickerLabel');
+    const metaKeyEl = document.getElementById('metaPrimaryKey');
+    const metaValEl = document.getElementById('metaPrimaryVal');
+    const modeTagEl = document.getElementById('clawModeTag');
+    const joltBtn = document.getElementById('clawJoltBtn');
+    const deckJoltBtn = document.getElementById('clawDeckJoltBtn');
+    const camBtn = document.getElementById('clawCamBtn');
+    const snapOgBtn = document.getElementById('snapOgBtn');
+    const aimOgBtn = document.getElementById('clawAimOgBtn');
+    const shuffleBtn = document.getElementById('clawShuffleBtn');
+    const dropLbl = document.getElementById('clawDropBtnLabel');
+    const leftLbl = document.getElementById('deckLeftLabel');
+    const rightLbl = document.getElementById('deckRightLabel');
+    const upLbl = document.getElementById('deckUpLabel');
+    const downLbl = document.getElementById('deckDownLabel');
+
+    if (isCouncil) {
+      if (kickerEl) kickerEl.textContent = '01 / HIGH TABLE WAR ROOM · 3D WEBGL';
+      if (metaKeyEl) metaKeyEl.textContent = 'COUNCIL DELEGATION';
+      const startNum = String(this.councilBatchIndex * 12 + 1).padStart(3, '0');
+      const endNum = String(Math.min(100, this.councilBatchIndex * 12 + 12)).padStart(3, '0');
+      if (metaValEl) metaValEl.textContent = `SEATS #${startNum}–#${endNum}`;
+      if (modeTagEl) modeTagEl.textContent = 'CHAMBER // 12 SOVEREIGN SEATS · OBSIDIAN MONOLITH CORE';
+      this.updateMarqueeStatus('DRAG OR A/D TO ORBIT COUNCIL TABLE · SPACE TO SUMMON SEAT');
+      if (joltBtn) joltBtn.textContent = 'NEXT 12 SEATS ↻';
+      if (deckJoltBtn) deckJoltBtn.textContent = 'NEXT 12 ↻';
+      if (camBtn) camBtn.textContent = `CAM: ${this.councilCamMode || 'TABLE'}`;
+      if (snapOgBtn) snapOgBtn.textContent = 'SEAT I (#001)';
+      if (aimOgBtn) aimOgBtn.textContent = 'SEAT I (#001)';
+      if (shuffleBtn) shuffleBtn.textContent = 'SWITCH TO CLAW';
+      if (dropLbl) dropLbl.textContent = 'SUMMON COUNCIL SEAT & CLAIM PFP';
+      if (leftLbl) leftLbl.textContent = 'PREV SEAT';
+      if (rightLbl) rightLbl.textContent = 'NEXT SEAT';
+      if (upLbl) upLbl.textContent = 'ZOOM IN';
+      if (downLbl) downLbl.textContent = 'WIDE VIEW';
+      this.focusCouncilSeatSlot(this.activeSeatSlot, false);
+    } else {
+      if (kickerEl) kickerEl.textContent = '01 / 3D EXTRACTION UNIT · WEBGL';
+      if (metaKeyEl) metaKeyEl.textContent = 'EDITION';
+      if (metaValEl) metaValEl.textContent = '100 1-OF-1 CUTOUTS';
+      if (modeTagEl) modeTagEl.textContent = 'GANTRY // X-Y-Z 3D PHYSICS';
+      this.updateMarqueeStatus('DRAG OR WASD TO AIM · SPACE TO DROP CLAW');
+      if (joltBtn) joltBtn.textContent = 'JOLT TANK';
+      if (deckJoltBtn) deckJoltBtn.textContent = 'JOLT';
+      if (camBtn) camBtn.textContent = `CAM: ${this.cameraViewMode || 'FRONT'}`;
+      if (snapOgBtn) snapOgBtn.textContent = 'LOCK #001';
+      if (aimOgBtn) aimOgBtn.textContent = 'TARGET #001';
+      if (shuffleBtn) shuffleBtn.textContent = 'RESTOCK';
+      if (dropLbl) dropLbl.textContent = 'DROP CLAW & CATCH MAXI';
+      if (leftLbl) leftLbl.textContent = 'LEFT';
+      if (rightLbl) rightLbl.textContent = 'RIGHT';
+      if (upLbl) upLbl.textContent = 'BACK';
+      if (downLbl) downLbl.textContent = 'FRONT';
+    }
+
+    if (playSfx) {
+      sfx.playBeep(isCouncil ? 680 : 820, 0.08, 'triangle');
+    }
+  }
+
+  update3DCouncilScene(dt, timeSec) {
+    if (!this.councilWorldGroup) return;
+
+    const floorY = this.councilFloorY || -44;
+
+    // 1. Float & Rotate the Central $MAXI Obsidian Monolith & Gyroscopic Rings
+    if (this.monolithGroup) {
+      this.monolithGroup.rotation.y = timeSec * 0.45;
+      this.monolithGroup.position.y = floorY + 46 + Math.sin(timeSec * 1.8) * 2.4;
+    }
+    if (this.monolithGyroRing) {
+      this.monolithGyroRing.rotation.z = timeSec * 0.9;
+      this.monolithGyroRing.rotation.x = Math.PI * 0.35 + Math.sin(timeSec * 0.7) * 0.25;
+    }
+    if (this.monolithGyroRing2) {
+      this.monolithGyroRing2.rotation.x = -timeSec * 0.75;
+      this.monolithGyroRing2.rotation.z = Math.cos(timeSec * 0.6) * 0.35;
+    }
+    if (this.sovereignSealGroup) {
+      this.sovereignSealGroup.rotation.y = -timeSec * 0.22;
+    }
+
+    // Pulse the Bottomless Light Well Rings
+    if (this.wellRings) {
+      this.wellRings.forEach((ring, idx) => {
+        const pulse = 0.35 + 0.3 * Math.sin(timeSec * 2.6 - idx * 0.55);
+        ring.material.opacity = Math.max(0.1, pulse - idx * 0.04);
+      });
+    }
+
+    // 2. Smoothly Interpolate Camera Orbit Around the Circular Table
+    this.councilOrbitAngle += (this.targetCouncilOrbitAngle - this.councilOrbitAngle) * Math.min(1, dt * 7.5);
+    this.councilZoomDist += (this.targetCouncilZoomDist - this.councilZoomDist) * Math.min(1, dt * 7.5);
+    this.councilCamHeight += (this.targetCouncilCamHeight - this.councilCamHeight) * Math.min(1, dt * 7.5);
+
+    // Move the Overhead Inspection Spotlight above the currently focused Council Seat
+    const seat = this.councilSeats[this.activeSeatSlot];
+    if (seat && this.seatInspectionLight) {
+      const targetSpotX = Math.sin(seat.angle) * 116;
+      const targetSpotZ = Math.cos(seat.angle) * 116;
+      this.seatInspectionLight.position.x += (targetSpotX - this.seatInspectionLight.position.x) * 0.14;
+      this.seatInspectionLight.position.z += (targetSpotZ - this.seatInspectionLight.position.z) * 0.14;
+    }
+
+    // Subtle breathing / floating motion on the active Council Seat standee
+    this.councilSeats.forEach((s, idx) => {
+      if (!s.standeeMesh) return;
+      const isFocused = idx === this.activeSeatSlot;
+      const targetY = floorY + (isFocused ? 21.5 + Math.sin(timeSec * 3.0) * 1.1 : 17.5);
+      s.standeeMesh.position.y += (targetY - s.standeeMesh.position.y) * 0.15;
+    });
+  }
+
+  render3DCouncilScene() {
+    if (!this.clawRenderer || !this.clawScene || !this.clawCamera) return;
+
+    const ang = this.councilOrbitAngle;
+    const dist = this.councilZoomDist;
+    const camX = Math.sin(ang) * dist;
+    const camZ = Math.cos(ang) * dist;
+    const camY = this.councilCamHeight;
+
+    this.clawCamera.position.set(camX, camY, camZ);
+    // Look across the active Council Seat toward the central rotating Obsidian Monolith
+    const lookX = Math.sin(ang) * 42;
+    const lookZ = Math.cos(ang) * 42;
+    this.clawCamera.lookAt(lookX, -14, lookZ);
+
+    this.clawRenderer.render(this.clawScene, this.clawCamera);
+  }
+
   joltClawTank() {
-    const b = this.tankBounds;
+    if (this.stage3DMode === 'COUNCIL') {
+      this.cycleCouncilDelegation();
+      return;
+    }
     this.pileItems.forEach((it) => {
       if (it.extracted || it.inChute || it === this.claw.grabbedItem) return;
       it.vy = 75 + Math.random() * 65;
@@ -2574,6 +3209,30 @@ class PlanetMaxiController {
   }
 
   cycle3DCameraView() {
+    if (this.stage3DMode === 'COUNCIL') {
+      const cModes = ['TABLE', 'THRONE', 'OVERHEAD'];
+      const cur = cModes.indexOf(this.councilCamMode || 'TABLE');
+      this.councilCamMode = cModes[(cur + 1) % cModes.length];
+
+      if (this.councilCamMode === 'TABLE') {
+        this.targetCouncilZoomDist = 204;
+        this.targetCouncilCamHeight = 52;
+      } else if (this.councilCamMode === 'THRONE') {
+        this.targetCouncilZoomDist = 166;
+        this.targetCouncilCamHeight = 20;
+      } else if (this.councilCamMode === 'OVERHEAD') {
+        this.targetCouncilZoomDist = 235;
+        this.targetCouncilCamHeight = 148;
+      }
+
+      const camBtn = document.getElementById('clawCamBtn');
+      const deckCamBtn = document.getElementById('clawDeckCamBtn');
+      if (camBtn) camBtn.textContent = `CAM: ${this.councilCamMode}`;
+      if (deckCamBtn) deckCamBtn.textContent = `CAM: ${this.councilCamMode}`;
+      sfx.playBeep(720, 0.07, 'triangle');
+      return;
+    }
+
     const modes = ['FRONT', 'SNIPER', 'ISO'];
     const currentIdx = modes.indexOf(this.cameraViewMode || 'FRONT');
     this.cameraViewMode = modes[(currentIdx + 1) % modes.length];
@@ -2621,6 +3280,19 @@ class PlanetMaxiController {
     this.activeCitizenIndex = (idx + MAXI_CITIZENS.length) % MAXI_CITIZENS.length;
     const cit = MAXI_CITIZENS[this.activeCitizenIndex];
     sfx.playBeep(cit.isOg ? 980 : 760, 0.08, 'triangle');
+
+    if (this.stage3DMode === 'COUNCIL') {
+      const targetBatch = Math.floor(this.activeCitizenIndex / 12);
+      const targetSlot = this.activeCitizenIndex % 12;
+      if (targetBatch !== this.councilBatchIndex) {
+        this.populateCouncilSeats(targetBatch, false);
+      }
+      this.focusCouncilSeatSlot(targetSlot, false);
+      if (triggerDrop) {
+        setTimeout(() => this.summonActiveCouncilSeat(), 240);
+      }
+      return;
+    }
 
     let targetItem = this.pileItems.find(
       (it) => it.citizenIndex === this.activeCitizenIndex && !it.extracted
@@ -2683,6 +3355,11 @@ class PlanetMaxiController {
     const overlay = document.getElementById('pullRevealOverlay');
     if (overlay && !overlay.classList.contains('hidden')) {
       overlay.classList.add('hidden');
+    }
+
+    if (this.stage3DMode === 'COUNCIL') {
+      this.summonActiveCouncilSeat();
+      return;
     }
 
     if (this.claw.state !== 'IDLE') return;
@@ -3371,7 +4048,31 @@ class PlanetMaxiController {
       if (btn) btn.addEventListener('click', () => this.spawnClawPile(true));
     });
 
-    // 3D Claw Machine Control Deck Buttons (X & Z Gantry + Drop Trigger)
+    // 3D Stage Mode Switcher (The Council Table vs 3D Claw Machine)
+    const modeCouncilBtn = document.getElementById('modeCouncilBtn');
+    const modeClawBtn = document.getElementById('modeClawBtn');
+    if (modeCouncilBtn) {
+      modeCouncilBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        this.setStage3DMode('COUNCIL', true);
+      });
+    }
+    if (modeClawBtn) {
+      modeClawBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        this.setStage3DMode('CLAW', true);
+      });
+    }
+
+    const councilHudSummonBtn = document.getElementById('councilHudSummonBtn');
+    if (councilHudSummonBtn) {
+      councilHudSummonBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        this.summonActiveCouncilSeat();
+      });
+    }
+
+    // 3D Control Deck Buttons (Adapts to Council Table or 3D Claw Machine)
     const leftBtn = document.getElementById('clawMoveLeftBtn');
     const rightBtn = document.getElementById('clawMoveRightBtn');
     const backBtn = document.getElementById('clawMoveBackBtn');
@@ -3379,13 +4080,27 @@ class PlanetMaxiController {
     const dropBtn = document.getElementById('clawDropBtn');
     const aimOgBtn = document.getElementById('clawAimOgBtn');
     const snapOgBtn = document.getElementById('snapOgBtn');
-    const focusOgBtn = document.getElementById('focusOgBtn');
     const shuffleBtn = document.getElementById('clawShuffleBtn');
 
     const bindHoldAxis = (btn, axis, dir) => {
       if (!btn) return;
       const startMove = (e) => {
         e.preventDefault();
+        if (this.stage3DMode === 'COUNCIL') {
+          if (axis === 'x') {
+            this.stepCouncilSeat(dir);
+          } else if (axis === 'z') {
+            if (dir < 0) {
+              this.targetCouncilZoomDist = 166;
+              this.targetCouncilCamHeight = 22;
+            } else {
+              this.targetCouncilZoomDist = 225;
+              this.targetCouncilCamHeight = 82;
+            }
+            sfx.playBeep(dir < 0 ? 740 : 520, 0.05, 'triangle');
+          }
+          return;
+        }
         if (this.claw.state === 'IDLE') {
           if (axis === 'x') this.claw.moveDirX = dir;
           else this.claw.moveDirZ = dir;
@@ -3417,7 +4132,7 @@ class PlanetMaxiController {
       if (btn) {
         btn.addEventListener('click', (e) => {
           e.preventDefault();
-          this.selectCitizen(0, true);
+          this.selectCitizen(0, this.stage3DMode === 'CLAW');
         });
       }
     });
@@ -3425,14 +4140,21 @@ class PlanetMaxiController {
     if (shuffleBtn) {
       shuffleBtn.addEventListener('click', (e) => {
         e.preventDefault();
-        this.spawnClawPile(true);
+        if (this.stage3DMode === 'COUNCIL') {
+          this.setStage3DMode('CLAW', true);
+        } else {
+          this.spawnClawPile(true);
+        }
       });
     }
 
-    // Direct 3D Aiming & Camera Parallax on the Glass Bay
+    // Direct 3D Orbiting (Council Mode) & Gantry Aiming (Claw Mode) on the Glass Bay
     if (this.clawGlassBay) {
       let isAimingGlass = false;
+      let dragStartX = 0;
+      let dragStartOrbit = 0;
       const b = this.tankBounds;
+
       const update3DAimFromPointer = (clientX, clientY) => {
         const rect = this.clawGlassBay.getBoundingClientRect();
         if (!rect.width || !rect.height) return;
@@ -3456,22 +4178,59 @@ class PlanetMaxiController {
       };
 
       this.clawGlassBay.addEventListener('pointerdown', (e) => {
-        if (e.target.closest('.pull-reveal-overlay')) return;
+        if (e.target.closest('.pull-reveal-overlay') || e.target.closest('.council-seat-hud')) return;
         isAimingGlass = true;
-        update3DAimFromPointer(e.clientX, e.clientY);
+        dragStartX = e.clientX;
+        dragStartOrbit = this.targetCouncilOrbitAngle;
+        if (this.stage3DMode === 'CLAW') {
+          update3DAimFromPointer(e.clientX, e.clientY);
+        }
       });
 
       window.addEventListener('pointermove', (e) => {
         if (!isAimingGlass) return;
-        update3DAimFromPointer(e.clientX, e.clientY);
+        if (this.stage3DMode === 'COUNCIL') {
+          const dx = e.clientX - dragStartX;
+          this.targetCouncilOrbitAngle = dragStartOrbit - dx * 0.0065;
+          // Snap active seat readout to whichever of the 12 Council Seats is closest to current orbit angle
+          const twoPi = Math.PI * 2;
+          const normAng = ((this.targetCouncilOrbitAngle % twoPi) + twoPi) % twoPi;
+          const nearestSlot = Math.round((normAng / twoPi) * 12) % 12;
+          if (nearestSlot !== this.activeSeatSlot && this.councilSeats[nearestSlot]) {
+            this.activeSeatSlot = nearestSlot;
+            const seat = this.councilSeats[nearestSlot];
+            this.activeCitizenIndex = seat.citizenIndex;
+            this.councilSeats.forEach((s, idx) => {
+              if (s.ringMat) s.ringMat.opacity = idx === nearestSlot ? 0.9 : 0.14;
+              if (s.throneEdgeMat) s.throneEdgeMat.opacity = idx === nearestSlot ? 1.0 : 0.4;
+            });
+            const seatNumEl = document.getElementById('councilHudSeatNum');
+            const rankEl = document.getElementById('councilHudRank');
+            const nameEl = document.getElementById('councilHudName');
+            const roleEl = document.getElementById('councilHudRole');
+            const laserEl = document.getElementById('clawLaserReadout');
+            if (seatNumEl) seatNumEl.textContent = `SEAT ${seat.roman} OF XII`;
+            if (rankEl) rankEl.textContent = `${seat.cit.rank} / 100`;
+            if (nameEl) nameEl.textContent = seat.cit.name;
+            if (roleEl) roleEl.textContent = seat.cit.title.replace(/^[👑★]\s*/, '');
+            if (laserEl) laserEl.textContent = `SEAT ${seat.roman} // ${seat.cit.rank} ${seat.cit.name}`;
+            this.updateSideHudReadouts(seat.cit);
+          }
+        } else {
+          update3DAimFromPointer(e.clientX, e.clientY);
+        }
       });
 
       window.addEventListener('pointerup', () => {
+        if (isAimingGlass && this.stage3DMode === 'COUNCIL') {
+          // Gently lock onto the nearest seat angle on release
+          this.focusCouncilSeatSlot(this.activeSeatSlot, false);
+        }
         isAimingGlass = false;
       });
     }
 
-    // Jolt Tank & 3D Camera View Switcher Buttons
+    // Jolt Tank / Next 12 Council Seats & 3D Camera View Switcher Buttons
     const joltBtns = [
       document.getElementById('clawJoltBtn'),
       document.getElementById('clawDeckJoltBtn')
@@ -3603,12 +4362,40 @@ class PlanetMaxiController {
       }
     });
 
-    // Keyboard 3D Arcade Controls (WASD / Arrow Keys + Spacebar)
+    // Keyboard 3D Controls (WASD / Arrow Keys + Spacebar — works for both Council Table & Claw Machine)
     window.addEventListener('keydown', (e) => {
       if (this.state !== 'LOCKED') return;
       if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA')) return;
       const anyModalOpen = document.querySelector('.suite-modal:not(.hidden)');
       if (anyModalOpen) return;
+
+      if (e.key === 'Escape') {
+        const overlay = document.getElementById('pullRevealOverlay');
+        if (overlay && !overlay.classList.contains('hidden')) {
+          overlay.classList.add('hidden');
+        }
+        return;
+      }
+
+      if (this.stage3DMode === 'COUNCIL') {
+        if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') {
+          this.stepCouncilSeat(-1);
+        } else if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') {
+          this.stepCouncilSeat(1);
+        } else if (e.key === 'ArrowUp' || e.key === 'w' || e.key === 'W') {
+          e.preventDefault();
+          this.targetCouncilZoomDist = 166;
+          this.targetCouncilCamHeight = 22;
+        } else if (e.key === 'ArrowDown' || e.key === 's' || e.key === 'S') {
+          e.preventDefault();
+          this.targetCouncilZoomDist = 225;
+          this.targetCouncilCamHeight = 82;
+        } else if (e.key === ' ') {
+          e.preventDefault();
+          this.summonActiveCouncilSeat();
+        }
+        return;
+      }
 
       if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') {
         this.claw.moveDirX = -1;
@@ -3697,10 +4484,15 @@ class PlanetMaxiController {
       this.renderer.render(this.scene, this.camera);
     }
 
-    // 2. Update & Render True 3D WebGL Claw Machine Scene
+    // 2. Update & Render True 3D WebGL Scene (Council Table War Room OR 3D Claw Machine)
     if (this.state === 'LOCKED') {
-      this.update3DClawAndPilePhysics(dt, timeSec);
-      this.render3DClawScene();
+      if (this.stage3DMode === 'COUNCIL') {
+        this.update3DCouncilScene(dt, timeSec);
+        this.render3DCouncilScene();
+      } else {
+        this.update3DClawAndPilePhysics(dt, timeSec);
+        this.render3DClawScene();
+      }
     }
 
     this.drawSpaceBackdrop();

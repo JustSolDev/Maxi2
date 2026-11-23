@@ -30,7 +30,7 @@
       </a>
 
       <nav class="nav-links">
-        <a href="#topStage" class="nav-link" id="focusOgBtn">01 / CLAW MACHINE</a>
+        <a href="#topStage" class="nav-link" id="focusOgBtn">01 / COUNCIL &amp; CLAW</a>
         <a href="#pfpSection" class="nav-link" id="openPfpModalBtn">02 / PFP STUDIO</a>
         <a href="#lookbookSection" class="nav-link" id="openVaultModalBtn">03 / INDEX (100)</a>
         <a href="#rankSection" class="nav-link" id="openRankModalBtn">04 / DOSSIER &amp; CHART</a>
@@ -56,22 +56,33 @@
   <main class="editorial-main">
 
     <!-- =====================================================================
-         01. HERO + 3D CLAW MACHINE STAGE (WITH JOLT TANK & 3D CAMERA VIEWS)
+         01. HERO: 3D MAXI WORLD ORDER COUNCIL TABLE + 3D CLAW EXTRACTION UNIT
          ===================================================================== -->
     <section class="stage-section" id="topStage">
       <div class="editorial-wrap">
 
-        <!-- Compact Editorial Title Bar above the 3D Machine -->
+        <!-- Compact Editorial Title Bar & 3D Engine Mode Switcher -->
         <div class="stage-top-bar">
           <div class="stage-headline-col">
-            <span class="index-num">01 / EXTRACTION UNIT</span>
+            <span class="index-num" id="stageKickerLabel">01 / HIGH TABLE WAR ROOM · 3D WEBGL</span>
             <h1 class="stage-title">MAXI WORLD ORDER</h1>
+          </div>
+
+          <!-- Primary 3D Experience Switcher: The Council Table vs 3D Claw Machine -->
+          <div class="stage-mode-switcher" id="stage3DModeGroup">
+            <button type="button" class="stage-mode-btn active" id="modeCouncilBtn" data-stage-mode="COUNCIL">
+              <span class="mode-dot"></span>
+              <span>THE COUNCIL TABLE (3D)</span>
+            </button>
+            <button type="button" class="stage-mode-btn" id="modeClawBtn" data-stage-mode="CLAW">
+              <span>3D CLAW MACHINE</span>
+            </button>
           </div>
 
           <div class="stage-meta-col">
             <div class="meta-cell">
-              <span class="meta-k">EDITION</span>
-              <span class="meta-v">100 1-OF-1 CUTOUTS</span>
+              <span class="meta-k" id="metaPrimaryKey">COUNCIL DELEGATION</span>
+              <span class="meta-v" id="metaPrimaryVal">TABLE I (SEATS 001–012)</span>
             </div>
             <div class="meta-cell">
               <span class="meta-k">ACTIVE SPECIMEN</span>
@@ -82,10 +93,10 @@
               <span class="meta-v" id="clawExtractedCount">0 / 100</span>
             </div>
             <div class="meta-actions">
-              <button type="button" class="line-btn" id="clawCamBtn" title="Cycle 3D Camera Angle (Front / Top-Down Sniper / Isometric)">CAM: FRONT</button>
-              <button type="button" class="line-btn" id="clawJoltBtn" title="Physically jolt the 3D tank to shake buried Maxis loose">JOLT TANK</button>
-              <button type="button" class="line-btn" id="snapOgBtn">LOCK #001</button>
-              <button type="button" class="line-btn" id="triggerZoomBtn">RESTOCK</button>
+              <button type="button" class="line-btn" id="clawCamBtn" title="Cycle 3D Camera Angle">CAM: TABLE</button>
+              <button type="button" class="line-btn" id="clawJoltBtn" title="Rotate to Next 12 Council Members / Jolt Tank">NEXT 12 SEATS ↻</button>
+              <button type="button" class="line-btn" id="snapOgBtn">SEAT I (#001)</button>
+              <button type="button" class="line-btn hidden" id="triggerZoomBtn">RESTOCK</button>
             </div>
           </div>
         </div>
@@ -94,19 +105,32 @@
         <canvas id="intro-canvas" class="hidden-util-canvas" width="200" height="200"></canvas>
         <canvas id="diveFxCanvas" class="hidden-util-canvas" width="200" height="200"></canvas>
 
-        <!-- 3D WebGL Claw Machine Cabinet -->
+        <!-- 3D WebGL Main Stage Cabinet (Renders Council Table or 3D Claw Machine) -->
         <div id="clawCabinetStage" class="claw-cabinet-stage">
           <div class="claw-machine-cabinet" id="clawMachineCabinet">
             <!-- Thin Technical Status Strip -->
             <div class="claw-marquee-bar">
-              <span class="marquee-tag">GANTRY // X-Y-Z 3D PHYSICS</span>
-              <span class="marquee-title" id="clawStatusReadout">DRAG OR WASD TO AIM · SPACE TO DROP CLAW</span>
-              <span class="marquee-laser" id="clawLaserReadout">READY</span>
+              <span class="marquee-tag" id="clawModeTag">CHAMBER // 12 SOVEREIGN SEATS · OBSIDIAN MONOLITH CORE</span>
+              <span class="marquee-title" id="clawStatusReadout">DRAG OR A/D TO ORBIT COUNCIL TABLE · SPACE TO SUMMON SEAT</span>
+              <span class="marquee-laser" id="clawLaserReadout">SEAT I // #001 OG MAXI</span>
             </div>
 
             <!-- 3D WebGL Viewport -->
             <div class="claw-glass-bay" id="clawGlassBay">
               <canvas id="clawMachineCanvas"></canvas>
+
+              <!-- Floating Council Seat Telemetry Badge inside 3D Chamber -->
+              <div class="council-seat-hud" id="councilSeatHud">
+                <div class="c-hud-top">
+                  <span class="c-hud-seat" id="councilHudSeatNum">SEAT I OF XII</span>
+                  <span class="c-hud-rank" id="councilHudRank">#001 / 100</span>
+                </div>
+                <div class="c-hud-name" id="councilHudName">OG MAXI</div>
+                <div class="c-hud-role" id="councilHudRole">SUPREME SOVEREIGN · GENESIS THRONE</div>
+                <div class="c-hud-actions">
+                  <button type="button" class="c-hud-summon-btn" id="councilHudSummonBtn">SUMMON DOSSIER &amp; PFP [SPACE]</button>
+                </div>
+              </div>
 
               <!-- ===========================================================
                    "YOU CAUGHT A MAXI" — 3D COLLECTOR CARD POP-UP & SAVE MODAL
@@ -218,7 +242,7 @@
                           class="line-btn"
                           id="pullShareXLink"
                         >SHARE ON 𝕏 ↗</a>
-                        <button type="button" class="line-btn solid-white" id="pullAgainBtn">CLAW AGAIN</button>
+                        <button type="button" class="line-btn solid-white" id="pullAgainBtn">RETURN TO CHAMBER</button>
                       </div>
                     </div>
                   </div>
@@ -226,37 +250,37 @@
               </div>
             </div>
 
-            <!-- Hardware Control Bar -->
+            <!-- Hardware Control Bar (Adapts dynamically to Council Table or 3D Claw Machine) -->
             <div class="claw-control-deck">
               <div class="deck-group deck-dpad">
                 <button type="button" class="claw-deck-btn" id="clawMoveLeftBtn">
                   <span class="key-cap">A</span>
-                  <span>LEFT</span>
+                  <span id="deckLeftLabel">PREV SEAT</span>
                 </button>
                 <button type="button" class="claw-deck-btn" id="clawMoveRightBtn">
                   <span class="key-cap">D</span>
-                  <span>RIGHT</span>
+                  <span id="deckRightLabel">NEXT SEAT</span>
                 </button>
                 <button type="button" class="claw-deck-btn" id="clawMoveBackBtn">
                   <span class="key-cap">W</span>
-                  <span>BACK</span>
+                  <span id="deckUpLabel">ZOOM IN</span>
                 </button>
                 <button type="button" class="claw-deck-btn" id="clawMoveFwdBtn">
                   <span class="key-cap">S</span>
-                  <span>FRONT</span>
+                  <span id="deckDownLabel">WIDE VIEW</span>
                 </button>
               </div>
 
               <button type="button" class="claw-drop-trigger" id="clawDropBtn">
-                <span id="clawDropBtnLabel">DROP CLAW &amp; CATCH MAXI</span>
+                <span id="clawDropBtnLabel">SUMMON COUNCIL SEAT &amp; CLAIM PFP</span>
                 <span class="drop-hotkey">SPACE</span>
               </button>
 
               <div class="deck-group deck-utils">
-                <button type="button" class="claw-deck-btn" id="clawDeckJoltBtn" title="Shake 3D Pile">JOLT</button>
+                <button type="button" class="claw-deck-btn" id="clawDeckJoltBtn" title="Rotate Next 12 Council Members / Jolt Tank">NEXT 12 ↻</button>
                 <button type="button" class="claw-deck-btn" id="clawDeckCamBtn" title="Switch 3D Camera Angle">CAM</button>
-                <button type="button" class="claw-deck-btn" id="clawAimOgBtn">TARGET #001</button>
-                <button type="button" class="claw-deck-btn" id="clawShuffleBtn">RESTOCK</button>
+                <button type="button" class="claw-deck-btn" id="clawAimOgBtn">SEAT I (#001)</button>
+                <button type="button" class="claw-deck-btn" id="clawShuffleBtn">SWITCH TO CLAW</button>
               </div>
             </div>
           </div>
@@ -264,7 +288,7 @@
 
         <!-- Horizontal Index Strip under the machine -->
         <div class="claw-roster-bar">
-          <span class="roster-bar-label">LOAD SPECIMEN</span>
+          <span class="roster-bar-label">100 COUNCIL ROSTER</span>
           <div class="citizen-roster-strip" id="citizenRosterStrip"></div>
         </div>
 
