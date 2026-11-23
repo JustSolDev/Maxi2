@@ -31,11 +31,9 @@
 
       <nav class="nav-links">
         <a href="#topStage" class="nav-link" id="focusOgBtn">01 / CLAW MACHINE</a>
-        <a href="#lockerSection" class="nav-link">02 / CAUGHT LOCKER</a>
-        <a href="#pfpSection" class="nav-link" id="openPfpModalBtn">03 / PFP STUDIO</a>
-        <a href="#pnlSection" class="nav-link">04 / PNL FLEX CARD</a>
-        <a href="#lookbookSection" class="nav-link" id="openVaultModalBtn">05 / INDEX (100)</a>
-        <a href="#rankSection" class="nav-link" id="openRankModalBtn">06 / DOSSIER &amp; CHART</a>
+        <a href="#pfpSection" class="nav-link" id="openPfpModalBtn">02 / PFP STUDIO</a>
+        <a href="#lookbookSection" class="nav-link" id="openVaultModalBtn">03 / INDEX (100)</a>
+        <a href="#rankSection" class="nav-link" id="openRankModalBtn">04 / DOSSIER &amp; CHART</a>
       </nav>
 
       <div class="nav-actions">
@@ -80,7 +78,7 @@
               <span class="meta-v" id="cardTitle">OG MAXI (#001)</span>
             </div>
             <div class="meta-cell">
-              <span class="meta-k">CAUGHT LOCKER</span>
+              <span class="meta-k">EXTRACTED</span>
               <span class="meta-v" id="clawExtractedCount">0 / 100</span>
             </div>
             <div class="meta-actions">
@@ -211,8 +209,7 @@
 
                       <!-- Secondary Actions -->
                       <div class="pull-reveal-actions">
-                        <button type="button" class="line-btn" id="pullToStudioBtn">PFP STUDIO</button>
-                        <button type="button" class="line-btn" id="pullToPnlBtn">MAKE PNL CARD</button>
+                        <button type="button" class="line-btn" id="pullToStudioBtn">CUSTOMIZE IN PFP STUDIO</button>
                         <a href="maxi Background Removed.png" download="maxi-cutout.png" class="line-btn" id="pullDownloadLink">RAW CUTOUT</a>
                         <a
                           href="https://x.com/intent/tweet?text=Caught%20from%20MAXI%20WORLD%20ORDER%20%24MAXI%20%40maxiworldorder"
@@ -275,35 +272,13 @@
     </section>
 
     <!-- =====================================================================
-         02. PERSISTENT "MY CAUGHT MAXIS" LOCKER (SAVED COLLECTION DRAWER)
-         ===================================================================== -->
-    <section class="locker-section" id="lockerSection">
-      <div class="editorial-wrap">
-        <div class="section-header-bar">
-          <div>
-            <span class="index-num">02 / PERSONAL VAULT</span>
-            <h2 class="section-heading">MY CAUGHT MAXIS LOCKER</h2>
-          </div>
-          <div class="locker-header-right">
-            <span class="section-note" id="lockerProgressReadout">0 / 100 SPECIMENS CAUGHT</span>
-            <button type="button" class="line-btn" id="unlockStarterPackBtn" title="Catch a random Maxi right now">QUICK CATCH</button>
-          </div>
-        </div>
-
-        <div class="locker-shelf-grid" id="caughtLockerGrid">
-          <!-- Populated dynamically by script.js: shows caught Maxis (click to view/save Collector Card) + locked slots -->
-        </div>
-      </div>
-    </section>
-
-    <!-- =====================================================================
-         03. PFP & BANNER STUDIO (CLEAN EDITORIAL WORKBENCH)
+         02. PFP & BANNER STUDIO (CLEAN EDITORIAL WORKBENCH)
          ===================================================================== -->
     <section class="studio-section" id="pfpSection">
       <div class="editorial-wrap">
         <div class="section-header-bar">
           <div>
-            <span class="index-num">03 / IDENTITY GENERATOR</span>
+            <span class="index-num">02 / IDENTITY GENERATOR</span>
             <h2 class="section-heading">PFP &amp; X-BANNER STUDIO</h2>
           </div>
           <span class="section-note">1000×1000 PFP &amp; 1500×500 HEADER EXPORT</span>
@@ -382,115 +357,13 @@
     </section>
 
     <!-- =====================================================================
-         04. LIVE RAID & PNL FLEX CARD GENERATOR
-         ===================================================================== -->
-    <section class="pnl-section" id="pnlSection">
-      <div class="editorial-wrap">
-        <div class="section-header-bar">
-          <div>
-            <span class="index-num">04 / RAID &amp; CONVICTION FLEX</span>
-            <h2 class="section-heading">$MAXI PNL &amp; RAID CARD GENERATOR</h2>
-          </div>
-          <span class="section-note">1200×675 HD WIDESCREEN RAID CARD</span>
-        </div>
-
-        <div class="studio-grid-box">
-          <div class="pfp-studio-layout">
-            <!-- Left: 1200x675 Widescreen PnL Flex Card Canvas -->
-            <div class="pfp-preview-col pnl-preview-col">
-              <div class="pfp-canvas-frame">
-                <canvas id="pnlFlexCanvas" width="1200" height="675"></canvas>
-              </div>
-              <div class="pfp-export-bar">
-                <button type="button" class="solid-action-btn" id="downloadPnlCardBtn">
-                  SAVE PNL FLEX CARD (PNG)
-                </button>
-                <button type="button" class="outline-action-btn" id="copyPnlCardBtn">
-                  <span id="copyPnlCardLabel">COPY PNL CARD TO CLIPBOARD</span>
-                </button>
-              </div>
-            </div>
-
-            <!-- Right: PnL Multiplier, Entry/Target, & Cutout Controls -->
-            <div class="pfp-controls-col">
-              <div class="control-block">
-                <label class="control-label">HEADLINE MULTIPLIER / PNL</label>
-                <input
-                  type="text"
-                  id="pnlMultiplierInput"
-                  class="suite-input"
-                  value="+4,200%"
-                  maxlength="18"
-                  placeholder="+4,200%"
-                />
-                <div class="preset-chips-row" id="pnlMultPresets">
-                  <button type="button" class="preset-chip" data-mult="+420%">+420%</button>
-                  <button type="button" class="preset-chip" data-mult="+1,000%">+1,000%</button>
-                  <button type="button" class="preset-chip active" data-mult="+4,200%">+4,200%</button>
-                  <button type="button" class="preset-chip" data-mult="+10,000%">+10,000%</button>
-                  <button type="button" class="preset-chip" data-mult="100X MWO">100X MWO</button>
-                </div>
-              </div>
-
-              <div class="control-block">
-                <label class="control-label">ENTRY MCAP &amp; TARGET CONVICTION</label>
-                <div class="rank-callsign-row">
-                  <input
-                    type="text"
-                    id="pnlEntryInput"
-                    class="suite-input"
-                    value="GENESIS ENTRY"
-                    maxlength="20"
-                    placeholder="ENTRY"
-                  />
-                  <input
-                    type="text"
-                    id="pnlTargetInput"
-                    class="suite-input"
-                    value="$100M+ TARGET"
-                    maxlength="20"
-                    placeholder="TARGET"
-                  />
-                </div>
-              </div>
-
-              <div class="control-block">
-                <label class="control-label">OPERATIVE HANDLE &amp; SPECIMEN</label>
-                <div class="rank-callsign-row">
-                  <input
-                    type="text"
-                    id="pnlHandleInput"
-                    class="suite-input"
-                    value="@MAXIWORLDORDER"
-                    maxlength="24"
-                    placeholder="@HANDLE"
-                  />
-                  <button type="button" class="line-btn" id="pnlNextCitizenBtn">NEXT SPECIMEN ↻</button>
-                </div>
-              </div>
-
-              <div class="control-block">
-                <label class="control-label">CARD AESTHETIC</label>
-                <div class="segmented-row" id="pnlThemeGroup">
-                  <button type="button" class="seg-btn active" data-pnl-theme="EMERALD">GREEN CANDLE</button>
-                  <button type="button" class="seg-btn" data-pnl-theme="OBSIDIAN">SOVEREIGN GOLD</button>
-                  <button type="button" class="seg-btn" data-pnl-theme="COBALT">SOLANA COBALT</button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- =====================================================================
-         05. ARCHIVE INDEX (100 CUTOUTS IN A RAZOR-CLEAN 1PX CATALOG GRID)
+         03. ARCHIVE INDEX (100 CUTOUTS IN A RAZOR-CLEAN 1PX CATALOG GRID)
          ===================================================================== -->
     <section class="archive-section" id="lookbookSection">
       <div class="editorial-wrap">
         <div class="section-header-bar">
           <div>
-            <span class="index-num">05 / ARCHIVE</span>
+            <span class="index-num">03 / ARCHIVE</span>
             <h2 class="section-heading">100 SPECIMEN INDEX</h2>
           </div>
 
@@ -508,13 +381,13 @@
     </section>
 
     <!-- =====================================================================
-         06. CONVICTION DOSSIER & LIVE DEXSCREENER TERMINAL
+         04. CONVICTION DOSSIER & LIVE DEXSCREENER TERMINAL
          ===================================================================== -->
     <section class="terminal-section" id="rankSection">
       <div class="editorial-wrap">
         <div class="section-header-bar">
           <div>
-            <span class="index-num">06 / TELEMETRY &amp; DOSSIER</span>
+            <span class="index-num">04 / TELEMETRY &amp; DOSSIER</span>
             <h2 class="section-heading">MWO RANK &amp; LIVE MARKET</h2>
           </div>
         </div>
