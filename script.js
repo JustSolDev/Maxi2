@@ -3562,7 +3562,7 @@ class CommunitySuiteController {
 
       const card = document.createElement('div');
       card.className = `vault-item-card ${cit.isOg ? 'og-card' : ''}`;
-      const tierLabel = cit.isOg ? 'JACKPOT #001' : cit.isMythic ? '1-OF-1 MASTER' : 'GASHAPON SERIES';
+      const tierLabel = cit.isOg ? 'PRIME 001' : cit.isMythic ? '1-OF-1' : 'EDITION';
 
       card.innerHTML = `
         <div>
@@ -3576,16 +3576,16 @@ class CommunitySuiteController {
           <div class="v-card-name">${cit.name}</div>
         </div>
         <div class="v-card-actions">
-          <button type="button" class="v-act-btn btn-locate">🕹️ CLAW IT</button>
-          <button type="button" class="v-act-btn btn-studio">🎨 MAKE PFP</button>
-          <a href="${cit.src}" download="${cit.name.toLowerCase().replace(/\s+/g, '-')}.png" class="v-act-btn">PNG ⬇</a>
+          <button type="button" class="v-act-btn btn-locate">CLAW</button>
+          <button type="button" class="v-act-btn btn-studio">PFP</button>
+          <a href="${cit.src}" download="${cit.name.toLowerCase().replace(/\s+/g, '-')}.png" class="v-act-btn">PNG</a>
         </div>
       `;
 
-      // Scroll to 3D Claw Machine, Load Figure & Drop Claw!
+      // Scroll to 3D Claw Machine, Load Figure & Drop Claw
       const locateFn = () => {
-        const clawSec = document.getElementById('clawSection');
-        if (clawSec) clawSec.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        const clawSec = document.getElementById('topStage');
+        if (clawSec) clawSec.scrollIntoView({ behavior: 'smooth', block: 'start' });
         this.planetCtrl.selectCitizen(idx, true);
       };
       card.querySelector('.v-card-stage').addEventListener('click', locateFn);
