@@ -1081,6 +1081,27 @@ class SoundEngine {
     osc.stop(now + duration);
   }
 
+  playArrivalChord() {
+    if (!this.enabled) return;
+    this.init();
+    if (!this.ctx) return;
+    const now = this.ctx.currentTime;
+    const freqs = [523.25, 659.25, 783.99, 1046.5];
+    freqs.forEach((f, idx) => {
+      const osc = this.ctx.createOscillator();
+      const g = this.ctx.createGain();
+      osc.type = 'triangle';
+      const t = now + idx * 0.06;
+      osc.frequency.setValueAtTime(f, t);
+      g.gain.setValueAtTime(0.11, t);
+      g.gain.exponentialRampToValueAtTime(0.001, t + 0.55);
+      osc.connect(g);
+      g.connect(this.masterGain);
+      osc.start(t);
+      osc.stop(t + 0.58);
+    });
+  }
+
   playZoomSequenceSFX() {
     if (!this.enabled) return;
     this.init();
@@ -1483,8 +1504,8 @@ class PlanetMaxiController {
       moveDirZ: 0       // -1 back, +1 front
     };
 
-    // 3D Stage Experience Mode ('COUNCIL' = The 3D Council Table War Room, 'CLAW' = 3D Claw Machine)
-    this.stage3DMode = 'COUNCIL';
+    // 3D Stage Experience Mode ('CLAW' = 3D Claw Machine, 'COUNCIL' = The 3D Council Table War Room)
+    this.stage3DMode = 'CLAW';
     this.councilSeatCount = 12;
     this.councilBatchIndex = 0;       // Which batch of 12 Maxis (0..8)
     this.activeSeatSlot = 0;          // 0..11 around the circular table
@@ -1511,7 +1532,7 @@ class PlanetMaxiController {
     this.resizeCanvases();
     this.spawnClawPile(false);
     this.populateCouncilSeats(0, false);
-    this.setStage3DMode('COUNCIL', false);
+    this.setStage3DMode('CLAW', false);
     this.loadCaughtLockerFromStorage();
     this.bindEvents();
 
@@ -2332,7 +2353,7 @@ class PlanetMaxiController {
     // Lore text (wrapped cleanly to 2 lines)
     ctx.fillStyle = '#94A3B8';
     ctx.font = '500 18px "Inter", sans-serif';
-    const rawLore = cit.lore.replace(/&quot;/g, '"');
+    const rawLore = cit.lore.replace(/<[^>]*>/g, '').replace(/&quot;/g, '"');
     const words = rawLore.split(' ');
     let line = '';
     let yCursor = 842;
@@ -3450,7 +3471,7 @@ class PlanetMaxiController {
     if (rankEl) rankEl.textContent = `SPECIMEN ${cit.rank} / 100`;
     if (nameEl) nameEl.textContent = cit.name;
     if (titleEl) titleEl.textContent = cit.title.replace(/^[👑★]\s*/, '');
-    if (loreEl) loreEl.textContent = cit.lore.replace(/&quot;/g, '"');
+    if (loreEl) loreEl.textContent = cit.lore.replace(/<[^>]*>/g, '').replace(/&quot;/g, '"');
     if (statClassEl) {
       statClassEl.textContent = cit.isOg ? 'PRIME SOVEREIGN' : cit.isMythic ? 'MYTHIC MASTER' : 'MWO OPERATIVE';
     }
