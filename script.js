@@ -1490,10 +1490,10 @@ class PlanetMaxiController {
     this.activeSeatSlot = 0;          // 0..11 around the circular table
     this.councilOrbitAngle = 0;       // Current camera orbit angle around the Council Table
     this.targetCouncilOrbitAngle = 0; // Target orbit angle
-    this.councilZoomDist = 204;       // Camera distance from center of Council Table
-    this.targetCouncilZoomDist = 204;
-    this.councilCamHeight = 52;
-    this.targetCouncilCamHeight = 52;
+    this.councilZoomDist = 238;       // Camera distance from center of Council Table
+    this.targetCouncilZoomDist = 238;
+    this.councilCamHeight = 76;
+    this.targetCouncilCamHeight = 76;
     this.councilSeats = [];
 
     // 3D Camera Parallax & Orbit (for Claw Mode)
@@ -2584,190 +2584,216 @@ class PlanetMaxiController {
     this.councilWorldGroup = new THREE.Group();
     this.clawScene.add(this.councilWorldGroup);
 
-    const floorY = -44;
+    const floorY = -36;
     this.councilFloorY = floorY;
 
-    // 1. Brutalist War Room Outer Floor & Radial Concentric Rings
+    // 1. Brutalist War Room Outer Floor & High-Contrast Architectural Grid Rings
     const roomFloorGeo = new THREE.CylinderGeometry(240, 240, 4, 64);
     const roomFloorMat = new THREE.MeshStandardMaterial({
-      color: 0x050608,
-      roughness: 0.42,
-      metalness: 0.78
+      color: 0x0b0e14,
+      roughness: 0.45,
+      metalness: 0.55
     });
     const roomFloorMesh = new THREE.Mesh(roomFloorGeo, roomFloorMat);
     roomFloorMesh.position.y = floorY - 2;
     this.councilWorldGroup.add(roomFloorMesh);
 
-    // Subtle Architectural Concentric Brass/Steel Floor Rings
-    [138, 175, 215].forEach((rad, idx) => {
-      const rGeo = new THREE.RingGeometry(rad - 0.5, rad + 0.5, 96);
+    // Subtle Architectural Grid on War Room Floor
+    const councilGrid = new THREE.GridHelper(320, 24, 0x334155, 0x181c26);
+    councilGrid.position.y = floorY + 0.15;
+    councilGrid.material.transparent = true;
+    councilGrid.material.opacity = 0.45;
+    this.councilWorldGroup.add(councilGrid);
+
+    // Concentric Brass & Emerald Floor Rings
+    [116, 134, 165, 200].forEach((rad, idx) => {
+      const rGeo = new THREE.RingGeometry(rad - 0.65, rad + 0.65, 96);
       rGeo.rotateX(-Math.PI * 0.5);
       const rMat = new THREE.MeshBasicMaterial({
-        color: idx === 0 ? 0xe5b869 : 0x334155,
+        color: idx === 0 ? 0xf3d285 : idx === 1 ? 0x10b981 : 0x334155,
         side: THREE.DoubleSide,
         transparent: true,
-        opacity: idx === 0 ? 0.35 : 0.22
+        opacity: idx < 2 ? 0.55 : 0.3
       });
       const rMesh = new THREE.Mesh(rGeo, rMat);
-      rMesh.position.y = floorY + 0.2;
+      rMesh.position.y = floorY + 0.28;
       this.councilWorldGroup.add(rMesh);
     });
 
-    // 2. Massive Circular Black-Obsidian High Council Table (Outer R=96, Inner Pit R=40)
+    // 2. Massive Circular Black-Obsidian High Council Table (Outer R=88, Inner Pit R=38)
     const tableGroup = new THREE.Group();
     this.councilWorldGroup.add(tableGroup);
 
-    // Outer Obsidian Table Cylinder Block
-    const tableOuterGeo = new THREE.CylinderGeometry(96, 91, 14, 64, 1, false);
+    // Pedestal Base under Table
+    const tableBaseGeo = new THREE.CylinderGeometry(72, 82, 12, 64);
+    const tableBaseMat = new THREE.MeshStandardMaterial({
+      color: 0x11151f,
+      roughness: 0.35,
+      metalness: 0.72
+    });
+    const tableBaseMesh = new THREE.Mesh(tableBaseGeo, tableBaseMat);
+    tableBaseMesh.position.y = floorY + 6;
+    tableGroup.add(tableBaseMesh);
+
+    // Top Table Deck Cylinder
+    const tableOuterGeo = new THREE.CylinderGeometry(90, 86, 6, 64);
     const obsidianTableMat = new THREE.MeshStandardMaterial({
-      color: 0x0a0c10,
-      roughness: 0.16,
-      metalness: 0.92
+      color: 0x141824,
+      roughness: 0.25,
+      metalness: 0.68
     });
     const tableOuterMesh = new THREE.Mesh(tableOuterGeo, obsidianTableMat);
-    tableOuterMesh.position.y = floorY + 14;
+    tableOuterMesh.position.y = floorY + 15;
     tableGroup.add(tableOuterMesh);
 
-    // Brushed Gold / Titanium Bezel Inlay Ring around the Table Perimeter
-    const outerRimGeo = new THREE.RingGeometry(93.8, 96.2, 64);
-    outerRimGeo.rotateX(-Math.PI * 0.5);
+    // Bright Brushed-Gold Outer Bezel & Inner Pit Rim on the Table Surface
     const goldInlayMat = new THREE.MeshBasicMaterial({
-      color: 0xe5b869,
+      color: 0xf3d285,
       side: THREE.DoubleSide,
       transparent: true,
-      opacity: 0.75
+      opacity: 0.92
     });
+    const emeraldInlayMat = new THREE.MeshBasicMaterial({
+      color: 0x10b981,
+      side: THREE.DoubleSide,
+      transparent: true,
+      opacity: 0.85
+    });
+
+    const outerRimGeo = new THREE.RingGeometry(87.8, 90.2, 64);
+    outerRimGeo.rotateX(-Math.PI * 0.5);
     const outerRimMesh = new THREE.Mesh(outerRimGeo, goldInlayMat);
-    outerRimMesh.position.y = floorY + 21.15;
+    outerRimMesh.position.y = floorY + 18.15;
     tableGroup.add(outerRimMesh);
 
-    const innerPitRimGeo = new THREE.RingGeometry(40.0, 42.2, 64);
+    const midRimGeo = new THREE.RingGeometry(60.5, 61.4, 64);
+    midRimGeo.rotateX(-Math.PI * 0.5);
+    const midRimMesh = new THREE.Mesh(midRimGeo, emeraldInlayMat);
+    midRimMesh.position.y = floorY + 18.15;
+    tableGroup.add(midRimMesh);
+
+    const innerPitRimGeo = new THREE.RingGeometry(38.0, 40.4, 64);
     innerPitRimGeo.rotateX(-Math.PI * 0.5);
     const innerPitRimMesh = new THREE.Mesh(innerPitRimGeo, goldInlayMat);
-    innerPitRimMesh.position.y = floorY + 21.2;
+    innerPitRimMesh.position.y = floorY + 18.2;
     tableGroup.add(innerPitRimMesh);
 
-    // 12 Radial Sector Divider Lines & Illuminated Dossier Slabs on the Table
+    // 12 Radial Sector Divider Lines on the Table
     for (let s = 0; s < 12; s++) {
       const ang = (s * Math.PI * 2) / 12;
       const lineAng = ang + Math.PI / 12;
 
-      // Radial sector line
-      const lineGeo = new THREE.PlaneGeometry(0.6, 51);
+      const lineGeo = new THREE.PlaneGeometry(0.85, 48);
       lineGeo.rotateX(-Math.PI * 0.5);
       const lineMat = new THREE.MeshBasicMaterial({
-        color: 0x334155,
+        color: 0x475569,
         transparent: true,
-        opacity: 0.45,
+        opacity: 0.65,
         side: THREE.DoubleSide
       });
       const lineMesh = new THREE.Mesh(lineGeo, lineMat);
-      lineMesh.position.set(Math.sin(lineAng) * 67, floorY + 21.18, Math.cos(lineAng) * 67);
+      lineMesh.position.set(Math.sin(lineAng) * 64, floorY + 18.18, Math.cos(lineAng) * 64);
       lineMesh.rotation.y = lineAng;
       tableGroup.add(lineMesh);
     }
 
     // 3. Recessed Bottomless Light Well Pit in the Center of the Table (Option 2)
-    const wellDarkCapGeo = new THREE.CircleGeometry(40, 64);
+    const wellDarkCapGeo = new THREE.CircleGeometry(38, 64);
     wellDarkCapGeo.rotateX(-Math.PI * 0.5);
-    const wellDarkCapMat = new THREE.MeshBasicMaterial({ color: 0x010103 });
+    const wellDarkCapMat = new THREE.MeshBasicMaterial({ color: 0x020305 });
     const wellDarkCap = new THREE.Mesh(wellDarkCapGeo, wellDarkCapMat);
-    wellDarkCap.position.y = floorY + 21.12;
+    wellDarkCap.position.y = floorY + 18.12;
     tableGroup.add(wellDarkCap);
 
     // Concentric Descending Infinity Light Rings inside the Bottomless Well
     this.wellRings = [];
     for (let d = 0; d < 7; d++) {
-      const ringRadius = 38.5 - d * 3.8;
-      const wRingGeo = new THREE.RingGeometry(ringRadius - 0.55, ringRadius, 64);
+      const ringRadius = 36.5 - d * 3.8;
+      const wRingGeo = new THREE.RingGeometry(ringRadius - 0.85, ringRadius, 64);
       wRingGeo.rotateX(-Math.PI * 0.5);
       const wRingMat = new THREE.MeshBasicMaterial({
-        color: d % 2 === 0 ? 0x10b981 : 0xe5b869,
+        color: d % 2 === 0 ? 0x10b981 : 0xf3d285,
         side: THREE.DoubleSide,
         transparent: true,
-        opacity: Math.max(0.12, 0.72 - d * 0.085)
+        opacity: Math.max(0.25, 0.9 - d * 0.09)
       });
       const wRing = new THREE.Mesh(wRingGeo, wRingMat);
-      wRing.position.y = floorY + 21.14 - d * 0.01;
+      wRing.position.y = floorY + 18.16;
       tableGroup.add(wRing);
       this.wellRings.push(wRing);
     }
 
     // Engraved Sovereign Seal Star / Octagram Ring floating over the Well
     this.sovereignSealGroup = new THREE.Group();
-    this.sovereignSealGroup.position.set(0, floorY + 22.2, 0);
+    this.sovereignSealGroup.position.set(0, floorY + 19.2, 0);
     this.councilWorldGroup.add(this.sovereignSealGroup);
 
     for (let k = 0; k < 2; k++) {
-      const sqGeo = new THREE.RingGeometry(27, 28.4, 4);
+      const sqGeo = new THREE.RingGeometry(25.5, 27.2, 4);
       sqGeo.rotateX(-Math.PI * 0.5);
       sqGeo.rotateY((k * Math.PI) / 4);
       const sqMat = new THREE.MeshBasicMaterial({
-        color: k === 0 ? 0xe5b869 : 0x10b981,
+        color: k === 0 ? 0xf3d285 : 0x10b981,
         side: THREE.DoubleSide,
         transparent: true,
-        opacity: 0.65
+        opacity: 0.85
       });
       this.sovereignSealGroup.add(new THREE.Mesh(sqGeo, sqMat));
     }
 
     // 4. Rotating 3D $MAXI Obsidian Monolith Floating Over the Light Well
     this.monolithGroup = new THREE.Group();
-    this.monolithGroup.position.set(0, floorY + 46, 0);
+    this.monolithGroup.position.set(0, floorY + 44, 0);
     this.councilWorldGroup.add(this.monolithGroup);
 
-    // Sculpted Obsidian Monolith Slab (2001 Space Odyssey / Brutalist Sovereign Slab)
-    const monolithGeo = new THREE.BoxGeometry(16, 40, 5.2);
+    // Sculpted Obsidian Monolith Slab
+    const monolithGeo = new THREE.BoxGeometry(17, 38, 5.5);
     const monolithMat = new THREE.MeshStandardMaterial({
-      color: 0x07080c,
-      roughness: 0.12,
-      metalness: 0.96
+      color: 0x111520,
+      roughness: 0.18,
+      metalness: 0.82,
+      emissive: 0x091510,
+      emissiveIntensity: 0.45
     });
     const monolithSlab = new THREE.Mesh(monolithGeo, monolithMat);
     this.monolithGroup.add(monolithSlab);
 
-    // Glowing Gold & Emerald Wireframe Bezel around the Obsidian Monolith
-    const monoEdgeGeo = new THREE.EdgesGeometry(new THREE.BoxGeometry(16.3, 40.3, 5.4));
+    // Glowing Gold Wireframe Bezel around the Obsidian Monolith
+    const monoEdgeGeo = new THREE.EdgesGeometry(new THREE.BoxGeometry(17.4, 38.4, 5.8));
     const monoEdgeMat = new THREE.LineBasicMaterial({
-      color: 0xe5b869,
-      transparent: true,
-      opacity: 0.85
+      color: 0xf3d285
     });
     const monoEdges = new THREE.LineSegments(monoEdgeGeo, monoEdgeMat);
     this.monolithGroup.add(monoEdges);
 
     // Front & Back Embossed $MAXI Sovereign Crest on the Obsidian Monolith
     const ogTex = this.getCitizenThreeTexture(MAXI_CITIZENS[0].src);
-    const crestGeo = new THREE.PlaneGeometry(13.5, 13.5);
+    const crestGeo = new THREE.PlaneGeometry(14.5, 14.5);
     const crestMat = new THREE.MeshBasicMaterial({
       map: ogTex,
       transparent: true,
-      alphaTest: 0.06,
+      alphaTest: 0.05,
       side: THREE.DoubleSide
     });
     const crestFront = new THREE.Mesh(crestGeo, crestMat);
-    crestFront.position.set(0, 3, 2.8);
+    crestFront.position.set(0, 2.5, 3.05);
     const crestBack = new THREE.Mesh(crestGeo, crestMat);
-    crestBack.position.set(0, 3, -2.8);
+    crestBack.position.set(0, 2.5, -3.05);
     crestBack.rotation.y = Math.PI;
     this.monolithGroup.add(crestFront, crestBack);
 
-    // Orbiting Gyroscopic Sovereign Seal Ring around the Obsidian Monolith
-    const gyroRingGeo = new THREE.TorusGeometry(23, 0.45, 16, 80);
+    // Orbiting Gyroscopic Sovereign Seal Rings around the Obsidian Monolith
+    const gyroRingGeo = new THREE.TorusGeometry(23, 0.55, 16, 80);
     const gyroRingMat = new THREE.MeshBasicMaterial({
-      color: 0xe5b869,
-      transparent: true,
-      opacity: 0.72
+      color: 0xf3d285
     });
     this.monolithGyroRing = new THREE.Mesh(gyroRingGeo, gyroRingMat);
     this.monolithGyroRing.rotation.x = Math.PI * 0.35;
     this.monolithGroup.add(this.monolithGyroRing);
 
-    const gyroRing2Geo = new THREE.TorusGeometry(26, 0.35, 16, 80);
+    const gyroRing2Geo = new THREE.TorusGeometry(26.5, 0.45, 16, 80);
     const gyroRing2Mat = new THREE.MeshBasicMaterial({
-      color: 0x10b981,
-      transparent: true,
-      opacity: 0.48
+      color: 0x10b981
     });
     this.monolithGyroRing2 = new THREE.Mesh(gyroRing2Geo, gyroRing2Mat);
     this.monolithGyroRing2.rotation.y = Math.PI * 0.25;
@@ -2775,42 +2801,46 @@ class PlanetMaxiController {
 
     // 5. Iconic Suspended Dr. Strangelove Overhead Architectural Halo Light Ring
     this.haloChandelierGroup = new THREE.Group();
-    this.haloChandelierGroup.position.set(0, floorY + 114, 0);
+    this.haloChandelierGroup.position.set(0, floorY + 96, 0);
     this.councilWorldGroup.add(this.haloChandelierGroup);
 
-    const haloOuterGeo = new THREE.TorusGeometry(84, 2.2, 20, 96);
+    const haloOuterGeo = new THREE.TorusGeometry(78, 2.2, 20, 96);
     haloOuterGeo.rotateX(Math.PI * 0.5);
     const haloHousingMat = new THREE.MeshStandardMaterial({
-      color: 0x161922,
-      roughness: 0.28,
-      metalness: 0.9
+      color: 0x1e2433,
+      roughness: 0.3,
+      metalness: 0.8
     });
     this.haloChandelierGroup.add(new THREE.Mesh(haloOuterGeo, haloHousingMat));
 
-    const haloGlowGeo = new THREE.TorusGeometry(84, 1.35, 16, 96);
+    const haloGlowGeo = new THREE.TorusGeometry(78, 1.4, 16, 96);
     haloGlowGeo.rotateX(Math.PI * 0.5);
     const haloGlowMat = new THREE.MeshBasicMaterial({
-      color: 0xf8fafc
+      color: 0xffffff
     });
     const haloGlowMesh = new THREE.Mesh(haloGlowGeo, haloGlowMat);
-    haloGlowMesh.position.y = -1.1;
+    haloGlowMesh.position.y = -1.2;
     this.haloChandelierGroup.add(haloGlowMesh);
 
     // 4 Suspension Tension Cables holding the Halo Light Ring
     for (let c = 0; c < 4; c++) {
       const cAng = (c * Math.PI) / 2 + Math.PI / 4;
-      const rodGeo = new THREE.CylinderGeometry(0.4, 0.4, 70, 8);
+      const rodGeo = new THREE.CylinderGeometry(0.45, 0.45, 60, 8);
       const rodMesh = new THREE.Mesh(rodGeo, haloHousingMat);
-      rodMesh.position.set(Math.sin(cAng) * 84, 35, Math.cos(cAng) * 84);
+      rodMesh.position.set(Math.sin(cAng) * 78, 30, Math.cos(cAng) * 78);
       this.haloChandelierGroup.add(rodMesh);
     }
 
-    // Vertical Light Well Core PointLight & Active Seat Inspection Spotlight
-    this.monolithCoreLight = new THREE.PointLight(0x10b981, 2.2, 240);
-    this.monolithCoreLight.position.set(0, floorY + 32, 0);
+    // Strong War Room PointLights so the Obsidian Table, Thrones, and Cutouts are crisply illuminated
+    this.monolithCoreLight = new THREE.PointLight(0x10b981, 2.6, 320);
+    this.monolithCoreLight.position.set(0, floorY + 42, 0);
     this.councilWorldGroup.add(this.monolithCoreLight);
 
-    this.seatInspectionLight = new THREE.PointLight(0xf3d285, 2.4, 160);
+    this.overheadTableLight = new THREE.PointLight(0xfff7ed, 2.2, 420);
+    this.overheadTableLight.position.set(0, floorY + 90, 0);
+    this.councilWorldGroup.add(this.overheadTableLight);
+
+    this.seatInspectionLight = new THREE.PointLight(0xf3d285, 2.8, 220);
     this.seatInspectionLight.position.set(0, floorY + 55, 118);
     this.councilWorldGroup.add(this.seatInspectionLight);
 
@@ -2825,10 +2855,10 @@ class PlanetMaxiController {
     cvs.height = 96;
     const ctx = cvs.getContext('2d');
 
-    ctx.fillStyle = '#07080C';
+    ctx.fillStyle = '#090B10';
     ctx.fillRect(0, 0, 256, 96);
-    ctx.strokeStyle = cit.isOg ? '#F3D285' : cit.isMythic ? '#10B981' : '#475569';
-    ctx.lineWidth = 4;
+    ctx.strokeStyle = cit.isOg ? '#F3D285' : cit.isMythic ? '#10B981' : '#64748B';
+    ctx.lineWidth = 5;
     ctx.strokeRect(3, 3, 250, 90);
 
     ctx.fillStyle = cit.isOg ? '#F3D285' : '#10B981';
@@ -2856,9 +2886,9 @@ class PlanetMaxiController {
     this.councilBatchIndex = ((batchIdx % totalBatches) + totalBatches) % totalBatches;
 
     const romans = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII'];
-    const seatRadius = 120;
-    const plaqueRadius = 74;
-    const floorY = this.councilFloorY || -44;
+    const seatRadius = 110;
+    const plaqueRadius = 70;
+    const floorY = this.councilFloorY || -36;
 
     this.councilSeats = [];
 
@@ -2872,20 +2902,20 @@ class PlanetMaxiController {
       this.councilSeatsGroup.add(seatNode);
 
       // 1. High-Back Brutalist Monolith Throne Chair behind the Maxi
-      const throneDist = seatRadius + 11;
+      const throneDist = seatRadius + 13;
       const isOg = Boolean(cit.isOg);
       const isMythic = Boolean(cit.isMythic);
 
-      const throneBackGeo = new THREE.BoxGeometry(24, isOg ? 52 : 44, 3.2);
+      const throneBackGeo = new THREE.BoxGeometry(24, isOg ? 50 : 42, 3.2);
       const throneMat = new THREE.MeshStandardMaterial({
-        color: isOg ? 0x1a150b : 0x0c0e14,
-        roughness: 0.25,
-        metalness: 0.88
+        color: isOg ? 0x241c0c : 0x131722,
+        roughness: 0.3,
+        metalness: 0.75
       });
       const throneBack = new THREE.Mesh(throneBackGeo, throneMat);
       throneBack.position.set(
         Math.sin(angle) * throneDist,
-        floorY + (isOg ? 26 : 22),
+        floorY + (isOg ? 25 : 21),
         Math.cos(angle) * throneDist
       );
       throneBack.rotation.y = angle;
@@ -2894,19 +2924,19 @@ class PlanetMaxiController {
       // Brushed Metallic Trim Edge on the Throne Monolith
       const throneEdgeGeo = new THREE.EdgesGeometry(throneBackGeo);
       const throneEdgeMat = new THREE.LineBasicMaterial({
-        color: isOg ? 0xf3d285 : isMythic ? 0x10b981 : 0x334155,
+        color: isOg ? 0xf3d285 : isMythic ? 0x10b981 : 0x64748b,
         transparent: true,
-        opacity: isOg ? 0.9 : 0.55
+        opacity: isOg ? 1.0 : 0.7
       });
       const throneEdges = new THREE.LineSegments(throneEdgeGeo, throneEdgeMat);
       throneBack.add(throneEdges);
 
-      // 2. 3D Maxi Cutout Seated at the High Table
-      const standeeScale = isOg ? 1.32 : isMythic ? 1.18 : 1.12;
+      // 2. 3D Maxi Cutout Seated at the High Table (Billboards toward camera every frame!)
+      const standeeScale = isOg ? 1.38 : isMythic ? 1.22 : 1.15;
       const standeeMesh = this.create3DMaxiStandeeMesh(cit, standeeScale);
       standeeMesh.position.set(
         Math.sin(angle) * seatRadius,
-        floorY + 18,
+        floorY + 23,
         Math.cos(angle) * seatRadius
       );
       standeeMesh.rotation.y = angle;
@@ -2914,7 +2944,7 @@ class PlanetMaxiController {
 
       // 3. Illuminated Dossier Plaque on the Black Obsidian Table in front of Seat
       const plaqueTex = this.createCouncilSeatCaptionTexture(romans[s], cit);
-      const plaqueGeo = new THREE.PlaneGeometry(18, 6.8);
+      const plaqueGeo = new THREE.PlaneGeometry(19, 7.2);
       plaqueGeo.rotateX(-Math.PI * 0.5);
       const plaqueMat = new THREE.MeshBasicMaterial({
         map: plaqueTex,
@@ -2923,25 +2953,25 @@ class PlanetMaxiController {
       const plaqueMesh = new THREE.Mesh(plaqueGeo, plaqueMat);
       plaqueMesh.position.set(
         Math.sin(angle) * plaqueRadius,
-        floorY + 21.35,
+        floorY + 18.35,
         Math.cos(angle) * plaqueRadius
       );
       plaqueMesh.rotation.y = angle;
       seatNode.add(plaqueMesh);
 
-      // 4. Spotlight Floor Halo Ring under the Active Seat
-      const ringGeo = new THREE.RingGeometry(13.5, 15.8, 32);
+      // 4. Spotlight Floor Halo Ring under the Seat
+      const ringGeo = new THREE.RingGeometry(14.0, 16.5, 32);
       ringGeo.rotateX(-Math.PI * 0.5);
       const ringMat = new THREE.MeshBasicMaterial({
         color: isOg ? 0xf3d285 : 0x10b981,
         side: THREE.DoubleSide,
         transparent: true,
-        opacity: s === this.activeSeatSlot ? 0.85 : 0.15
+        opacity: s === this.activeSeatSlot ? 0.95 : 0.25
       });
       const ringMesh = new THREE.Mesh(ringGeo, ringMat);
       ringMesh.position.set(
         Math.sin(angle) * seatRadius,
-        floorY + 0.5,
+        floorY + 0.55,
         Math.cos(angle) * seatRadius
       );
       seatNode.add(ringMesh);
@@ -2998,10 +3028,10 @@ class PlanetMaxiController {
     this.councilSeats.forEach((s, idx) => {
       const isFocused = idx === normalized;
       if (s.ringMat) {
-        s.ringMat.opacity = isFocused ? 0.9 : 0.14;
+        s.ringMat.opacity = isFocused ? 0.95 : 0.24;
       }
       if (s.throneEdgeMat) {
-        s.throneEdgeMat.opacity = isFocused ? 1.0 : 0.4;
+        s.throneEdgeMat.opacity = isFocused ? 1.0 : 0.55;
       }
     });
 
@@ -3085,7 +3115,7 @@ class PlanetMaxiController {
       if (camBtn) camBtn.textContent = `CAM: ${this.councilCamMode || 'TABLE'}`;
       if (snapOgBtn) snapOgBtn.textContent = 'SEAT I (#001)';
       if (aimOgBtn) aimOgBtn.textContent = 'SEAT I (#001)';
-      if (shuffleBtn) shuffleBtn.textContent = 'SWITCH TO CLAW';
+      if (shuffleBtn) shuffleBtn.textContent = '3D CLAW MACHINE →';
       if (dropLbl) dropLbl.textContent = 'SUMMON COUNCIL SEAT & CLAIM PFP';
       if (leftLbl) leftLbl.textContent = 'PREV SEAT';
       if (rightLbl) rightLbl.textContent = 'NEXT SEAT';
@@ -3119,30 +3149,30 @@ class PlanetMaxiController {
   update3DCouncilScene(dt, timeSec) {
     if (!this.councilWorldGroup) return;
 
-    const floorY = this.councilFloorY || -44;
+    const floorY = this.councilFloorY || -36;
 
     // 1. Float & Rotate the Central $MAXI Obsidian Monolith & Gyroscopic Rings
     if (this.monolithGroup) {
-      this.monolithGroup.rotation.y = timeSec * 0.45;
-      this.monolithGroup.position.y = floorY + 46 + Math.sin(timeSec * 1.8) * 2.4;
+      this.monolithGroup.rotation.y = timeSec * 0.55;
+      this.monolithGroup.position.y = floorY + 46 + Math.sin(timeSec * 1.8) * 2.5;
     }
     if (this.monolithGyroRing) {
-      this.monolithGyroRing.rotation.z = timeSec * 0.9;
+      this.monolithGyroRing.rotation.z = timeSec * 0.95;
       this.monolithGyroRing.rotation.x = Math.PI * 0.35 + Math.sin(timeSec * 0.7) * 0.25;
     }
     if (this.monolithGyroRing2) {
-      this.monolithGyroRing2.rotation.x = -timeSec * 0.75;
+      this.monolithGyroRing2.rotation.x = -timeSec * 0.8;
       this.monolithGyroRing2.rotation.z = Math.cos(timeSec * 0.6) * 0.35;
     }
     if (this.sovereignSealGroup) {
-      this.sovereignSealGroup.rotation.y = -timeSec * 0.22;
+      this.sovereignSealGroup.rotation.y = -timeSec * 0.28;
     }
 
     // Pulse the Bottomless Light Well Rings
     if (this.wellRings) {
       this.wellRings.forEach((ring, idx) => {
-        const pulse = 0.35 + 0.3 * Math.sin(timeSec * 2.6 - idx * 0.55);
-        ring.material.opacity = Math.max(0.1, pulse - idx * 0.04);
+        const pulse = 0.5 + 0.32 * Math.sin(timeSec * 2.6 - idx * 0.55);
+        ring.material.opacity = Math.max(0.18, pulse - idx * 0.04);
       });
     }
 
@@ -3154,18 +3184,21 @@ class PlanetMaxiController {
     // Move the Overhead Inspection Spotlight above the currently focused Council Seat
     const seat = this.councilSeats[this.activeSeatSlot];
     if (seat && this.seatInspectionLight) {
-      const targetSpotX = Math.sin(seat.angle) * 116;
-      const targetSpotZ = Math.cos(seat.angle) * 116;
+      const targetSpotX = Math.sin(seat.angle) * 112;
+      const targetSpotZ = Math.cos(seat.angle) * 112;
       this.seatInspectionLight.position.x += (targetSpotX - this.seatInspectionLight.position.x) * 0.14;
       this.seatInspectionLight.position.z += (targetSpotZ - this.seatInspectionLight.position.z) * 0.14;
     }
 
-    // Subtle breathing / floating motion on the active Council Seat standee
+    // Billboard all 12 Maxi Standees toward the camera so every single Council Member is clearly visible,
+    // and elevate + scale up the active front seat!
     this.councilSeats.forEach((s, idx) => {
       if (!s.standeeMesh) return;
       const isFocused = idx === this.activeSeatSlot;
-      const targetY = floorY + (isFocused ? 21.5 + Math.sin(timeSec * 3.0) * 1.1 : 17.5);
-      s.standeeMesh.position.y += (targetY - s.standeeMesh.position.y) * 0.15;
+      const targetY = floorY + (isFocused ? 27.5 + Math.sin(timeSec * 3.0) * 1.4 : 21.5);
+      s.standeeMesh.position.y += (targetY - s.standeeMesh.position.y) * 0.16;
+      // Face the camera horizontally so none of the 12 cutouts are ever edge-on or invisible
+      s.standeeMesh.rotation.y = this.councilOrbitAngle;
     });
   }
 
@@ -3179,10 +3212,8 @@ class PlanetMaxiController {
     const camY = this.councilCamHeight;
 
     this.clawCamera.position.set(camX, camY, camZ);
-    // Look across the active Council Seat toward the central rotating Obsidian Monolith
-    const lookX = Math.sin(ang) * 42;
-    const lookZ = Math.cos(ang) * 42;
-    this.clawCamera.lookAt(lookX, -14, lookZ);
+    // Look directly at the center of the Circular Council Table & Rotating Obsidian Monolith
+    this.clawCamera.lookAt(0, -10, 0);
 
     this.clawRenderer.render(this.clawScene, this.clawCamera);
   }
