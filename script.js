@@ -1496,6 +1496,7 @@ class PlanetMaxiController {
     this.initThreeClawMachine();
     this.resizeCanvases();
     this.spawnClawPile(false);
+    this.loadCaughtLockerFromStorage();
     this.bindEvents();
 
     this.lastFrameTime = performance.now();
@@ -2100,9 +2101,269 @@ class PlanetMaxiController {
   }
 
   /* -----------------------------------------------------------------------
-     D. LIVE 1000x1000 HD PFP FORGER INSIDE THE CLAW EXTRACTION MODAL
+     D. LIVE 800x1040 COLLECTOR CARD & 1000x1000 PFP FORGER + CAUGHT LOCKER
      ----------------------------------------------------------------------- */
+  loadCaughtLockerFromStorage() {
+    if (this._lockerLoaded) return;
+    this._lockerLoaded = true;
+    try {
+      const saved = localStorage.getItem('mwo_caught_maxis_v1');
+      if (saved) {
+        const arr = JSON.parse(saved);
+        if (Array.isArray(arr)) {
+          arr.forEach((r) => this.extractedSet.add(r));
+        }
+      }
+    } catch (e) {
+      // Ignore storage errors
+    }
+    this.renderCaughtLockerGrid();
+  }
+
+  saveCaughtLockerToStorage() {
+    try {
+      localStorage.setItem('mwo_caught_maxis_v1', JSON.stringify(Array.from(this.extractedSet)));
+    } catch (e) {
+      // Ignore storage errors
+    }
+  }
+
+  renderCaughtLockerGrid() {
+    const grid = document.getElementById('caughtLockerGrid');
+    const progEl = document.getElementById('lockerProgressReadout');
+    const topCountEl = document.getElementById('clawExtractedCount');
+
+    if (progEl) {
+      progEl.textContent = `${this.extractedSet.size} / ${MAXI_CITIZENS.length} SPECIMENS CAUGHT`;
+    }
+    if (topCountEl) {
+      topCountEl.textContent = `${this.extractedSet.size} / ${MAXI_CITIZENS.length}`;
+    }
+    if (!grid) return;
+
+    grid.innerHTML = '';
+    MAXI_CITIZENS.forEach((cit, idx) => {
+      const isCaught = this.extractedSet.has(cit.rank);
+      const slot = document.createElement('div');
+      slot.className = `locker-slot ${isCaught ? 'caught' : 'locked'}`;
+      slot.title = isCaught
+        ? `${cit.rank} ${cit.name} — Click to open Collector Card & Save`
+        : `${cit.rank} — Locked (Catch in 3D Claw Machine)`;
+
+      slot.innerHTML = `
+        <div class="locker-slot-top">
+          <span>${cit.rank}</span>
+          ${isCaught ? '<span class="locker-dot"></span>' : '<span>LOCKED</span>'}
+        </div>
+        <img src="${cit.src}" alt="${cit.name}" class="locker-slot-img" loading="lazy" />
+        <div class="locker-slot-name">${isCaught ? cit.name.replace(' MAXI', '') : '???'}</div>
+      `;
+
+      slot.addEventListener('click', () => {
+        if (isCaught) {
+          this.openCaughtCardForCitizen(idx, false);
+        } else {
+          // Scroll up to 3D Claw Machine, drop this locked Maxi into the tank, and lock laser on it!
+          const stage = document.getElementById('topStage');
+          if (stage) stage.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          this.selectCitizen(idx, true);
+        }
+      });
+
+      grid.appendChild(slot);
+    });
+  }
+
+  renderCaughtCollectorCardCanvas() {
+    const canvas = document.getElementById('caughtCollectorCardCanvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const w = canvas.width;  // 800
+    const h = canvas.height; // 1040
+
+    const cit = MAXI_CITIZENS[this.activeCitizenIndex] || MAXI_CITIZENS[0];
+    const img = this.getSprite(cit.src);
+
+    ctx.clearRect(0, 0, w, h);
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
+
+    const themes = {
+      OBSIDIAN: { c0: '#161922', c1: '#0A0B0E', c2: '#050507', accent: '#F4F4F6', border: '#323642', tagBg: '#F4F4F6', tagFg: '#08080A' },
+      CANDLE:   { c0: '#09241B', c1: '#05110D', c2: '#020705', accent: '#10B981', border: '#10B981', tagBg: '#10B981', tagFg: '#040907' },
+      SOLANA:   { c0: '#111C38', c1: '#080C18', c2: '#04060C', accent: '#38BDF8', border: '#38BDF8', tagBg: '#38BDF8', tagFg: '#04080E' },
+      ROYAL:    { c0: '#2E0D17', c1: '#120509', c2: '#060204', accent: '#F43F5E', border: '#F43F5E', tagBg: '#F43F5E', tagFg: '#080304' }
+    };
+    const th = themes[this.pullPfpTheme] || themes.OBSIDIAN;
+
+    // 1. Matte Architectural Trading Card Base
+    const bgGrad = ctx.createLinearGradient(0, 0, 0, h);
+    bgGrad.addColorStop(0, th.c0);
+    bgGrad.addColorStop(0.6, th.c1);
+    bgGrad.addColorStop(1, th.c2);
+    ctx.fillStyle = bgGrad;
+    ctx.fillRect(0, 0, w, h);
+
+    // Outer & Inner 1px Hairline Collector Borders
+    ctx.strokeStyle = th.border;
+    ctx.lineWidth = 4;
+    ctx.strokeRect(18, 18, w - 36, h - 36);
+
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.12)';
+    ctx.lineWidth = 1.5;
+    ctx.strokeRect(32, 32, w - 64, h - 64);
+
+    // 2. Top Collector Header Bar
+    ctx.fillStyle = th.tagBg;
+    ctx.fillRect(32, 32, w - 64, 54);
+
+    ctx.fillStyle = th.tagFg;
+    ctx.font = '800 20px "JetBrains Mono", monospace';
+    ctx.textAlign = 'left';
+    const stampText = (this.pullPfpBadgeText || 'MAXI WORLD ORDER').toUpperCase();
+    ctx.fillText(`${stampText} // SPECIMEN CARD`, 52, 66);
+
+    ctx.textAlign = 'right';
+    ctx.fillText(`${cit.rank} / 100`, w - 52, 66);
+
+    // 3. Central Portrait Frame (Lines 86..720)
+    const frameX = 48;
+    const frameY = 104;
+    const frameW = w - 96;
+    const frameH = 590;
+
+    ctx.save();
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.02)';
+    ctx.fillRect(frameX, frameY, frameW, frameH);
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.14)';
+    ctx.lineWidth = 1.5;
+    ctx.strokeRect(frameX, frameY, frameW, frameH);
+
+    // Subtle Grid inside Portrait Frame
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.04)';
+    ctx.lineWidth = 1;
+    for (let gx = frameX + 70; gx < frameX + frameW; gx += 70) {
+      ctx.beginPath();
+      ctx.moveTo(gx, frameY);
+      ctx.lineTo(gx, frameY + frameH);
+      ctx.stroke();
+    }
+    for (let gy = frameY + 70; gy < frameY + frameH; gy += 70) {
+      ctx.beginPath();
+      ctx.moveTo(frameX, gy);
+      ctx.lineTo(frameX + frameW, gy);
+      ctx.stroke();
+    }
+
+    // Center Radial Backlight behind Specimen
+    const aura = ctx.createRadialGradient(w * 0.5, frameY + frameH * 0.52, 20, w * 0.5, frameY + frameH * 0.52, 260);
+    aura.addColorStop(0, `${th.accent}33`);
+    aura.addColorStop(1, 'transparent');
+    ctx.fillStyle = aura;
+    ctx.beginPath();
+    ctx.arc(w * 0.5, frameY + frameH * 0.52, 260, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Draw High-Res Un-Tinted Background-Removed Maxi Cutout
+    if (img && img.complete && img.naturalWidth > 0) {
+      const iw = img.naturalWidth;
+      const ih = img.naturalHeight;
+      const maxBox = 530;
+      const scale = Math.min(maxBox / iw, maxBox / ih);
+      const dw = iw * scale;
+      const dh = ih * scale;
+
+      ctx.shadowColor = 'rgba(0, 0, 0, 0.92)';
+      ctx.shadowBlur = 32;
+      ctx.shadowOffsetY = 14;
+      ctx.drawImage(img, (w - dw) * 0.5, frameY + (frameH - dh) * 0.52, dw, dh);
+      ctx.shadowBlur = 0;
+    }
+
+    // Corner Technical Coordinates inside Portrait Frame
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.45)';
+    ctx.font = '600 15px "JetBrains Mono", monospace';
+    ctx.textAlign = 'left';
+    ctx.fillText(`ID: MWO-${cit.rank.replace('#', '')}`, frameX + 18, frameY + 30);
+    ctx.textAlign = 'right';
+    ctx.fillText(cit.isOg ? 'TIER: PRIME SOVEREIGN' : cit.isMythic ? 'TIER: 1-OF-1 MASTER' : 'TIER: VERIFIED CITIZEN', frameX + frameW - 18, frameY + 30);
+    ctx.restore();
+
+    // 4. Specimen Name & Archetype Block
+    ctx.save();
+    ctx.textAlign = 'left';
+    ctx.fillStyle = th.accent;
+    ctx.font = '700 17px "JetBrains Mono", monospace';
+    const cleanTitle = cit.title.replace(/^[👑★]\s*/, '').toUpperCase();
+    ctx.fillText(cleanTitle, 48, 736);
+
+    ctx.fillStyle = '#FFFFFF';
+    ctx.font = '800 46px "Syne", "Inter", sans-serif';
+    ctx.fillText(cit.name, 48, 788);
+
+    // Divider line
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.14)';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(48, 810);
+    ctx.lineTo(w - 48, 810);
+    ctx.stroke();
+
+    // Lore text (wrapped cleanly to 2 lines)
+    ctx.fillStyle = '#94A3B8';
+    ctx.font = '500 18px "Inter", sans-serif';
+    const rawLore = cit.lore.replace(/&quot;/g, '"');
+    const words = rawLore.split(' ');
+    let line = '';
+    let yCursor = 842;
+    const maxLineW = w - 96;
+    for (let i = 0; i < words.length; i++) {
+      const test = line + words[i] + ' ';
+      if (ctx.measureText(test).width > maxLineW && line.length > 0) {
+        ctx.fillText(line.trim(), 48, yCursor);
+        line = words[i] + ' ';
+        yCursor += 26;
+        if (yCursor > 895) break;
+      } else {
+        line = test;
+      }
+    }
+    if (line && yCursor <= 895) {
+      ctx.fillText(line.trim(), 48, yCursor);
+    }
+
+    // 5. Bottom 3-Column Technical Specification Footer
+    const statY = 918;
+    const statH = 72;
+    const colW = (w - 96) / 3;
+    const specs = [
+      { k: 'COLLECTION', v: 'MAXI WORLD ORDER' },
+      { k: 'EDITION', v: `${cit.rank} OF 100` },
+      { k: 'NETWORK', v: '$MAXI // SOLANA' }
+    ];
+    specs.forEach((sp, i) => {
+      const sx = 48 + i * colW;
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.03)';
+      ctx.fillRect(sx, statY, colW - 6, statH);
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.14)';
+      ctx.lineWidth = 1;
+      ctx.strokeRect(sx, statY, colW - 6, statH);
+
+      ctx.fillStyle = '#64748B';
+      ctx.font = '600 13px "JetBrains Mono", monospace';
+      ctx.fillText(sp.k, sx + 14, statY + 25);
+
+      ctx.fillStyle = '#F8FAFC';
+      ctx.font = '700 16px "JetBrains Mono", monospace';
+      ctx.fillText(sp.v, sx + 14, statY + 52);
+    });
+    ctx.restore();
+  }
+
   renderPullPfpCanvas() {
+    // Also render the 800x1040 Collector Trading Card whenever theme/badge/citizen updates!
+    this.renderCaughtCollectorCardCanvas();
+
     const canvas = document.getElementById('pullPfpCanvas');
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
@@ -2116,11 +2377,10 @@ class PlanetMaxiController {
     ctx.imageSmoothingEnabled = true;
     ctx.imageSmoothingQuality = 'high';
 
-    // 1. High-Craft Architectural Background Theme
     const themes = {
-      OBSIDIAN: { c0: '#1c2436', c1: '#070a12', c2: '#030408', accent: '#e5b869', sub: '#f3d285' },
-      CANDLE:   { c0: '#0b2e23', c1: '#05140f', c2: '#020806', accent: '#34d399', sub: '#6ee7b7' },
-      SOLANA:   { c0: '#1e1b4b', c1: '#090d1a', c2: '#03050a', accent: '#38bdf8', sub: '#a855f7' },
+      OBSIDIAN: { c0: '#161922', c1: '#090A0F', c2: '#040406', accent: '#F4F4F6', sub: '#8A8F9E' },
+      CANDLE:   { c0: '#0b2e23', c1: '#05140f', c2: '#020806', accent: '#10B981', sub: '#6ee7b7' },
+      SOLANA:   { c0: '#121E3A', c1: '#080C18', c2: '#03050a', accent: '#38bdf8', sub: '#94A3B8' },
       ROYAL:    { c0: '#3b0d1e', c1: '#14050b', c2: '#060204', accent: '#f43f5e', sub: '#fbbf24' }
     };
     const th = themes[this.pullPfpTheme] || themes.OBSIDIAN;
@@ -2132,9 +2392,8 @@ class PlanetMaxiController {
     ctx.fillStyle = bgGrad;
     ctx.fillRect(0, 0, w, h);
 
-    // Subtle Blueprint Grid & Radial Telemetry Rings
     ctx.save();
-    ctx.strokeStyle = 'rgba(255, 255, 255, 0.045)';
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.04)';
     ctx.lineWidth = 2;
     const step = 100;
     for (let x = step; x < w; x += step) {
@@ -2150,41 +2409,30 @@ class PlanetMaxiController {
       ctx.stroke();
     }
 
-    // Center Sovereign Aura Ring behind Character
     const auraGrad = ctx.createRadialGradient(w * 0.5, h * 0.46, 30, w * 0.5, h * 0.46, 360);
-    auraGrad.addColorStop(0, `${th.accent}44`);
-    auraGrad.addColorStop(0.6, `${th.accent}14`);
+    auraGrad.addColorStop(0, `${th.accent}33`);
     auraGrad.addColorStop(1, 'transparent');
     ctx.fillStyle = auraGrad;
     ctx.beginPath();
     ctx.arc(w * 0.5, h * 0.46, 360, 0, Math.PI * 2);
     ctx.fill();
 
-    ctx.strokeStyle = `${th.accent}66`;
-    ctx.lineWidth = 3;
+    ctx.strokeStyle = `${th.accent}55`;
+    ctx.lineWidth = 2;
     ctx.beginPath();
     ctx.arc(w * 0.5, h * 0.46, 315, 0, Math.PI * 2);
     ctx.stroke();
-
-    ctx.setLineDash([14, 10]);
-    ctx.strokeStyle = `${th.sub}44`;
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.arc(w * 0.5, h * 0.46, 345, 0, Math.PI * 2);
-    ctx.stroke();
     ctx.restore();
 
-    // 2. Top Corner Telemetry Watermarks
     ctx.save();
     ctx.fillStyle = 'rgba(255, 255, 255, 0.55)';
     ctx.font = '700 22px "JetBrains Mono", monospace';
     ctx.fillText(`MWO // ${cit.rank}`, 48, 62);
     ctx.textAlign = 'right';
     ctx.fillStyle = th.accent;
-    ctx.fillText('$MAXI VERIFIED', w - 48, 62);
+    ctx.fillText('$MAXI', w - 48, 62);
     ctx.restore();
 
-    // 3. Full-Res Background-Removed Maxi Cutout Portrait
     if (img && img.complete && img.naturalWidth > 0) {
       ctx.save();
       const iw = img.naturalWidth;
@@ -2201,36 +2449,71 @@ class PlanetMaxiController {
       ctx.restore();
     }
 
-    // 4. Bottom Architectural Nameplate & Custom Badge Pill
     const badgeText = (this.pullPfpBadgeText || 'MAXI WORLD ORDER').toUpperCase();
     ctx.save();
     const plateW = 860;
-    const plateH = 126;
+    const plateH = 122;
     const plateX = (w - plateW) * 0.5;
-    const plateY = h - 166;
+    const plateY = h - 162;
 
-    ctx.fillStyle = 'rgba(6, 9, 16, 0.92)';
+    ctx.fillStyle = 'rgba(8, 9, 12, 0.94)';
     ctx.strokeStyle = th.accent;
-    ctx.lineWidth = 3;
-    ctx.beginPath();
-    ctx.roundRect(plateX, plateY, plateW, plateH, 18);
-    ctx.fill();
-    ctx.stroke();
+    ctx.lineWidth = 2;
+    ctx.fillRect(plateX, plateY, plateW, plateH);
+    ctx.strokeRect(plateX, plateY, plateW, plateH);
 
     ctx.fillStyle = th.accent;
-    ctx.font = '800 22px "JetBrains Mono", monospace';
+    ctx.font = '700 20px "JetBrains Mono", monospace';
     ctx.textAlign = 'center';
-    ctx.fillText(`${badgeText} · ${cit.rank}`, w * 0.5, plateY + 42);
+    ctx.fillText(`${badgeText} · ${cit.rank}`, w * 0.5, plateY + 40);
 
     ctx.fillStyle = '#ffffff';
-    ctx.font = '900 44px "Syne", "Inter", sans-serif';
-    ctx.fillText(cit.name, w * 0.5, plateY + 96);
+    ctx.font = '800 44px "Syne", "Inter", sans-serif';
+    ctx.fillText(cit.name, w * 0.5, plateY + 94);
     ctx.restore();
 
-    // Outer 1000x1000 Precision Border Frame
     ctx.strokeStyle = th.accent;
-    ctx.lineWidth = 10;
-    ctx.strokeRect(5, 5, w - 10, h - 10);
+    ctx.lineWidth = 6;
+    ctx.strokeRect(3, 3, w - 6, h - 6);
+  }
+
+  downloadCaughtCollectorCard() {
+    this.renderCaughtCollectorCardCanvas();
+    const canvas = document.getElementById('caughtCollectorCardCanvas');
+    if (!canvas) return;
+    const cit = MAXI_CITIZENS[this.activeCitizenIndex] || MAXI_CITIZENS[0];
+    const link = document.createElement('a');
+    link.download = `MAXI-CARD-${cit.rank.replace('#', '')}-${cit.name.replace(/\s+/g, '-')}.png`;
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+    sfx.playBeep(940, 0.1, 'triangle');
+  }
+
+  copyCaughtCollectorCard() {
+    this.renderCaughtCollectorCardCanvas();
+    const canvas = document.getElementById('caughtCollectorCardCanvas');
+    const lbl = document.getElementById('pullCopyCardLabel');
+    if (!canvas) return;
+
+    canvas.toBlob(async (blob) => {
+      if (!blob) return;
+      try {
+        if (navigator.clipboard && window.ClipboardItem) {
+          await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
+          if (lbl) lbl.textContent = 'COPIED CARD!';
+          sfx.playBeep(1040, 0.1, 'triangle');
+        } else {
+          this.downloadCaughtCollectorCard();
+          if (lbl) lbl.textContent = 'SAVED CARD!';
+        }
+      } catch (err) {
+        this.downloadCaughtCollectorCard();
+        if (lbl) lbl.textContent = 'SAVED CARD!';
+      }
+      setTimeout(() => {
+        if (lbl) lbl.textContent = 'COPY COLLECTOR CARD';
+      }, 2200);
+    }, 'image/png');
   }
 
   downloadPullPfp() {
@@ -2256,47 +2539,65 @@ class PlanetMaxiController {
       try {
         if (navigator.clipboard && window.ClipboardItem) {
           await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
-          if (lbl) lbl.textContent = '✓ PFP COPIED TO CLIPBOARD!';
+          if (lbl) lbl.textContent = 'COPIED PFP!';
           sfx.playBeep(1040, 0.1, 'triangle');
         } else {
           this.downloadPullPfp();
-          if (lbl) lbl.textContent = '✓ DOWNLOADED PNG!';
+          if (lbl) lbl.textContent = 'SAVED PFP!';
         }
       } catch (err) {
         this.downloadPullPfp();
-        if (lbl) lbl.textContent = '✓ SAVED PNG!';
+        if (lbl) lbl.textContent = 'SAVED PFP!';
       }
       setTimeout(() => {
-        if (lbl) lbl.textContent = '📋 COPY PFP IMAGE';
+        if (lbl) lbl.textContent = 'COPY 1:1 PFP';
       }, 2400);
     }, 'image/png');
   }
 
+  joltClawTank() {
+    const b = this.tankBounds;
+    this.pileItems.forEach((it) => {
+      if (it.extracted || it.inChute || it === this.claw.grabbedItem) return;
+      it.vy = 75 + Math.random() * 65;
+      it.vx += (Math.random() - 0.5) * 85;
+      it.vz += (Math.random() - 0.5) * 85;
+      it.rotX = (Math.random() - 0.5) * 0.45;
+      it.rotZ = (Math.random() - 0.5) * 0.45;
+    });
+
+    // Brief camera shake pulse
+    this.camPitch = Math.min(0.45, this.camPitch + 0.08);
+    sfx.playBeep(220, 0.11, 'sawtooth');
+    setTimeout(() => sfx.playBeep(360, 0.09, 'triangle'), 60);
+    this.updateMarqueeStatus('TANK JOLTED // 3D PILE DISRUPTED');
+  }
+
+  cycle3DCameraView() {
+    const modes = ['FRONT', 'SNIPER', 'ISO'];
+    const currentIdx = modes.indexOf(this.cameraViewMode || 'FRONT');
+    this.cameraViewMode = modes[(currentIdx + 1) % modes.length];
+
+    if (this.cameraViewMode === 'FRONT') {
+      this.targetCamYaw = 0;
+      this.targetCamPitch = 0.16;
+    } else if (this.cameraViewMode === 'SNIPER') {
+      this.targetCamYaw = 0;
+      this.targetCamPitch = 0.68; // High overhead laser aiming view
+    } else if (this.cameraViewMode === 'ISO') {
+      this.targetCamYaw = 0.42;
+      this.targetCamPitch = 0.30; // 3D Isometric view
+    }
+
+    const camBtn = document.getElementById('clawCamBtn');
+    const deckCamBtn = document.getElementById('clawDeckCamBtn');
+    if (camBtn) camBtn.textContent = `CAM: ${this.cameraViewMode}`;
+    if (deckCamBtn) deckCamBtn.textContent = `CAM: ${this.cameraViewMode}`;
+    sfx.playBeep(720, 0.07, 'triangle');
+  }
+
   cycleIntroShowcase(step = 1) {
     this.introPreviewIdx = (this.introPreviewIdx + step + MAXI_CITIZENS.length) % MAXI_CITIZENS.length;
-    const centerCit = MAXI_CITIZENS[this.introPreviewIdx];
-    const leftCit = MAXI_CITIZENS[(this.introPreviewIdx + 36) % MAXI_CITIZENS.length];
-    const rightCit = MAXI_CITIZENS[(this.introPreviewIdx + 1) % MAXI_CITIZENS.length];
-
-    const primeRank = document.getElementById('introPrimeRank');
-    const primeName = document.getElementById('introPrimeName');
-    const primeImg = document.getElementById('intro-logo-front');
-
-    const leftTag = document.getElementById('introSideLeftTag');
-    const leftImg = document.getElementById('introSideLeftImg');
-    const rightTag = document.getElementById('introSideRightTag');
-    const rightImg = document.getElementById('introSideRightImg');
-
-    if (primeRank) primeRank.textContent = centerCit.isOg ? '👑 #001' : centerCit.rank;
-    if (primeName) primeName.textContent = centerCit.name;
-    if (primeImg) primeImg.src = centerCit.src;
-
-    if (leftTag) leftTag.textContent = `${leftCit.rank} ${leftCit.name.replace(' MAXI', '')}`;
-    if (leftImg) leftImg.src = leftCit.src;
-
-    if (rightTag) rightTag.textContent = `${rightCit.rank} ${rightCit.name.replace(' MAXI', '')}`;
-    if (rightImg) rightImg.src = rightCit.src;
-
     sfx.playBeep(780, 0.07, 'triangle');
   }
 
@@ -2307,17 +2608,8 @@ class PlanetMaxiController {
 
   updateSideHudReadouts(citizen) {
     const cit = citizen || MAXI_CITIZENS[this.activeCitizenIndex] || MAXI_CITIZENS[0];
-    const cardSprite = document.getElementById('cardMaxiSprite');
-    const cardKicker = document.getElementById('cardKicker');
     const cardTitle = document.getElementById('cardTitle');
-    const quoteEl = document.getElementById('maxiLiveQuote');
-    const hudActiveTarget = document.getElementById('hudActiveTarget');
-
-    if (cardSprite) cardSprite.src = cit.src;
-    if (cardKicker) cardKicker.textContent = `${cit.rank} · ${cit.title.replace(/^[👑★]\s*/, '')}`;
-    if (cardTitle) cardTitle.textContent = cit.name;
-    if (quoteEl) quoteEl.innerHTML = cit.lore;
-    if (hudActiveTarget) hudActiveTarget.textContent = `${cit.rank} ${cit.name}`;
+    if (cardTitle) cardTitle.textContent = `${cit.name} (${cit.rank})`;
 
     document.querySelectorAll('.roster-chip').forEach((chip) => {
       const isMatch = Number(chip.dataset.idx) === this.activeCitizenIndex;
@@ -2330,7 +2622,6 @@ class PlanetMaxiController {
     const cit = MAXI_CITIZENS[this.activeCitizenIndex];
     sfx.playBeep(cit.isOg ? 980 : 760, 0.08, 'triangle');
 
-    // Find this citizen in the 3D pile, or spawn a 3D Standee for them right on top of the pile!
     let targetItem = this.pileItems.find(
       (it) => it.citizenIndex === this.activeCitizenIndex && !it.extracted
     );
@@ -2384,15 +2675,11 @@ class PlanetMaxiController {
     this.updateSideHudReadouts(cit);
     const laserEl = document.getElementById('clawLaserReadout');
     if (laserEl) {
-      laserEl.textContent = `3D LASER LOCK // ${cit.rank} ${cit.name}`;
+      laserEl.textContent = `LOCKED // ${cit.rank} ${cit.name}`;
     }
   }
 
   triggerClawDrop() {
-    if (this.state === 'ORBIT') {
-      this.startZoomSequence();
-      return;
-    }
     const overlay = document.getElementById('pullRevealOverlay');
     if (overlay && !overlay.classList.contains('hidden')) {
       overlay.classList.add('hidden');
@@ -2416,98 +2703,80 @@ class PlanetMaxiController {
     this.updateMarqueeStatus('DESCENDING // 3D HYDRAULIC TALONS DEPLOYED');
   }
 
-  triggerExtractionReveal(item) {
-    if (!item || !item.cit) return;
-    const cit = item.cit;
-    this.activeCitizenIndex = item.citizenIndex;
+  openCaughtCardForCitizen(citizenIdx, isFreshCatch = true) {
+    this.loadCaughtLockerFromStorage();
+    this.activeCitizenIndex = (citizenIdx + MAXI_CITIZENS.length) % MAXI_CITIZENS.length;
+    const cit = MAXI_CITIZENS[this.activeCitizenIndex];
+
     this.extractedSet.add(cit.rank);
+    this.saveCaughtLockerToStorage();
+    this.renderCaughtLockerGrid();
 
     sfx.playArrivalChord();
     this.updateSideHudReadouts(cit);
 
-    const countEl = document.getElementById('clawExtractedCount');
-    if (countEl) {
-      countEl.textContent = `EXTRACTED: ${this.extractedSet.size} / ${MAXI_CITIZENS.length}`;
-    }
-
     const overlay = document.getElementById('pullRevealOverlay');
+    const bannerEl = document.getElementById('caughtHeadlineBanner');
     const tierEl = document.getElementById('pullRevealTier');
     const rankEl = document.getElementById('pullRevealRank');
     const nameEl = document.getElementById('pullRevealName');
     const titleEl = document.getElementById('pullRevealTitle');
     const loreEl = document.getElementById('pullRevealLore');
+    const statClassEl = document.getElementById('caughtStatClass');
+    const statEditionEl = document.getElementById('caughtStatEdition');
     const shareXEl = document.getElementById('pullShareXLink');
     const dlEl = document.getElementById('pullDownloadLink');
 
+    if (bannerEl) {
+      bannerEl.textContent = isFreshCatch
+        ? `YOU CAUGHT A MAXI // ${cit.rank} ${cit.name}`
+        : `LOCKER SPECIMEN // ${cit.rank} ${cit.name}`;
+    }
     if (tierEl) {
       tierEl.textContent = cit.isOg
-        ? 'SOVEREIGN JACKPOT // #001'
+        ? 'PRIME #001'
         : cit.isMythic
-        ? '1-OF-1 MWO MYTHIC PULL'
-        : 'VERIFIED MWO CITIZEN';
+        ? '1-OF-1 MASTER'
+        : 'VERIFIED CITIZEN';
     }
-    if (rankEl) rankEl.textContent = `CITIZEN ${cit.rank} / 100`;
+    if (rankEl) rankEl.textContent = `SPECIMEN ${cit.rank} / 100`;
     if (nameEl) nameEl.textContent = cit.name;
     if (titleEl) titleEl.textContent = cit.title.replace(/^[👑★]\s*/, '');
     if (loreEl) loreEl.textContent = cit.lore.replace(/&quot;/g, '"');
+    if (statClassEl) {
+      statClassEl.textContent = cit.isOg ? 'PRIME SOVEREIGN' : cit.isMythic ? 'MYTHIC MASTER' : 'MWO OPERATIVE';
+    }
+    if (statEditionEl) {
+      statEditionEl.textContent = `${cit.rank} OF 100`;
+    }
     if (dlEl) {
       dlEl.href = cit.src;
       dlEl.download = `MAXI-CUTOUT-${cit.rank.replace('#', '')}-${cit.name.replace(/\s+/g, '-')}.png`;
     }
     if (shareXEl) {
-      const tweetText = `Just clawed ${cit.rank} ${cit.name} (${cit.title.replace(/^[👑★]\s*/, '')}) out of the 3D MAXI WORLD ORDER Vault Claw Machine & minted my PFP 🦾🌍\n\n$MAXI CA: EBCpGdXuS34WZuX13thrku2KmuLSe3Tf2gMtMKndpump\n@maxiworldorder`;
+      const tweetText = `Just caught ${cit.rank} ${cit.name} (${cit.title.replace(/^[👑★]\s*/, '')}) in the 3D MAXI WORLD ORDER Claw Machine.\n\n$MAXI CA: EBCpGdXuS34WZuX13thrku2KmuLSe3Tf2gMtMKndpump\n@maxiworldorder`;
       shareXEl.href = `https://twitter.com/intent/tweet?text=${encodeURIComponent(tweetText)}`;
     }
 
-    // Immediately forge the 1000x1000 High-Res PFP on the Reveal Modal Canvas!
+    // Render both the 800x1040 Collector Card and 1000x1000 Square PFP
     this.renderPullPfpCanvas();
 
     if (overlay) {
       overlay.classList.remove('hidden');
     }
 
-    this.updateMarqueeStatus(`EXTRACTED ${cit.rank} ${cit.name} // 1000×1000 PFP READY TO SAVE`);
+    this.updateMarqueeStatus(`CAUGHT ${cit.rank} ${cit.name} // COLLECTOR CARD & PFP READY`);
+  }
+
+  triggerExtractionReveal(item) {
+    if (!item || !item.cit) return;
+    this.openCaughtCardForCitizen(item.citizenIndex, true);
   }
 
   toggleOverdriveMode() {
     this.isOverdrive = !this.isOverdrive;
     document.body.classList.toggle('mwo-overdrive', this.isOverdrive);
-
-    const navLbl = document.getElementById('overdriveNavLabel');
-    const stageLbl = document.getElementById('overdriveStageLabel');
-
-    if (this.isOverdrive) {
-      this.targetWarpSpeed = 9.5;
-      if (this.atmoMesh) {
-        this.atmoMesh.material.color.setHex(0x34d399);
-        this.atmoMesh.material.opacity = 0.25;
-      }
-      if (this.goldTrimMat) {
-        this.goldTrimMat.color.setHex(0x34d399);
-        this.goldTrimMat.emissive.setHex(0x34d399);
-      }
-      if (navLbl) navLbl.textContent = 'OVERDRIVE: ON';
-      if (stageLbl) stageLbl.textContent = 'OVERDRIVE: ON';
-      this.updateMarqueeStatus('MWO OVERDRIVE // HIGH-TORQUE GREEN CANDLE 3D CLAW');
-
-      sfx.playBeep(523.25, 0.12, 'sawtooth');
-      setTimeout(() => sfx.playBeep(659.25, 0.14, 'sawtooth'), 70);
-      setTimeout(() => sfx.playBeep(1046.5, 0.22, 'triangle'), 140);
-    } else {
-      this.targetWarpSpeed = 1.5;
-      if (this.atmoMesh) {
-        this.atmoMesh.material.color.setHex(0x38bdf8);
-        this.atmoMesh.material.opacity = 0.16;
-      }
-      if (this.goldTrimMat) {
-        this.goldTrimMat.color.setHex(0xe5b869);
-        this.goldTrimMat.emissive.setHex(0xe5b869);
-      }
-      if (navLbl) navLbl.textContent = 'OVERDRIVE';
-      if (stageLbl) stageLbl.textContent = 'OVERDRIVE';
-      this.updateMarqueeStatus('3D GANTRY ARMED // 100 UNIQUE CITIZENS LOADED');
-      sfx.playBeep(440, 0.09, 'sine');
-    }
+    sfx.playBeep(520, 0.1, 'triangle');
   }
 
   startZoomSequence() {
@@ -3202,7 +3471,85 @@ class PlanetMaxiController {
       });
     }
 
-    // Live 1000x1000 PFP Forger Controls inside the Pull Reveal Card
+    // Jolt Tank & 3D Camera View Switcher Buttons
+    const joltBtns = [
+      document.getElementById('clawJoltBtn'),
+      document.getElementById('clawDeckJoltBtn')
+    ];
+    joltBtns.forEach((btn) => {
+      if (btn) {
+        btn.addEventListener('click', (e) => {
+          e.preventDefault();
+          this.joltClawTank();
+        });
+      }
+    });
+
+    const camBtns = [
+      document.getElementById('clawCamBtn'),
+      document.getElementById('clawDeckCamBtn')
+    ];
+    camBtns.forEach((btn) => {
+      if (btn) {
+        btn.addEventListener('click', (e) => {
+          e.preventDefault();
+          this.cycle3DCameraView();
+        });
+      }
+    });
+
+    const quickCatchBtn = document.getElementById('unlockStarterPackBtn');
+    if (quickCatchBtn) {
+      quickCatchBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const randIdx = Math.floor(Math.random() * MAXI_CITIZENS.length);
+        const stage = document.getElementById('topStage');
+        if (stage) stage.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        this.selectCitizen(randIdx, true);
+      });
+    }
+
+    // Collector Card vs 1:1 PFP Toggle inside Caught Modal
+    const previewModeGroup = document.getElementById('caughtPreviewModeGroup');
+    if (previewModeGroup) {
+      previewModeGroup.querySelectorAll('.caught-tab').forEach((tab) => {
+        tab.addEventListener('click', () => {
+          previewModeGroup.querySelectorAll('.caught-tab').forEach((t) => t.classList.remove('active'));
+          tab.classList.add('active');
+          const mode = tab.dataset.caughtMode;
+          const cardCvs = document.getElementById('caughtCollectorCardCanvas');
+          const pfpCvs = document.getElementById('pullPfpCanvas');
+          if (cardCvs && pfpCvs) {
+            cardCvs.classList.toggle('hidden', mode === 'pfp');
+            pfpCvs.classList.toggle('hidden', mode !== 'pfp');
+          }
+          sfx.playBeep(740, 0.05, 'triangle');
+        });
+      });
+    }
+
+    // Interactive 3D Holographic Tilt on the Caught Collector Card
+    const tiltStage = document.getElementById('caughtTiltStage');
+    const holoGlare = document.getElementById('caughtHoloGlare');
+    if (tiltStage) {
+      tiltStage.addEventListener('pointermove', (e) => {
+        const rect = tiltStage.getBoundingClientRect();
+        if (!rect.width || !rect.height) return;
+        const nx = ((e.clientX - rect.left) / rect.width - 0.5) * 2;
+        const ny = ((e.clientY - rect.top) / rect.height - 0.5) * 2;
+        tiltStage.style.transform = `rotateX(${(-ny * 10).toFixed(2)}deg) rotateY(${(nx * 10).toFixed(2)}deg)`;
+        if (holoGlare) {
+          const gx = Math.round(((nx + 1) * 0.5) * 100);
+          const gy = Math.round(((ny + 1) * 0.5) * 100);
+          holoGlare.style.background = `radial-gradient(circle at ${gx}% ${gy}%, rgba(255, 255, 255, 0.22) 0%, transparent 62%)`;
+        }
+      });
+      tiltStage.addEventListener('pointerleave', () => {
+        tiltStage.style.transform = 'rotateX(0deg) rotateY(0deg)';
+      });
+    }
+
+    // Live Collector Card & 1000x1000 PFP Forger Controls inside the Pull Reveal Card
     const themeStrip = document.getElementById('pullPfpThemeStrip');
     if (themeStrip) {
       themeStrip.querySelectorAll('.pull-theme-chip').forEach((chip) => {
@@ -3222,6 +3569,16 @@ class PlanetMaxiController {
         this.pullPfpBadgeText = badgeInput.value;
         this.renderPullPfpCanvas();
       });
+    }
+
+    const saveCardBtn = document.getElementById('pullSaveCardBtn');
+    if (saveCardBtn) {
+      saveCardBtn.addEventListener('click', () => this.downloadCaughtCollectorCard());
+    }
+
+    const copyCardBtn = document.getElementById('pullCopyCardBtn');
+    if (copyCardBtn) {
+      copyCardBtn.addEventListener('click', () => this.copyCaughtCollectorCard());
     }
 
     const savePfpBtn = document.getElementById('pullSavePfpBtn');
@@ -3462,9 +3819,20 @@ class CommunitySuiteController {
     this.rankCitizenIdx = 0;
     this.liveMarketCapUsd = 0;
 
+    // 1200x675 Widescreen PnL & Raid Flex Card Generator State
+    this.pnlCanvas = document.getElementById('pnlFlexCanvas');
+    this.pnlCtx = this.pnlCanvas ? this.pnlCanvas.getContext('2d') : null;
+    this.pnlMultiplier = '+4,200%';
+    this.pnlEntry = 'GENESIS ENTRY';
+    this.pnlTarget = '$100M+ TARGET';
+    this.pnlHandle = '@MAXIWORLDORDER';
+    this.pnlTheme = 'EMERALD';
+    this.pnlCitizenIdx = 0;
+
     this.initModals();
     this.initVaultGrid();
     this.initPfpStudio();
+    this.initPnlGenerator();
     this.initRankCalculator();
     this.initLiveMarketPoller();
   }
@@ -3523,6 +3891,18 @@ class CommunitySuiteController {
         if (pullOverlay) pullOverlay.classList.add('hidden');
         this.selectPfpCitizen(this.planetCtrl.activeCitizenIndex);
         this.openModal('pfpModal');
+      });
+    }
+
+    const pullToPnlBtn = document.getElementById('pullToPnlBtn');
+    if (pullToPnlBtn) {
+      pullToPnlBtn.addEventListener('click', () => {
+        const pullOverlay = document.getElementById('pullRevealOverlay');
+        if (pullOverlay) pullOverlay.classList.add('hidden');
+        this.pnlCitizenIdx = this.planetCtrl.activeCitizenIndex;
+        this.renderPnlFlexCanvas();
+        const pnlSec = document.getElementById('pnlSection');
+        if (pnlSec) pnlSec.scrollIntoView({ behavior: 'smooth', block: 'center' });
       });
     }
 
@@ -4223,6 +4603,276 @@ class CommunitySuiteController {
 
     fetchMarketData();
     setInterval(fetchMarketData, 20000);
+  }
+
+  /* -----------------------------------------------------------------------
+     6. 1200x675 WIDESCREEN PNL & RAID FLEX CARD GENERATOR
+     ----------------------------------------------------------------------- */
+  initPnlGenerator() {
+    if (!this.pnlCanvas) return;
+
+    const multInput = document.getElementById('pnlMultiplierInput');
+    if (multInput) {
+      multInput.addEventListener('input', () => {
+        this.pnlMultiplier = multInput.value || '+4,200%';
+        this.renderPnlFlexCanvas();
+      });
+    }
+
+    const multPresets = document.getElementById('pnlMultPresets');
+    if (multPresets) {
+      multPresets.querySelectorAll('.preset-chip').forEach((chip) => {
+        chip.addEventListener('click', () => {
+          multPresets.querySelectorAll('.preset-chip').forEach((c) => c.classList.remove('active'));
+          chip.classList.add('active');
+          this.pnlMultiplier = chip.dataset.mult || '+4,200%';
+          if (multInput) multInput.value = this.pnlMultiplier;
+          sfx.playBeep(760, 0.05, 'triangle');
+          this.renderPnlFlexCanvas();
+        });
+      });
+    }
+
+    const entryInput = document.getElementById('pnlEntryInput');
+    if (entryInput) {
+      entryInput.addEventListener('input', () => {
+        this.pnlEntry = entryInput.value || 'GENESIS ENTRY';
+        this.renderPnlFlexCanvas();
+      });
+    }
+
+    const targetInput = document.getElementById('pnlTargetInput');
+    if (targetInput) {
+      targetInput.addEventListener('input', () => {
+        this.pnlTarget = targetInput.value || '$100M+ TARGET';
+        this.renderPnlFlexCanvas();
+      });
+    }
+
+    const handleInput = document.getElementById('pnlHandleInput');
+    if (handleInput) {
+      handleInput.addEventListener('input', () => {
+        this.pnlHandle = handleInput.value || '@MAXIWORLDORDER';
+        this.renderPnlFlexCanvas();
+      });
+    }
+
+    const nextCitBtn = document.getElementById('pnlNextCitizenBtn');
+    if (nextCitBtn) {
+      nextCitBtn.addEventListener('click', () => {
+        this.pnlCitizenIdx = (this.pnlCitizenIdx + 1) % MAXI_CITIZENS.length;
+        sfx.playBeep(780, 0.06, 'triangle');
+        this.renderPnlFlexCanvas();
+      });
+    }
+
+    const themeGroup = document.getElementById('pnlThemeGroup');
+    if (themeGroup) {
+      themeGroup.querySelectorAll('.seg-btn').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          themeGroup.querySelectorAll('.seg-btn').forEach((b) => b.classList.remove('active'));
+          btn.classList.add('active');
+          this.pnlTheme = btn.dataset.pnlTheme || 'EMERALD';
+          sfx.playBeep(720, 0.05, 'triangle');
+          this.renderPnlFlexCanvas();
+        });
+      });
+    }
+
+    const dlBtn = document.getElementById('downloadPnlCardBtn');
+    if (dlBtn) {
+      dlBtn.addEventListener('click', () => {
+        this.renderPnlFlexCanvas();
+        const cit = MAXI_CITIZENS[this.pnlCitizenIdx] || MAXI_CITIZENS[0];
+        const link = document.createElement('a');
+        link.download = `MAXI-PNL-${cit.rank.replace('#', '')}.png`;
+        link.href = this.pnlCanvas.toDataURL('image/png');
+        link.click();
+        sfx.playBeep(940, 0.09, 'triangle');
+      });
+    }
+
+    const copyBtn = document.getElementById('copyPnlCardBtn');
+    if (copyBtn) {
+      copyBtn.addEventListener('click', () => {
+        this.renderPnlFlexCanvas();
+        const lbl = document.getElementById('copyPnlCardLabel');
+        this.pnlCanvas.toBlob(async (blob) => {
+          if (!blob) return;
+          try {
+            if (navigator.clipboard && window.ClipboardItem) {
+              await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
+              if (lbl) lbl.textContent = 'COPIED PNL CARD!';
+              sfx.playBeep(1040, 0.1, 'triangle');
+            } else if (dlBtn) {
+              dlBtn.click();
+            }
+          } catch (e) {
+            if (dlBtn) dlBtn.click();
+          }
+          setTimeout(() => {
+            if (lbl) lbl.textContent = 'COPY PNL CARD TO CLIPBOARD';
+          }, 2200);
+        }, 'image/png');
+      });
+    }
+
+    this.getCitizenImage(this.pnlCitizenIdx, () => this.renderPnlFlexCanvas());
+    this.renderPnlFlexCanvas();
+  }
+
+  renderPnlFlexCanvas() {
+    if (!this.pnlCtx || !this.pnlCanvas) return;
+    const ctx = this.pnlCtx;
+    const w = this.pnlCanvas.width;  // 1200
+    const h = this.pnlCanvas.height; // 675
+
+    const cit = MAXI_CITIZENS[this.pnlCitizenIdx] || MAXI_CITIZENS[0];
+    const img = this.getCitizenImage(this.pnlCitizenIdx, () => this.renderPnlFlexCanvas());
+
+    ctx.clearRect(0, 0, w, h);
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
+
+    const themes = {
+      EMERALD:  { bg0: '#071B14', bg1: '#05080A', accent: '#10B981', glow: 'rgba(16, 185, 129, 0.22)' },
+      OBSIDIAN: { bg0: '#161821', bg1: '#07080B', accent: '#F4F4F6', glow: 'rgba(244, 244, 246, 0.14)' },
+      COBALT:   { bg0: '#0C1A36', bg1: '#05080F', accent: '#38BDF8', glow: 'rgba(56, 189, 248, 0.22)' }
+    };
+    const th = themes[this.pnlTheme] || themes.EMERALD;
+
+    // 1. Matte Carbon Widescreen Base
+    const bgGrad = ctx.createRadialGradient(w * 0.72, h * 0.45, 40, w * 0.5, h * 0.5, w * 0.8);
+    bgGrad.addColorStop(0, th.bg0);
+    bgGrad.addColorStop(1, th.bg1);
+    ctx.fillStyle = bgGrad;
+    ctx.fillRect(0, 0, w, h);
+
+    // 1px Architectural Grid Matrix
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.04)';
+    ctx.lineWidth = 1;
+    for (let x = 80; x < w; x += 80) {
+      ctx.beginPath();
+      ctx.moveTo(x, 0);
+      ctx.lineTo(x, h);
+      ctx.stroke();
+    }
+    for (let y = 80; y < h; y += 80) {
+      ctx.beginPath();
+      ctx.moveTo(0, y);
+      ctx.lineTo(w, y);
+      ctx.stroke();
+    }
+
+    // 2. Ascending Green-Candle Impulse Chart Curve across Background
+    ctx.save();
+    const chartPts = [
+      [60, 520],
+      [210, 495],
+      [350, 505],
+      [480, 430],
+      [610, 445],
+      [740, 320],
+      [870, 260],
+      [1010, 150],
+      [1140, 88]
+    ];
+
+    const areaGrad = ctx.createLinearGradient(0, 80, 0, 560);
+    areaGrad.addColorStop(0, th.glow);
+    areaGrad.addColorStop(1, 'transparent');
+
+    ctx.beginPath();
+    ctx.moveTo(chartPts[0][0], 560);
+    chartPts.forEach(([px, py]) => ctx.lineTo(px, py));
+    ctx.lineTo(chartPts[chartPts.length - 1][0], 560);
+    ctx.closePath();
+    ctx.fillStyle = areaGrad;
+    ctx.fill();
+
+    ctx.strokeStyle = th.accent;
+    ctx.lineWidth = 3.5;
+    ctx.beginPath();
+    chartPts.forEach(([px, py], i) => {
+      if (i === 0) ctx.moveTo(px, py);
+      else ctx.lineTo(px, py);
+    });
+    ctx.stroke();
+    ctx.restore();
+
+    // 3. Outer 1px Hairline Frame & Top Header Bar
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.18)';
+    ctx.lineWidth = 2;
+    ctx.strokeRect(24, 24, w - 48, h - 48);
+
+    ctx.fillStyle = '#F4F4F6';
+    ctx.font = '800 20px "Syne", "Inter", sans-serif';
+    ctx.textAlign = 'left';
+    ctx.fillText('MAXI WORLD ORDER // $MAXI', 56, 72);
+
+    ctx.fillStyle = th.accent;
+    ctx.font = '600 15px "JetBrains Mono", monospace';
+    ctx.fillText(`OPERATIVE: ${(this.pnlHandle || '@MAXIWORLDORDER').toUpperCase()}`, 56, 102);
+
+    // 4. Giant PnL Multiplier Readout
+    ctx.fillStyle = th.accent;
+    ctx.font = '800 112px "Syne", "Inter", sans-serif';
+    ctx.fillText((this.pnlMultiplier || '+4,200%').toUpperCase(), 52, 248);
+
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.55)';
+    ctx.font = '600 16px "JetBrains Mono", monospace';
+    ctx.fillText('SOLANA MAINNET CONVICTION POSITION // VERIFIED', 56, 286);
+
+    // 5. 3 Data Cells (Entry, Target, Active Specimen)
+    const cells = [
+      { k: 'POSITION ENTRY', v: (this.pnlEntry || 'GENESIS ENTRY').toUpperCase() },
+      { k: 'CONVICTION TARGET', v: (this.pnlTarget || '$100M+ TARGET').toUpperCase() },
+      { k: 'SPECIMEN ID', v: `${cit.rank} ${cit.name}` }
+    ];
+    cells.forEach((c, idx) => {
+      const cx = 56 + idx * 235;
+      const cy = 340;
+      ctx.fillStyle = 'rgba(10, 12, 16, 0.88)';
+      ctx.fillRect(cx, cy, 220, 96);
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.16)';
+      ctx.lineWidth = 1;
+      ctx.strokeRect(cx, cy, 220, 96);
+
+      ctx.fillStyle = '#64748B';
+      ctx.font = '600 13px "JetBrains Mono", monospace';
+      ctx.fillText(c.k, cx + 16, cy + 32);
+
+      ctx.fillStyle = '#F8FAFC';
+      ctx.font = '700 18px "JetBrains Mono", monospace';
+      ctx.fillText(c.v, cx + 16, cy + 66);
+    });
+
+    // 6. Right-Side Full-Res Background-Removed Maxi Cutout
+    if (img && img.complete && img.naturalWidth > 0) {
+      ctx.save();
+      const iw = img.naturalWidth;
+      const ih = img.naturalHeight;
+      const maxDim = 490;
+      const scale = Math.min(maxDim / iw, maxDim / ih);
+      const dw = iw * scale;
+      const dh = ih * scale;
+
+      ctx.shadowColor = 'rgba(0, 0, 0, 0.92)';
+      ctx.shadowBlur = 36;
+      ctx.shadowOffsetY = 14;
+      ctx.drawImage(img, w - dw - 75, h - dh - 56, dw, dh);
+      ctx.restore();
+    }
+
+    // 7. Bottom Contract Address Footer Strip
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.45)';
+    ctx.font = '500 14px "JetBrains Mono", monospace';
+    ctx.textAlign = 'left';
+    ctx.fillText(`CA: ${LIVE_CA}`, 56, h - 48);
+
+    ctx.fillStyle = th.accent;
+    ctx.textAlign = 'right';
+    ctx.fillText('𝕏 @MAXIWORLDORDER · T.ME/MAXICOLLECTIVE', w - 56, h - 48);
   }
 }
 
