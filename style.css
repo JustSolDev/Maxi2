@@ -3145,36 +3145,38 @@ body.mwo-overdrive .claw-machine-cabinet {
   box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.8);
 }
 
-/* 4. Prize Extraction Reveal Overlay Card */
+/* 4. Prize Extraction & Live 1000x1000 PFP Forger Reveal Modal */
 .pull-reveal-overlay {
   position: absolute;
   inset: 0;
   z-index: 25;
-  background: rgba(3, 5, 9, 0.86);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
+  background: rgba(3, 5, 9, 0.88);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 20px;
+  padding: 16px;
   animation: fadeInPull 0.28s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 @keyframes fadeInPull {
-  from { opacity: 0; transform: scale(0.94); }
+  from { opacity: 0; transform: scale(0.93); }
   to { opacity: 1; transform: scale(1); }
 }
 
 .pull-reveal-card {
-  width: min(580px, 100%);
-  background: linear-gradient(180deg, #0d121d 0%, #070a10 100%);
+  width: min(760px, 100%);
+  max-height: 94%;
+  overflow-y: auto;
+  background: linear-gradient(180deg, #0d1320 0%, #06090f 100%);
   border: 1.5px solid var(--gold);
   border-radius: 16px;
-  padding: 20px 22px;
+  padding: 18px 22px;
   box-shadow:
-    0 32px 90px rgba(0, 0, 0, 0.96),
-    0 0 48px rgba(229, 184, 105, 0.25),
-    inset 0 1px 0 rgba(255, 255, 255, 0.18);
+    0 36px 100px rgba(0, 0, 0, 0.98),
+    0 0 60px rgba(229, 184, 105, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -3186,6 +3188,13 @@ body.mwo-overdrive .claw-machine-cabinet {
   justify-content: space-between;
   border-bottom: 1px solid var(--border-hairline);
   padding-bottom: 10px;
+}
+
+.pull-header-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 
 .pull-tier-badge {
@@ -3200,12 +3209,20 @@ body.mwo-overdrive .claw-machine-cabinet {
   color: var(--gold-bright);
 }
 
+.pull-kicker-inline {
+  font-family: var(--font-mono);
+  font-size: 0.64rem;
+  font-weight: 800;
+  color: var(--emerald);
+  letter-spacing: 0.1em;
+}
+
 .pull-close-btn {
-  width: 28px;
-  height: 28px;
+  width: 30px;
+  height: 30px;
   border-radius: 6px;
   border: 1px solid var(--border-hairline);
-  background: rgba(255, 255, 255, 0.04);
+  background: rgba(255, 255, 255, 0.05);
   color: var(--text-muted);
   cursor: pointer;
 }
@@ -3217,71 +3234,114 @@ body.mwo-overdrive .claw-machine-cabinet {
 
 .pull-reveal-body {
   display: flex;
-  align-items: center;
-  gap: 20px;
+  align-items: stretch;
+  gap: 22px;
 }
 
-.pull-reveal-stage {
-  position: relative;
-  width: 165px;
-  height: 165px;
+/* Left Column: Live 1000x1000 PFP Canvas Preview + Theme Chips */
+.pull-pfp-forger-col {
+  width: 245px;
   flex-shrink: 0;
   display: flex;
-  align-items: center;
-  justify-content: center;
+  flex-direction: column;
+  gap: 10px;
 }
 
-.pull-aura-ring {
-  position: absolute;
-  inset: 6px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(229, 184, 105, 0.25) 0%, rgba(8, 11, 18, 0.65) 75%);
-  border: 1.5px solid var(--gold);
-  box-shadow: 0 0 32px rgba(229, 184, 105, 0.3);
-}
-
-.pull-reveal-stage img {
+.pull-pfp-canvas-frame {
   position: relative;
-  z-index: 2;
-  max-width: 100%;
-  max-height: 100%;
-  object-fit: contain;
-  filter: drop-shadow(0 14px 26px rgba(0, 0, 0, 0.96));
+  width: 245px;
+  height: 245px;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 2px solid var(--gold);
+  box-shadow:
+    0 18px 44px rgba(0, 0, 0, 0.92),
+    0 0 28px rgba(229, 184, 105, 0.25);
+  background: #06080e;
 }
 
+#pullPfpCanvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.pull-pfp-res-tag {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  background: rgba(5, 8, 14, 0.88);
+  border: 1px solid rgba(229, 184, 105, 0.45);
+  color: var(--gold-bright);
+  font-family: var(--font-mono);
+  font-size: 0.54rem;
+  font-weight: 800;
+  padding: 2px 7px;
+  border-radius: 4px;
+  letter-spacing: 0.08em;
+  pointer-events: none;
+}
+
+.pull-pfp-theme-strip {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 5px;
+}
+
+.pull-theme-chip {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 6px;
+  padding: 6px 6px;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 0.56rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  text-align: center;
+}
+
+.pull-theme-chip:hover {
+  color: var(--text-main);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.pull-theme-chip.active {
+  background: rgba(229, 184, 105, 0.2);
+  border-color: var(--gold);
+  color: var(--gold-bright);
+}
+
+/* Right Column: Citizen Info, Custom Badge Text, & 1-Click PFP Save Actions */
 .pull-reveal-info {
   flex: 1;
   min-width: 0;
-}
-
-.pull-kicker {
-  font-family: var(--font-mono);
-  font-size: 0.64rem;
-  font-weight: 800;
-  color: var(--emerald);
-  letter-spacing: 0.1em;
-  margin-bottom: 4px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 10px;
 }
 
 .pull-title {
   font-family: var(--font-display);
-  font-size: 1.55rem;
+  font-size: 1.65rem;
   font-weight: 800;
   color: var(--text-main);
-  margin-bottom: 4px;
+  line-height: 1.05;
 }
 
 .pull-subtitle {
   font-family: var(--font-mono);
-  font-size: 0.64rem;
+  font-size: 0.65rem;
   font-weight: 700;
   color: var(--gold);
   letter-spacing: 0.08em;
-  margin-bottom: 8px;
 }
 
 .pull-lore {
-  font-size: 0.84rem;
+  font-size: 0.82rem;
   line-height: 1.45;
   color: var(--text-muted);
 }
@@ -3290,12 +3350,97 @@ body.mwo-overdrive .claw-machine-cabinet {
   color: var(--text-main);
 }
 
+.pull-custom-tag-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border-hairline);
+  border-radius: 8px;
+  padding: 6px 10px;
+}
+
+.pull-tag-lbl {
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+}
+
+.pull-tag-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: var(--text-main);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  outline: none;
+}
+
+.pull-primary-save-grid {
+  display: grid;
+  grid-template-columns: 1.35fr 1fr;
+  gap: 8px;
+}
+
+.pull-save-pfp-btn {
+  height: 44px;
+  background: linear-gradient(180deg, #4ade80 0%, #22c55e 55%, #16a34a 100%);
+  border: 1px solid #86efac;
+  border-bottom: 3px solid #064e3b;
+  border-radius: 8px;
+  color: #020805;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 24px rgba(34, 197, 94, 0.35);
+  transition: all 0.15s ease;
+}
+
+.pull-save-pfp-btn:hover {
+  transform: translateY(-1px);
+  background: linear-gradient(180deg, #6ee7b7 0%, #34d399 55%, #10b981 100%);
+}
+
+.pull-copy-pfp-btn {
+  height: 44px;
+  background: linear-gradient(180deg, #f3d285 0%, #d4a048 100%);
+  border: 1px solid #f6dc9b;
+  border-bottom: 3px solid #78350f;
+  border-radius: 8px;
+  color: #050608;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 24px rgba(229, 184, 105, 0.28);
+  transition: all 0.15s ease;
+}
+
+.pull-copy-pfp-btn:hover {
+  transform: translateY(-1px);
+  background: linear-gradient(180deg, #ffe39e 0%, #e5b869 100%);
+}
+
 .pull-reveal-actions {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 7px;
   border-top: 1px solid var(--border-hairline);
-  padding-top: 12px;
+  padding-top: 10px;
 }
 
 .pull-reveal-actions > * {
@@ -3417,13 +3562,23 @@ body.mwo-overdrive .claw-machine-cabinet {
 
   .pull-reveal-body {
     flex-direction: column;
+    align-items: center;
     text-align: center;
-    gap: 10px;
+    gap: 12px;
   }
 
-  .pull-reveal-stage {
-    width: 120px;
-    height: 120px;
+  .pull-pfp-forger-col {
+    width: 190px;
+    align-items: center;
+  }
+
+  .pull-pfp-canvas-frame {
+    width: 185px;
+    height: 185px;
+  }
+
+  .pull-primary-save-grid {
+    grid-template-columns: 1fr;
   }
 
   .pull-title {

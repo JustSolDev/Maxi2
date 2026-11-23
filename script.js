@@ -1390,7 +1390,7 @@ function generateRealisticPlanetMaps(paletteIndex = 0) {
 }
 
 /* =========================================================================
-   3. 3D PLANET + LUXURY METALLIC CLAW MACHINE & FULL-RES CUTOUT ENGINE
+   3. TRUE 3D WEBGL CLAW MACHINE & INSTANT 1000x1000 PFP FORGER ENGINE
    ========================================================================= */
 class PlanetMaxiController {
   constructor() {
@@ -1401,7 +1401,6 @@ class PlanetMaxiController {
     this.webglContainer = document.getElementById('planetWebGLContainer');
 
     this.clawCanvas = document.getElementById('clawMachineCanvas');
-    this.clawCtx = this.clawCanvas ? this.clawCanvas.getContext('2d') : null;
     this.clawGlassBay = document.getElementById('clawGlassBay');
     this.clawCabinetStage = document.getElementById('clawCabinetStage');
 
@@ -1415,12 +1414,16 @@ class PlanetMaxiController {
     this.reticleHud = document.getElementById('reticleHud');
     this.arrivedCard = document.getElementById('arrivedCard');
 
-    this.state = 'ORBIT'; // 'ORBIT' (Opening Gate) | 'LOCKED' (Claw Machine Active)
+    this.state = 'ORBIT'; // 'ORBIT' (Opening Gate) | 'LOCKED' (3D WebGL Claw Machine Active)
     this.orbitSpinMode = '3d';
     this.paletteIdx = 0;
     this.activeCitizenIndex = 0; // 0 = OG MAXI (#001)
     this.introPreviewIdx = 0;
     this.isOverdrive = false;
+
+    // Live Pull PFP Forger state
+    this.pullPfpTheme = 'OBSIDIAN';
+    this.pullPfpBadgeText = 'MAXI WORLD ORDER';
 
     // 3D Planet Rotation
     this.planetRotY = -1.8;
@@ -1435,38 +1438,62 @@ class PlanetMaxiController {
     this.mouseY = 0;
     this.starColors = ['#ffbe2e', '#70f8ff', '#fff6e0', '#38bdf8', '#ffffff'];
 
-    // Claw Machine State & High-Res Natural Cutout Physics
+    // Texture & Sprite Caches
     this.imageCache = new Map();
+    this.textureCache = new Map();
     this.extractedSet = new Set();
     this.pileItems = [];
-    this.sparkParticles = [];
     this.pileBatchOffset = 0;
 
-    // Logical dimensions of the claw tank (updated on resize)
-    this.bayW = 980;
-    this.bayH = 520;
-    this.chuteWidthRatio = 0.20; // Left 20% is the Prize Extraction Chute
+    // 3D Claw Tank Bounds (in Three.js World Units)
+    // Tank Width: X in [-105 .. +105]
+    // Left Extraction Chute: X in [-105 .. -55], Z in [-58 .. +58]
+    // Main Prize Containment Pit: X in [-48 .. +100], Z in [-55 .. +55]
+    // Floor Y = -56, Top Gantry Bridge Y = +64
+    this.tankBounds = {
+      minX: -102,
+      maxX: 102,
+      chuteMaxX: -54,
+      pitMinX: -45,
+      pitMaxX: 98,
+      minZ: -54,
+      maxZ: 54,
+      floorY: -56,
+      railY: 64,
+      dividerHeight: 34
+    };
 
     this.claw = {
-      x: 0.56,          // Normalized [0.08..0.93]
-      targetX: 0.56,
-      y: 56,            // Current claw head Y in logical px
-      railY: 28,        // Gantry top rail Y
-      homeY: 58,
+      x: 24,            // World X in [-90..92]
+      targetX: 24,
+      z: 6,             // World Z in [-46..46]
+      targetZ: 6,
+      y: 44,            // Current 3D Claw Hub Y
+      homeY: 44,
       state: 'IDLE',    // 'IDLE' | 'DROPPING' | 'CLAMPING' | 'HOISTING' | 'CARRYING' | 'RELEASING'
       stateTimer: 0,
-      jawAngle: 0.58,   // Radians (0.62 = wide open, 0.16 = clamped tight)
-      targetJaw: 0.58,
-      swingAngle: 0,
-      swingVel: 0,
+      jawAngle: 0.56,   // Radians (0.62 = open wide, 0.15 = clamped tight)
+      targetJaw: 0.56,
+      swingX: 0,
+      swingZ: 0,
+      velX: 0,
+      velZ: 0,
       grabbedItem: null,
-      moveDir: 0        // -1 left, 0 stop, +1 right
+      moveDirX: 0,      // -1 left, +1 right
+      moveDirZ: 0       // -1 back, +1 front
     };
+
+    // 3D Camera Parallax & Orbit
+    this.camYaw = 0;
+    this.targetCamYaw = 0;
+    this.camPitch = 0.16;
+    this.targetCamPitch = 0.16;
 
     this.preloadCitizenSprites();
     this.buildRosterStrip();
     this.initWarpParticles();
     this.initThreePlanet();
+    this.initThreeClawMachine();
     this.resizeCanvases();
     this.spawnClawPile(false);
     this.bindEvents();
@@ -1481,13 +1508,24 @@ class PlanetMaxiController {
       const loadFn = () => {
         if (this.imageCache.has(cit.src)) return;
         const img = new Image();
+        img.onload = () => {
+          // If texture already requested, update it
+          if (this.textureCache.has(cit.src)) {
+            const tex = this.textureCache.get(cit.src);
+            tex.image = img;
+            tex.needsUpdate = true;
+          }
+          if (idx === this.activeCitizenIndex) {
+            this.renderPullPfpCanvas();
+          }
+        };
         img.src = cit.src;
         this.imageCache.set(cit.src, img);
       };
       if (idx < 45) {
         loadFn();
       } else {
-        setTimeout(loadFn, 100 + (idx - 45) * 14);
+        setTimeout(loadFn, 90 + (idx - 45) * 14);
       }
     });
   }
@@ -1497,9 +1535,33 @@ class PlanetMaxiController {
       return this.imageCache.get(src);
     }
     const img = new Image();
+    img.onload = () => {
+      if (this.textureCache.has(src)) {
+        const tex = this.textureCache.get(src);
+        tex.image = img;
+        tex.needsUpdate = true;
+      }
+    };
     img.src = src;
     this.imageCache.set(src, img);
     return img;
+  }
+
+  getCitizenThreeTexture(src) {
+    if (this.textureCache.has(src)) {
+      return this.textureCache.get(src);
+    }
+    const img = this.getSprite(src);
+    const tex = new THREE.Texture(img);
+    tex.encoding = THREE.sRGBEncoding;
+    tex.anisotropy = this.clawRenderer
+      ? Math.min(8, this.clawRenderer.capabilities.getMaxAnisotropy())
+      : 4;
+    if (img.complete && img.naturalWidth > 0) {
+      tex.needsUpdate = true;
+    }
+    this.textureCache.set(src, tex);
+    return tex;
   }
 
   buildRosterStrip() {
@@ -1523,6 +1585,9 @@ class PlanetMaxiController {
     });
   }
 
+  /* -----------------------------------------------------------------------
+     A. BACKGROUND 3D PLANET MAXI (OPENING GATE & VAULT AMBIENCE)
+     ----------------------------------------------------------------------- */
   initThreePlanet() {
     if (!this.webglContainer || typeof THREE === 'undefined') return;
     const w = window.innerWidth || 1440;
@@ -1551,7 +1616,7 @@ class PlanetMaxiController {
     this.roughTex = new THREE.CanvasTexture(maps.roughCanvas);
     this.cloudTex = new THREE.CanvasTexture(maps.cloudCanvas);
 
-    const sphereGeo = new THREE.SphereGeometry(this.planetRadius, 80, 80);
+    const sphereGeo = new THREE.SphereGeometry(this.planetRadius, 72, 72);
     const sphereMat = new THREE.MeshStandardMaterial({
       map: this.diffuseTex,
       bumpMap: this.bumpTex,
@@ -1563,7 +1628,7 @@ class PlanetMaxiController {
     this.planetMesh = new THREE.Mesh(sphereGeo, sphereMat);
     this.planetGroup.add(this.planetMesh);
 
-    const cloudGeo = new THREE.SphereGeometry(this.planetRadius * 1.015, 56, 56);
+    const cloudGeo = new THREE.SphereGeometry(this.planetRadius * 1.015, 48, 48);
     const cloudMat = new THREE.MeshStandardMaterial({
       map: this.cloudTex,
       transparent: true,
@@ -1574,7 +1639,7 @@ class PlanetMaxiController {
     this.cloudMesh = new THREE.Mesh(cloudGeo, cloudMat);
     this.planetGroup.add(this.cloudMesh);
 
-    const atmoGeo = new THREE.SphereGeometry(this.planetRadius * 1.08, 56, 56);
+    const atmoGeo = new THREE.SphereGeometry(this.planetRadius * 1.08, 48, 48);
     const atmoMat = new THREE.MeshBasicMaterial({
       color: maps.atmoHex,
       transparent: true,
@@ -1597,7 +1662,7 @@ class PlanetMaxiController {
     ];
     this.ringMeshes = [];
     ringConfigs.forEach((rc) => {
-      const rGeo = new THREE.RingGeometry(rc.inner, rc.outer, 120);
+      const rGeo = new THREE.RingGeometry(rc.inner, rc.outer, 96);
       const rMat = new THREE.MeshBasicMaterial({
         color: rc.color,
         side: THREE.DoubleSide,
@@ -1614,10 +1679,597 @@ class PlanetMaxiController {
     const sunLight = new THREE.DirectionalLight(0xfffbeb, 1.2);
     sunLight.position.set(260, 180, 240);
     this.scene.add(sunLight);
-    const rimLight1 = new THREE.PointLight(0x38bdf8, 0.9, 750);
-    rimLight1.position.set(-240, -130, 170);
-    this.scene.add(rimLight1);
-    this.rimLight1 = rimLight1;
+  }
+
+  /* -----------------------------------------------------------------------
+     B. TRUE 3D WEBGL CLAW MACHINE SCENE, GANTRY, 3-PRONG CLAW & LIGHTING
+     ----------------------------------------------------------------------- */
+  initThreeClawMachine() {
+    if (!this.clawCanvas || typeof THREE === 'undefined') return;
+
+    this.clawScene = new THREE.Scene();
+
+    this.clawCamera = new THREE.PerspectiveCamera(38, 16 / 9, 1, 1500);
+    this.clawCamera.position.set(0, 18, 232);
+    this.clawCamera.lookAt(0, -8, 0);
+
+    this.clawRenderer = new THREE.WebGLRenderer({
+      canvas: this.clawCanvas,
+      alpha: true,
+      antialias: true,
+      powerPreference: 'high-performance'
+    });
+    this.clawRenderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    this.clawRenderer.outputEncoding = THREE.sRGBEncoding;
+
+    // 1. Studio PBR Lighting Inside the 3D Glass Vault
+    const ambient = new THREE.AmbientLight(0xe2e8f0, 0.92);
+    this.clawScene.add(ambient);
+
+    const keyLight = new THREE.DirectionalLight(0xfff7ed, 1.35);
+    keyLight.position.set(90, 160, 140);
+    this.clawScene.add(keyLight);
+
+    this.vaultGoldLight = new THREE.PointLight(0xe5b869, 1.6, 420);
+    this.vaultGoldLight.position.set(55, 70, 60);
+    this.clawScene.add(this.vaultGoldLight);
+
+    this.chuteEmeraldLight = new THREE.PointLight(0x34d399, 1.8, 320);
+    this.chuteEmeraldLight.position.set(-80, -15, 30);
+    this.clawScene.add(this.chuteEmeraldLight);
+
+    const rimBackLight = new THREE.DirectionalLight(0x38bdf8, 0.75);
+    rimBackLight.position.set(-60, 80, -140);
+    this.clawScene.add(rimBackLight);
+
+    // 2. Build 3D Vault Architecture (Floor Deck, Extraction Chute, Neon Rails, Glass Pillars)
+    this.vaultStructGroup = new THREE.Group();
+    this.clawScene.add(this.vaultStructGroup);
+
+    const b = this.tankBounds;
+
+    // Brushed Dark-Obsidian Containment Floor (Right side pit floor)
+    const pitW = b.maxX - b.chuteMaxX;
+    const pitD = b.maxZ - b.minZ;
+    const floorGeo = new THREE.BoxGeometry(pitW, 6, pitD);
+    const floorMat = new THREE.MeshStandardMaterial({
+      color: 0x0b101b,
+      roughness: 0.35,
+      metalness: 0.75
+    });
+    const floorMesh = new THREE.Mesh(floorGeo, floorMat);
+    floorMesh.position.set(b.chuteMaxX + pitW * 0.5, b.floorY - 3, 0);
+    this.vaultStructGroup.add(floorMesh);
+
+    // Subtle Gold Grid Lines on the 3D Containment Floor
+    const gridHelper = new THREE.GridHelper(160, 14, 0xe5b869, 0x1e293b);
+    gridHelper.position.set(22, b.floorY + 0.2, 0);
+    gridHelper.material.transparent = true;
+    gridHelper.material.opacity = 0.35;
+    this.vaultStructGroup.add(gridHelper);
+
+    // Left 3D Prize Extraction Chute Well & Glowing Emerald Laser Ring
+    const chuteW = b.chuteMaxX - b.minX;
+    const chuteWallMat = new THREE.MeshStandardMaterial({
+      color: 0x111927,
+      roughness: 0.25,
+      metalness: 0.85
+    });
+
+    // Armored 3D Divider Wall between Main Pit and Extraction Chute
+    const dividerGeo = new THREE.BoxGeometry(4.5, b.dividerHeight, pitD);
+    const dividerMesh = new THREE.Mesh(dividerGeo, chuteWallMat);
+    dividerMesh.position.set(b.chuteMaxX, b.floorY + b.dividerHeight * 0.5, 0);
+    this.vaultStructGroup.add(dividerMesh);
+
+    // Golden Top Rail on the Chute Divider Wall
+    const divCapGeo = new THREE.BoxGeometry(5.5, 2.2, pitD + 1);
+    this.goldTrimMat = new THREE.MeshStandardMaterial({
+      color: 0xe5b869,
+      roughness: 0.22,
+      metalness: 0.92,
+      emissive: 0xe5b869,
+      emissiveIntensity: 0.18
+    });
+    const divCapMesh = new THREE.Mesh(divCapGeo, this.goldTrimMat);
+    divCapMesh.position.set(b.chuteMaxX, b.floorY + b.dividerHeight + 1.1, 0);
+    this.vaultStructGroup.add(divCapMesh);
+
+    // Glowing Emerald Chute Drop Portal Frame
+    const portalGeo = new THREE.EdgesGeometry(new THREE.BoxGeometry(chuteW - 4, 2, pitD - 8));
+    const portalMat = new THREE.LineBasicMaterial({ color: 0x34d399 });
+    const portalLines = new THREE.LineSegments(portalGeo, portalMat);
+    portalLines.position.set(b.minX + chuteW * 0.5, b.floorY + 6, 0);
+    this.vaultStructGroup.add(portalLines);
+
+    // 4 Corner Brushed-Chrome Structural Pillars of the 3D Glass Tank
+    const pillarGeo = new THREE.CylinderGeometry(2.2, 2.2, b.railY - b.floorY + 14, 16);
+    const chromeMat = new THREE.MeshStandardMaterial({
+      color: 0xdbeafe,
+      roughness: 0.18,
+      metalness: 0.94
+    });
+    [
+      [b.minX, b.minZ],
+      [b.maxX, b.minZ],
+      [b.minX, b.maxZ],
+      [b.maxX, b.maxZ]
+    ].forEach(([px, pz]) => {
+      const pil = new THREE.Mesh(pillarGeo, chromeMat);
+      pil.position.set(px, (b.railY + b.floorY) * 0.5, pz);
+      this.vaultStructGroup.add(pil);
+    });
+
+    // Fixed Front & Back Top X-Axis Gantry Structural Beams
+    const xBeamGeo = new THREE.CylinderGeometry(1.8, 1.8, b.maxX - b.minX + 6, 16);
+    xBeamGeo.rotateZ(Math.PI * 0.5);
+    [-b.maxZ, b.maxZ].forEach((pz) => {
+      const beam = new THREE.Mesh(xBeamGeo, chromeMat);
+      beam.position.set(0, b.railY + 4, pz);
+      this.vaultStructGroup.add(beam);
+    });
+
+    // 3. Moving Z-Axis Gantry Bridge (Slides Left/Right along X)
+    this.gantryBridgeGroup = new THREE.Group();
+    this.gantryBridgeGroup.position.set(this.claw.x, b.railY, 0);
+    this.clawScene.add(this.gantryBridgeGroup);
+
+    const zRailGeo = new THREE.CylinderGeometry(1.5, 1.5, pitD + 6, 16);
+    zRailGeo.rotateX(Math.PI * 0.5);
+    const zRailLeft = new THREE.Mesh(zRailGeo, chromeMat);
+    zRailLeft.position.set(-4.5, 2, 0);
+    const zRailRight = new THREE.Mesh(zRailGeo, chromeMat);
+    zRailRight.position.set(4.5, 2, 0);
+    this.gantryBridgeGroup.add(zRailLeft, zRailRight);
+
+    // 4. Moving 3D Trolley Carriage (Slides Front/Back along Z on the Bridge)
+    this.trolleyGroup = new THREE.Group();
+    this.trolleyGroup.position.set(this.claw.x, b.railY, this.claw.z);
+    this.clawScene.add(this.trolleyGroup);
+
+    const carriageGeo = new THREE.BoxGeometry(16, 7, 16);
+    const darkSteelMat = new THREE.MeshStandardMaterial({
+      color: 0x1e293b,
+      roughness: 0.28,
+      metalness: 0.88
+    });
+    const carriageMesh = new THREE.Mesh(carriageGeo, darkSteelMat);
+    this.trolleyGroup.add(carriageMesh);
+
+    const carriageTrim = new THREE.Mesh(new THREE.BoxGeometry(17, 1.6, 17), this.goldTrimMat);
+    carriageTrim.position.y = -2.5;
+    this.trolleyGroup.add(carriageTrim);
+
+    // 5. Braided Steel Hoist Cable & Vertical Volumetric Laser Beam
+    const cableGeo = new THREE.CylinderGeometry(0.65, 0.65, 1, 12);
+    this.cableMesh = new THREE.Mesh(cableGeo, chromeMat);
+    this.clawScene.add(this.cableMesh);
+
+    // Vertical Laser Aiming Line + Floor Target Reticle Ring
+    const laserGeo = new THREE.CylinderGeometry(0.32, 0.32, 120, 8);
+    this.laserMat = new THREE.MeshBasicMaterial({
+      color: 0x34d399,
+      transparent: true,
+      opacity: 0.55
+    });
+    this.laserBeamMesh = new THREE.Mesh(laserGeo, this.laserMat);
+    this.clawScene.add(this.laserBeamMesh);
+
+    const reticleRingGeo = new THREE.RingGeometry(8.5, 11.2, 32);
+    reticleRingGeo.rotateX(-Math.PI * 0.5);
+    this.reticleMat = new THREE.MeshBasicMaterial({
+      color: 0x34d399,
+      side: THREE.DoubleSide,
+      transparent: true,
+      opacity: 0.8
+    });
+    this.floorReticleMesh = new THREE.Mesh(reticleRingGeo, this.reticleMat);
+    this.floorReticleMesh.position.y = b.floorY + 0.4;
+    this.clawScene.add(this.floorReticleMesh);
+
+    // 6. Articulated 3-Prong Hydraulic 3D Claw Head (120-degree radial symmetry)
+    this.clawHeadGroup = new THREE.Group();
+    this.clawHeadGroup.position.set(this.claw.x, this.claw.y, this.claw.z);
+    this.clawScene.add(this.clawHeadGroup);
+
+    // Motor Hub Cylinder
+    const hubCyl = new THREE.Mesh(
+      new THREE.CylinderGeometry(6.5, 7.5, 7, 24),
+      darkSteelMat
+    );
+    this.clawHeadGroup.add(hubCyl);
+
+    const hubGoldRing = new THREE.Mesh(
+      new THREE.CylinderGeometry(7.8, 7.8, 1.6, 24),
+      this.goldTrimMat
+    );
+    hubGoldRing.position.y = -1.5;
+    this.clawHeadGroup.add(hubGoldRing);
+
+    // Glowing Core Under Hub
+    this.clawCoreMat = new THREE.MeshBasicMaterial({ color: 0xe5b869 });
+    const coreSphere = new THREE.Mesh(new THREE.SphereGeometry(3.2, 16, 16), this.clawCoreMat);
+    coreSphere.position.y = -4;
+    this.clawHeadGroup.add(coreSphere);
+
+    // 3 Articulated Prongs at 0°, 120°, 240°
+    this.clawFingers = [];
+    for (let i = 0; i < 3; i++) {
+      const mountYaw = (i * Math.PI * 2) / 3 + Math.PI / 6;
+      const mountGroup = new THREE.Group();
+      mountGroup.rotation.y = mountYaw;
+      this.clawHeadGroup.add(mountGroup);
+
+      const fingerPivot = new THREE.Group();
+      fingerPivot.position.set(6.2, -3.2, 0);
+      mountGroup.add(fingerPivot);
+
+      // Upper Chrome Strut
+      const upperArmGeo = new THREE.CylinderGeometry(1.05, 0.95, 13, 12);
+      const upperArm = new THREE.Mesh(upperArmGeo, chromeMat);
+      upperArm.position.set(3.2, -5.5, 0);
+      upperArm.rotation.z = 0.48;
+      fingerPivot.add(upperArm);
+
+      // Gold Knee Joint
+      const kneeSphere = new THREE.Mesh(new THREE.SphereGeometry(1.75, 14, 14), this.goldTrimMat);
+      kneeSphere.position.set(6.4, -11.0, 0);
+      fingerPivot.add(kneeSphere);
+
+      // Lower Curved Talon Tip (hooks inward)
+      const lowerTipGeo = new THREE.CylinderGeometry(0.95, 0.35, 13.5, 12);
+      const lowerTip = new THREE.Mesh(lowerTipGeo, this.goldTrimMat);
+      lowerTip.position.set(3.4, -16.8, 0);
+      lowerTip.rotation.z = -0.45;
+      fingerPivot.add(lowerTip);
+
+      this.clawFingers.push(fingerPivot);
+    }
+
+    // Group to hold all 3D Maxi Collectible Standees inside the pit
+    this.pileGroup = new THREE.Group();
+    this.clawScene.add(this.pileGroup);
+
+    // Shared Geometry for 3D Collector Standee Bases
+    this.pedestalCylGeo = new THREE.CylinderGeometry(9.5, 10.6, 3.2, 28);
+    this.pedestalRingGeo = new THREE.CylinderGeometry(10.85, 10.85, 1.1, 28);
+  }
+
+  create3DMaxiStandeeMesh(cit, scaleMultiplier = 1.0) {
+    const group = new THREE.Group();
+
+    const isOg = Boolean(cit.isOg);
+    const isMythic = Boolean(cit.isMythic || cit.rank === '#037');
+
+    // 1. 3D Collector Pedestal Puck Base
+    const baseMat = new THREE.MeshStandardMaterial({
+      color: isOg ? 0x2a1f0d : isMythic ? 0x092218 : 0x111827,
+      roughness: 0.3,
+      metalness: 0.85
+    });
+    const baseMesh = new THREE.Mesh(this.pedestalCylGeo, baseMat);
+    baseMesh.position.y = -11.5;
+    group.add(baseMesh);
+
+    const rimMat = new THREE.MeshStandardMaterial({
+      color: isOg ? 0xf3d285 : isMythic ? 0x34d399 : 0x94a3b8,
+      roughness: 0.22,
+      metalness: 0.92,
+      emissive: isOg ? 0xe5b869 : isMythic ? 0x34d399 : 0x000000,
+      emissiveIntensity: isOg ? 0.3 : isMythic ? 0.22 : 0
+    });
+    const rimMesh = new THREE.Mesh(this.pedestalRingGeo, rimMat);
+    rimMesh.position.y = -11.2;
+    group.add(rimMesh);
+
+    // 2. High-Resolution Un-Tinted Double-Sided Acrylic Cutout Standee Plane
+    const tex = this.getCitizenThreeTexture(cit.src);
+    const standeeH = 25.5;
+    const standeeW = 24.0;
+    const planeGeo = new THREE.PlaneGeometry(standeeW, standeeH);
+    const planeMat = new THREE.MeshBasicMaterial({
+      map: tex,
+      transparent: true,
+      alphaTest: 0.06,
+      side: THREE.DoubleSide
+    });
+    const cutoutMesh = new THREE.Mesh(planeGeo, planeMat);
+    cutoutMesh.position.y = 1.2;
+    group.add(cutoutMesh);
+
+    // Subtle 3D Metallic Backlight Aura Disc behind OG & Mythic Standees
+    if (isOg || isMythic) {
+      const haloGeo = new THREE.RingGeometry(9.2, 11.4, 32);
+      const haloMat = new THREE.MeshBasicMaterial({
+        color: isOg ? 0xf3d285 : 0x34d399,
+        side: THREE.DoubleSide,
+        transparent: true,
+        opacity: 0.45
+      });
+      const haloMesh = new THREE.Mesh(haloGeo, haloMat);
+      haloMesh.position.set(0, 1.0, -0.6);
+      group.add(haloMesh);
+    }
+
+    group.scale.setScalar(scaleMultiplier);
+    return group;
+  }
+
+  /* -----------------------------------------------------------------------
+     C. SPAWN 3D PILE OF MAXI STANDEES ACROSS ALL 100 UNIQUE CITIZENS
+     ----------------------------------------------------------------------- */
+  spawnClawPile(playSfx = true) {
+    if (!this.pileGroup) return;
+
+    // Clear previous 3D meshes from pileGroup
+    while (this.pileGroup.children.length > 0) {
+      this.pileGroup.remove(this.pileGroup.children[0]);
+    }
+
+    const b = this.tankBounds;
+    const count = 24;
+
+    // Always include #001 OG MAXI and #037 PUMP.FUN PILL MAXI + rotating batch from all 100 citizens
+    const chosenIndices = new Set([0]);
+    if (MAXI_CITIZENS.length > 36) chosenIndices.add(36);
+
+    const mythicPool = [1, 2, 3, 4, 5, 37, 50, 77].filter((i) => i < MAXI_CITIZENS.length);
+    for (let m = 0; m < 4; m++) {
+      chosenIndices.add(mythicPool[(this.pileBatchOffset + m) % mythicPool.length]);
+    }
+
+    let cursor = (this.pileBatchOffset * 13) % MAXI_CITIZENS.length;
+    while (chosenIndices.size < Math.min(count, MAXI_CITIZENS.length)) {
+      chosenIndices.add(cursor);
+      cursor = (cursor + 3) % MAXI_CITIZENS.length;
+    }
+    this.pileBatchOffset = (this.pileBatchOffset + 1) % MAXI_CITIZENS.length;
+
+    const indicesArr = Array.from(chosenIndices);
+    for (let i = indicesArr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [indicesArr[i], indicesArr[j]] = [indicesArr[j], indicesArr[i]];
+    }
+    // Ensure OG Maxi (#001) drops near the top-center of the 3D pile
+    const ogPos = indicesArr.indexOf(0);
+    if (ogPos !== -1 && ogPos < indicesArr.length - 4) {
+      indicesArr.splice(ogPos, 1);
+      indicesArr.splice(indicesArr.length - 3, 0, 0);
+    }
+
+    this.pileItems = indicesArr.map((citIdx, i) => {
+      const cit = MAXI_CITIZENS[citIdx];
+      const scale = cit.isOg ? 1.24 : cit.isMythic ? 1.12 : 1.02;
+      const radius = 12.2 * scale;
+
+      const cols = 6;
+      const rowsZ = 3;
+      const col = i % cols;
+      const rowZ = Math.floor(i / cols) % rowsZ;
+      const layerY = Math.floor(i / (cols * rowsZ));
+
+      const spanX = b.pitMaxX - b.pitMinX - 28;
+      const spanZ = b.maxZ - b.minZ - 26;
+
+      const x =
+        b.pitMinX +
+        14 +
+        (col / (cols - 1)) * spanX +
+        (Math.random() - 0.5) * 9;
+      const z =
+        b.minZ +
+        13 +
+        (rowZ / (rowsZ - 1)) * spanZ +
+        (Math.random() - 0.5) * 9;
+      const y = b.floorY + radius + 12 + layerY * 22 + Math.random() * 10;
+
+      const mesh = this.create3DMaxiStandeeMesh(cit, scale);
+      mesh.position.set(x, y, z);
+      this.pileGroup.add(mesh);
+
+      return {
+        uid: `${cit.rank}-${Date.now()}-${i}`,
+        citizenIndex: citIdx,
+        cit,
+        mesh,
+        x,
+        y,
+        z,
+        vx: (Math.random() - 0.5) * 14,
+        vy: 0,
+        vz: (Math.random() - 0.5) * 14,
+        r: radius,
+        rotX: (Math.random() - 0.5) * 0.22,
+        rotZ: (Math.random() - 0.5) * 0.22,
+        rotY: (Math.random() - 0.5) * 0.35,
+        inChute: false,
+        extracted: false
+      };
+    });
+
+    if (this.claw.grabbedItem) {
+      this.claw.grabbedItem = null;
+      this.claw.state = 'IDLE';
+    }
+
+    if (playSfx) {
+      sfx.playBeep(540, 0.07, 'triangle');
+      setTimeout(() => sfx.playBeep(760, 0.09, 'triangle'), 65);
+    }
+    this.updateMarqueeStatus('3D VAULT RESTOCKED // 100 CITIZENS IN ROTATION');
+  }
+
+  /* -----------------------------------------------------------------------
+     D. LIVE 1000x1000 HD PFP FORGER INSIDE THE CLAW EXTRACTION MODAL
+     ----------------------------------------------------------------------- */
+  renderPullPfpCanvas() {
+    const canvas = document.getElementById('pullPfpCanvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const w = canvas.width;  // 1000
+    const h = canvas.height; // 1000
+
+    const cit = MAXI_CITIZENS[this.activeCitizenIndex] || MAXI_CITIZENS[0];
+    const img = this.getSprite(cit.src);
+
+    ctx.clearRect(0, 0, w, h);
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
+
+    // 1. High-Craft Architectural Background Theme
+    const themes = {
+      OBSIDIAN: { c0: '#1c2436', c1: '#070a12', c2: '#030408', accent: '#e5b869', sub: '#f3d285' },
+      CANDLE:   { c0: '#0b2e23', c1: '#05140f', c2: '#020806', accent: '#34d399', sub: '#6ee7b7' },
+      SOLANA:   { c0: '#1e1b4b', c1: '#090d1a', c2: '#03050a', accent: '#38bdf8', sub: '#a855f7' },
+      ROYAL:    { c0: '#3b0d1e', c1: '#14050b', c2: '#060204', accent: '#f43f5e', sub: '#fbbf24' }
+    };
+    const th = themes[this.pullPfpTheme] || themes.OBSIDIAN;
+
+    const bgGrad = ctx.createRadialGradient(w * 0.5, h * 0.44, 40, w * 0.5, h * 0.5, w * 0.72);
+    bgGrad.addColorStop(0, th.c0);
+    bgGrad.addColorStop(0.62, th.c1);
+    bgGrad.addColorStop(1, th.c2);
+    ctx.fillStyle = bgGrad;
+    ctx.fillRect(0, 0, w, h);
+
+    // Subtle Blueprint Grid & Radial Telemetry Rings
+    ctx.save();
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.045)';
+    ctx.lineWidth = 2;
+    const step = 100;
+    for (let x = step; x < w; x += step) {
+      ctx.beginPath();
+      ctx.moveTo(x, 0);
+      ctx.lineTo(x, h);
+      ctx.stroke();
+    }
+    for (let y = step; y < h; y += step) {
+      ctx.beginPath();
+      ctx.moveTo(0, y);
+      ctx.lineTo(w, y);
+      ctx.stroke();
+    }
+
+    // Center Sovereign Aura Ring behind Character
+    const auraGrad = ctx.createRadialGradient(w * 0.5, h * 0.46, 30, w * 0.5, h * 0.46, 360);
+    auraGrad.addColorStop(0, `${th.accent}44`);
+    auraGrad.addColorStop(0.6, `${th.accent}14`);
+    auraGrad.addColorStop(1, 'transparent');
+    ctx.fillStyle = auraGrad;
+    ctx.beginPath();
+    ctx.arc(w * 0.5, h * 0.46, 360, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.strokeStyle = `${th.accent}66`;
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.arc(w * 0.5, h * 0.46, 315, 0, Math.PI * 2);
+    ctx.stroke();
+
+    ctx.setLineDash([14, 10]);
+    ctx.strokeStyle = `${th.sub}44`;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.arc(w * 0.5, h * 0.46, 345, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.restore();
+
+    // 2. Top Corner Telemetry Watermarks
+    ctx.save();
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.55)';
+    ctx.font = '700 22px "JetBrains Mono", monospace';
+    ctx.fillText(`MWO // ${cit.rank}`, 48, 62);
+    ctx.textAlign = 'right';
+    ctx.fillStyle = th.accent;
+    ctx.fillText('$MAXI VERIFIED', w - 48, 62);
+    ctx.restore();
+
+    // 3. Full-Res Background-Removed Maxi Cutout Portrait
+    if (img && img.complete && img.naturalWidth > 0) {
+      ctx.save();
+      const iw = img.naturalWidth;
+      const ih = img.naturalHeight;
+      const targetBox = 740;
+      const scale = Math.min(targetBox / iw, targetBox / ih);
+      const dw = iw * scale;
+      const dh = ih * scale;
+
+      ctx.shadowColor = 'rgba(0, 0, 0, 0.92)';
+      ctx.shadowBlur = 38;
+      ctx.shadowOffsetY = 18;
+      ctx.drawImage(img, (w - dw) * 0.5, h * 0.47 - dh * 0.5, dw, dh);
+      ctx.restore();
+    }
+
+    // 4. Bottom Architectural Nameplate & Custom Badge Pill
+    const badgeText = (this.pullPfpBadgeText || 'MAXI WORLD ORDER').toUpperCase();
+    ctx.save();
+    const plateW = 860;
+    const plateH = 126;
+    const plateX = (w - plateW) * 0.5;
+    const plateY = h - 166;
+
+    ctx.fillStyle = 'rgba(6, 9, 16, 0.92)';
+    ctx.strokeStyle = th.accent;
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.roundRect(plateX, plateY, plateW, plateH, 18);
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.fillStyle = th.accent;
+    ctx.font = '800 22px "JetBrains Mono", monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText(`${badgeText} · ${cit.rank}`, w * 0.5, plateY + 42);
+
+    ctx.fillStyle = '#ffffff';
+    ctx.font = '900 44px "Syne", "Inter", sans-serif';
+    ctx.fillText(cit.name, w * 0.5, plateY + 96);
+    ctx.restore();
+
+    // Outer 1000x1000 Precision Border Frame
+    ctx.strokeStyle = th.accent;
+    ctx.lineWidth = 10;
+    ctx.strokeRect(5, 5, w - 10, h - 10);
+  }
+
+  downloadPullPfp() {
+    this.renderPullPfpCanvas();
+    const canvas = document.getElementById('pullPfpCanvas');
+    if (!canvas) return;
+    const cit = MAXI_CITIZENS[this.activeCitizenIndex] || MAXI_CITIZENS[0];
+    const link = document.createElement('a');
+    link.download = `MAXI-PFP-${cit.rank.replace('#', '')}-${cit.name.replace(/\s+/g, '-')}.png`;
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+    sfx.playBeep(920, 0.1, 'triangle');
+  }
+
+  copyPullPfpToClipboard() {
+    this.renderPullPfpCanvas();
+    const canvas = document.getElementById('pullPfpCanvas');
+    const lbl = document.getElementById('pullCopyPfpLabel');
+    if (!canvas) return;
+
+    canvas.toBlob(async (blob) => {
+      if (!blob) return;
+      try {
+        if (navigator.clipboard && window.ClipboardItem) {
+          await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
+          if (lbl) lbl.textContent = '✓ PFP COPIED TO CLIPBOARD!';
+          sfx.playBeep(1040, 0.1, 'triangle');
+        } else {
+          this.downloadPullPfp();
+          if (lbl) lbl.textContent = '✓ DOWNLOADED PNG!';
+        }
+      } catch (err) {
+        this.downloadPullPfp();
+        if (lbl) lbl.textContent = '✓ SAVED PNG!';
+      }
+      setTimeout(() => {
+        if (lbl) lbl.textContent = '📋 COPY PFP IMAGE';
+      }, 2400);
+    }, 'image/png');
   }
 
   cycleIntroShowcase(step = 1) {
@@ -1646,94 +2298,6 @@ class PlanetMaxiController {
     if (rightImg) rightImg.src = rightCit.src;
 
     sfx.playBeep(780, 0.07, 'triangle');
-  }
-
-  spawnClawPile(playSfx = true) {
-    const w = this.bayW || 980;
-    const h = this.bayH || 520;
-    const chuteW = Math.max(135, Math.min(210, w * this.chuteWidthRatio));
-    const pitLeft = chuteW + 30;
-    const pitRight = w - 30;
-    const pitW = Math.max(220, pitRight - pitLeft);
-
-    const isMobile = w < 640;
-    // Bigger, ultra-crisp natural cutouts instead of tiny bubbles
-    const count = isMobile ? 16 : 22;
-    const baseRadius = isMobile ? 35 : 46;
-
-    const chosenIndices = new Set([0]);
-    if (MAXI_CITIZENS.length > 36) chosenIndices.add(36); // #037 Pump.fun Pill Maxi
-
-    const mythicPool = [1, 2, 3, 4, 5, 37, 50, 77].filter((i) => i < MAXI_CITIZENS.length);
-    for (let m = 0; m < 3; m++) {
-      chosenIndices.add(mythicPool[(this.pileBatchOffset + m) % mythicPool.length]);
-    }
-
-    let cursor = (this.pileBatchOffset * 13) % MAXI_CITIZENS.length;
-    while (chosenIndices.size < Math.min(count, MAXI_CITIZENS.length)) {
-      chosenIndices.add(cursor);
-      cursor = (cursor + 3) % MAXI_CITIZENS.length;
-    }
-    this.pileBatchOffset = (this.pileBatchOffset + 1) % MAXI_CITIZENS.length;
-
-    const indicesArr = Array.from(chosenIndices);
-    for (let i = indicesArr.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [indicesArr[i], indicesArr[j]] = [indicesArr[j], indicesArr[i]];
-    }
-    // Guarantee #001 OG MAXI lands visibly near the top-center of the pile
-    const ogPos = indicesArr.indexOf(0);
-    if (ogPos !== -1 && ogPos < indicesArr.length - 4) {
-      indicesArr.splice(ogPos, 1);
-      indicesArr.splice(indicesArr.length - 3, 0, 0);
-    }
-
-    this.pileItems = indicesArr.map((citIdx, i) => {
-      const cit = MAXI_CITIZENS[citIdx];
-      this.getSprite(cit.src);
-      const r = cit.isOg
-        ? baseRadius * 1.18
-        : cit.isMythic
-        ? baseRadius * 1.07
-        : baseRadius * (0.94 + (i % 3) * 0.04);
-
-      const cols = isMobile ? 4 : 6;
-      const col = i % cols;
-      const row = Math.floor(i / cols);
-      const colSpan = (pitW - r * 2) / Math.max(1, cols - 1);
-      const spawnX =
-        pitLeft +
-        r +
-        col * colSpan +
-        (Math.random() - 0.5) * 24;
-      const spawnY = h - 220 - row * (r * 1.48) - Math.random() * 20;
-
-      return {
-        uid: `${cit.rank}-${Date.now()}-${i}`,
-        citizenIndex: citIdx,
-        cit,
-        x: Math.max(pitLeft + r, Math.min(pitRight - r, spawnX)),
-        y: spawnY,
-        vx: (Math.random() - 0.5) * 2.0,
-        vy: Math.random() * 1.4,
-        r,
-        angle: (Math.random() - 0.5) * 0.28, // Natural figure tilt
-        vAngle: (Math.random() - 0.5) * 0.015,
-        inChute: false,
-        extracted: false
-      };
-    });
-
-    if (this.claw.grabbedItem) {
-      this.claw.grabbedItem = null;
-      this.claw.state = 'IDLE';
-    }
-
-    if (playSfx) {
-      sfx.playBeep(540, 0.07, 'triangle');
-      setTimeout(() => sfx.playBeep(760, 0.09, 'triangle'), 65);
-    }
-    this.updateMarqueeStatus('VAULT RESTOCKED // 100 FULL-RES CUTOUTS IN ROTATION');
   }
 
   updateMarqueeStatus(text) {
@@ -1766,28 +2330,37 @@ class PlanetMaxiController {
     const cit = MAXI_CITIZENS[this.activeCitizenIndex];
     sfx.playBeep(cit.isOg ? 980 : 760, 0.08, 'triangle');
 
-    let targetItem = this.pileItems.find((it) => it.citizenIndex === this.activeCitizenIndex && !it.extracted);
-    if (!targetItem) {
-      const w = this.bayW || 980;
-      const chuteW = Math.max(135, Math.min(210, w * this.chuteWidthRatio));
-      const pitLeft = chuteW + 45;
-      const pitRight = w - 45;
-      const spawnX = pitLeft + (pitRight - pitLeft) * (0.35 + Math.random() * 0.45);
-      const isMobile = w < 640;
-      const baseRadius = isMobile ? 35 : 46;
+    // Find this citizen in the 3D pile, or spawn a 3D Standee for them right on top of the pile!
+    let targetItem = this.pileItems.find(
+      (it) => it.citizenIndex === this.activeCitizenIndex && !it.extracted
+    );
+    if (!targetItem && this.pileGroup) {
+      const b = this.tankBounds;
+      const scale = cit.isOg ? 1.24 : cit.isMythic ? 1.12 : 1.04;
+      const radius = 12.2 * scale;
+      const x = (b.pitMinX + b.pitMaxX) * 0.5 + (Math.random() - 0.5) * 35;
+      const z = (Math.random() - 0.5) * 30;
+      const y = b.floorY + radius + 16;
 
-      this.getSprite(cit.src);
+      const mesh = this.create3DMaxiStandeeMesh(cit, scale);
+      mesh.position.set(x, y, z);
+      this.pileGroup.add(mesh);
+
       targetItem = {
         uid: `${cit.rank}-${Date.now()}`,
         citizenIndex: this.activeCitizenIndex,
         cit,
-        x: spawnX,
-        y: 125,
+        mesh,
+        x,
+        y,
+        z,
         vx: 0,
-        vy: 1.5,
-        r: cit.isOg ? baseRadius * 1.18 : baseRadius * 1.05,
-        angle: 0,
-        vAngle: 0,
+        vy: 0,
+        vz: 0,
+        r: radius,
+        rotX: 0,
+        rotZ: 0,
+        rotY: 0,
         inChute: false,
         extracted: false
       };
@@ -1795,17 +2368,23 @@ class PlanetMaxiController {
     }
 
     if (this.claw.state === 'IDLE' && targetItem) {
-      const w = this.bayW || 980;
-      this.claw.targetX = Math.max(0.24, Math.min(0.93, targetItem.x / w));
+      this.claw.targetX = Math.max(
+        this.tankBounds.pitMinX + 6,
+        Math.min(this.tankBounds.pitMaxX - 6, targetItem.x)
+      );
+      this.claw.targetZ = Math.max(
+        this.tankBounds.minZ + 6,
+        Math.min(this.tankBounds.maxZ - 6, targetItem.z)
+      );
       if (triggerDrop) {
-        setTimeout(() => this.triggerClawDrop(), 260);
+        setTimeout(() => this.triggerClawDrop(), 280);
       }
     }
 
     this.updateSideHudReadouts(cit);
     const laserEl = document.getElementById('clawLaserReadout');
     if (laserEl) {
-      laserEl.textContent = `LOCKED: ${cit.rank} ${cit.name}`;
+      laserEl.textContent = `3D LASER LOCK // ${cit.rank} ${cit.name}`;
     }
   }
 
@@ -1821,9 +2400,10 @@ class PlanetMaxiController {
 
     if (this.claw.state !== 'IDLE') return;
 
-    if (this.claw.x < this.chuteWidthRatio + 0.04) {
-      this.claw.targetX = 0.56;
-      this.claw.x = 0.56;
+    const b = this.tankBounds;
+    if (this.claw.x < b.pitMinX) {
+      this.claw.targetX = 20;
+      this.claw.x = 20;
     }
 
     this.claw.state = 'DROPPING';
@@ -1833,7 +2413,7 @@ class PlanetMaxiController {
 
     sfx.playBeep(620, 0.09, 'sawtooth');
     setTimeout(() => sfx.playBeep(440, 0.12, 'sawtooth'), 70);
-    this.updateMarqueeStatus('DESCENDING // HYDRAULIC 3-PRONG CLAW DEPLOYED');
+    this.updateMarqueeStatus('DESCENDING // 3D HYDRAULIC TALONS DEPLOYED');
   }
 
   triggerExtractionReveal(item) {
@@ -1845,22 +2425,6 @@ class PlanetMaxiController {
     sfx.playArrivalChord();
     this.updateSideHudReadouts(cit);
 
-    const chuteX = (this.bayW || 980) * (this.chuteWidthRatio * 0.5);
-    const chuteY = (this.bayH || 520) - 70;
-    for (let i = 0; i < 32; i++) {
-      const ang = Math.random() * Math.PI * 2;
-      const spd = 2.5 + Math.random() * 7.0;
-      this.sparkParticles.push({
-        x: chuteX,
-        y: chuteY,
-        vx: Math.cos(ang) * spd,
-        vy: Math.sin(ang) * spd - 2.8,
-        life: 1.0,
-        color: i % 2 === 0 ? '#34d399' : '#e5b869',
-        size: 2.4 + Math.random() * 3.0
-      });
-    }
-
     const countEl = document.getElementById('clawExtractedCount');
     if (countEl) {
       countEl.textContent = `EXTRACTED: ${this.extractedSet.size} / ${MAXI_CITIZENS.length}`;
@@ -1868,7 +2432,6 @@ class PlanetMaxiController {
 
     const overlay = document.getElementById('pullRevealOverlay');
     const tierEl = document.getElementById('pullRevealTier');
-    const imgEl = document.getElementById('pullRevealImg');
     const rankEl = document.getElementById('pullRevealRank');
     const nameEl = document.getElementById('pullRevealName');
     const titleEl = document.getElementById('pullRevealTitle');
@@ -1883,25 +2446,27 @@ class PlanetMaxiController {
         ? '1-OF-1 MWO MYTHIC PULL'
         : 'VERIFIED MWO CITIZEN';
     }
-    if (imgEl) imgEl.src = cit.src;
-    if (rankEl) rankEl.textContent = `EXTRACTED SPECIMEN ${cit.rank} / 100`;
+    if (rankEl) rankEl.textContent = `CITIZEN ${cit.rank} / 100`;
     if (nameEl) nameEl.textContent = cit.name;
     if (titleEl) titleEl.textContent = cit.title.replace(/^[👑★]\s*/, '');
     if (loreEl) loreEl.textContent = cit.lore.replace(/&quot;/g, '"');
     if (dlEl) {
       dlEl.href = cit.src;
-      dlEl.download = `MAXI-${cit.rank.replace('#', '')}-${cit.name.replace(/\s+/g, '-')}.png`;
+      dlEl.download = `MAXI-CUTOUT-${cit.rank.replace('#', '')}-${cit.name.replace(/\s+/g, '-')}.png`;
     }
     if (shareXEl) {
-      const tweetText = `Just clawed ${cit.rank} ${cit.name} (${cit.title.replace(/^[👑★]\s*/, '')}) out of the MAXI WORLD ORDER Vault Claw Machine 🦾🌍\n\n$MAXI CA: EBCpGdXuS34WZuX13thrku2KmuLSe3Tf2gMtMKndpump\n@maxiworldorder`;
+      const tweetText = `Just clawed ${cit.rank} ${cit.name} (${cit.title.replace(/^[👑★]\s*/, '')}) out of the 3D MAXI WORLD ORDER Vault Claw Machine & minted my PFP 🦾🌍\n\n$MAXI CA: EBCpGdXuS34WZuX13thrku2KmuLSe3Tf2gMtMKndpump\n@maxiworldorder`;
       shareXEl.href = `https://twitter.com/intent/tweet?text=${encodeURIComponent(tweetText)}`;
     }
+
+    // Immediately forge the 1000x1000 High-Res PFP on the Reveal Modal Canvas!
+    this.renderPullPfpCanvas();
 
     if (overlay) {
       overlay.classList.remove('hidden');
     }
 
-    this.updateMarqueeStatus(`EXTRACTED ${cit.rank} ${cit.name} // PRIZE SECURED`);
+    this.updateMarqueeStatus(`EXTRACTED ${cit.rank} ${cit.name} // 1000×1000 PFP READY TO SAVE`);
   }
 
   toggleOverdriveMode() {
@@ -1917,9 +2482,13 @@ class PlanetMaxiController {
         this.atmoMesh.material.color.setHex(0x34d399);
         this.atmoMesh.material.opacity = 0.25;
       }
+      if (this.goldTrimMat) {
+        this.goldTrimMat.color.setHex(0x34d399);
+        this.goldTrimMat.emissive.setHex(0x34d399);
+      }
       if (navLbl) navLbl.textContent = 'OVERDRIVE: ON';
       if (stageLbl) stageLbl.textContent = 'OVERDRIVE: ON';
-      this.updateMarqueeStatus('MWO OVERDRIVE // HIGH-TORQUE GREEN CANDLE CLAW');
+      this.updateMarqueeStatus('MWO OVERDRIVE // HIGH-TORQUE GREEN CANDLE 3D CLAW');
 
       sfx.playBeep(523.25, 0.12, 'sawtooth');
       setTimeout(() => sfx.playBeep(659.25, 0.14, 'sawtooth'), 70);
@@ -1930,9 +2499,13 @@ class PlanetMaxiController {
         this.atmoMesh.material.color.setHex(0x38bdf8);
         this.atmoMesh.material.opacity = 0.16;
       }
+      if (this.goldTrimMat) {
+        this.goldTrimMat.color.setHex(0xe5b869);
+        this.goldTrimMat.emissive.setHex(0xe5b869);
+      }
       if (navLbl) navLbl.textContent = 'OVERDRIVE';
       if (stageLbl) stageLbl.textContent = 'OVERDRIVE';
-      this.updateMarqueeStatus('GANTRY ARMED // 100 UNIQUE CITIZENS LOADED');
+      this.updateMarqueeStatus('3D GANTRY ARMED // 100 UNIQUE CITIZENS LOADED');
       sfx.playBeep(440, 0.09, 'sine');
     }
   }
@@ -2022,104 +2595,112 @@ class PlanetMaxiController {
       this.camera.updateProjectionMatrix();
     }
 
-    if (this.clawCanvas && this.clawGlassBay) {
+    if (this.clawRenderer && this.clawCamera && this.clawGlassBay) {
       const rect = this.clawGlassBay.getBoundingClientRect();
-      const bayW = Math.max(300, Math.floor(rect.width || 980));
-      const bayH = Math.max(240, Math.floor(rect.height || 520));
-      // Full native Retina DPR for razor-sharp cutout rendering
-      const dpr = Math.min(window.devicePixelRatio || 1, 3);
+      const bayW = Math.max(320, Math.floor(rect.width || 980));
+      const bayH = Math.max(260, Math.floor(rect.height || 520));
 
       this.bayW = bayW;
       this.bayH = bayH;
-      this.clawCanvas.width = bayW * dpr;
-      this.clawCanvas.height = bayH * dpr;
-      if (this.clawCtx) {
-        this.clawCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
-        this.clawCtx.imageSmoothingEnabled = true;
-        this.clawCtx.imageSmoothingQuality = 'high';
-      }
+      this.clawRenderer.setSize(bayW, bayH, false);
+      this.clawCamera.aspect = bayW / bayH;
+      // Widen FOV slightly on portrait mobile screens so the entire 3D tank fits comfortably
+      this.clawCamera.fov = bayW < 640 ? 48 : 37;
+      this.clawCamera.updateProjectionMatrix();
     }
   }
 
-  updateClawAndPilePhysics(dt) {
-    const w = this.bayW || 980;
-    const h = this.bayH || 520;
-    const chuteW = Math.max(135, Math.min(210, w * this.chuteWidthRatio));
-    const dividerTopY = h - Math.min(210, h * 0.42);
-    const floorY = h - 18;
-    const gantrySpeed = this.isOverdrive ? 0.58 : 0.42;
-
+  /* -----------------------------------------------------------------------
+     E. 3D RIGID-BODY PHYSICS & 3-PRONG HYDRAULIC CLAW STATE MACHINE
+     ----------------------------------------------------------------------- */
+  update3DClawAndPilePhysics(dt, timeSec) {
+    const b = this.tankBounds;
     const claw = this.claw;
-    const prevClawX = claw.x * w;
+    const prevX = claw.x;
+    const prevZ = claw.z;
+    const speedXZ = this.isOverdrive ? 105 : 76;
 
+    // 1. Update 3D Claw Gantry X / Y / Z & 3-Prong Jaw Articulation
     if (claw.state === 'IDLE') {
-      if (claw.moveDir !== 0) {
+      if (claw.moveDirX !== 0) {
         claw.targetX = Math.max(
-          this.chuteWidthRatio + 0.04,
-          Math.min(0.94, claw.targetX + claw.moveDir * gantrySpeed * dt)
+          b.pitMinX + 4,
+          Math.min(b.pitMaxX - 4, claw.targetX + claw.moveDirX * speedXZ * dt)
         );
       }
+      if (claw.moveDirZ !== 0) {
+        claw.targetZ = Math.max(
+          b.minZ + 8,
+          Math.min(b.maxZ - 8, claw.targetZ + claw.moveDirZ * speedXZ * dt)
+        );
+      }
+
       claw.x += (claw.targetX - claw.x) * Math.min(1, dt * 12);
+      claw.z += (claw.targetZ - claw.z) * Math.min(1, dt * 12);
       claw.y += (claw.homeY - claw.y) * Math.min(1, dt * 10);
       claw.targetJaw = 0.58;
 
-      const clawPxX = claw.x * w;
+      // Find nearest 3D Standee under the 3D Laser Sight
       let nearest = null;
       let bestDist = 9999;
       for (let i = 0; i < this.pileItems.length; i++) {
         const it = this.pileItems[i];
         if (it.extracted || it.inChute) continue;
-        const dx = Math.abs(it.x - clawPxX);
-        if (dx < it.r * 1.15 && it.y < bestDist) {
-          bestDist = it.y;
+        const dXZ = Math.hypot(it.x - claw.x, it.z - claw.z);
+        if (dXZ < it.r * 1.3 && dXZ < bestDist) {
+          bestDist = dXZ;
           nearest = it;
         }
       }
+
       const laserEl = document.getElementById('clawLaserReadout');
       if (laserEl) {
         if (nearest) {
-          laserEl.textContent = `LASER LOCK // ${nearest.cit.rank} ${nearest.cit.name}`;
+          laserEl.textContent = `3D LASER LOCK // ${nearest.cit.rank} ${nearest.cit.name}`;
         } else {
-          laserEl.textContent = `GANTRY X=${Math.round(claw.x * 100)}% // READY`;
+          const pctX = Math.round(((claw.x - b.minX) / (b.maxX - b.minX)) * 100);
+          const pctZ = Math.round(((claw.z - b.minZ) / (b.maxZ - b.minZ)) * 100);
+          laserEl.textContent = `3D GANTRY X=${pctX}% Z=${pctZ}% // READY`;
         }
       }
 
       const altEl = document.getElementById('hudAltitude');
       const barEl = document.getElementById('hudZoomBar');
-      if (altEl) altEl.textContent = `${(claw.x * 100).toFixed(1)}%`;
-      if (barEl) barEl.style.width = `${Math.round(claw.x * 100)}%`;
+      const pct = Math.round(((claw.x - b.minX) / (b.maxX - b.minX)) * 100);
+      if (altEl) altEl.textContent = `${pct}%`;
+      if (barEl) barEl.style.width = `${pct}%`;
     } else if (claw.state === 'DROPPING') {
-      const dropSpeed = this.isOverdrive ? 460 : 350;
-      claw.y += dropSpeed * dt;
-      claw.targetJaw = 0.66;
+      const dropSpeed = this.isOverdrive ? 120 : 92;
+      claw.y -= dropSpeed * dt;
+      claw.targetJaw = 0.65;
 
-      const clawPxX = claw.x * w;
-      const grabCenterY = claw.y + 38;
+      const grabTipY = claw.y - 16;
 
       let hitCandidate = null;
       let minDist = 9999;
       for (let i = 0; i < this.pileItems.length; i++) {
         const it = this.pileItems[i];
         if (it.extracted || it.inChute) continue;
-        const dist = Math.hypot(it.x - clawPxX, it.y - grabCenterY);
-        if (dist <= it.r * 0.92 && dist < minDist) {
-          minDist = dist;
+        const dist3D = Math.hypot(it.x - claw.x, it.y - grabTipY, it.z - claw.z);
+        if (dist3D <= it.r * 1.15 && dist3D < minDist) {
+          minDist = dist3D;
           hitCandidate = it;
         }
       }
 
-      if (hitCandidate || claw.y >= floorY - 68) {
+      if (hitCandidate || claw.y <= b.floorY + 25) {
         claw.state = 'CLAMPING';
         claw.stateTimer = 0;
-        claw.targetJaw = 0.18;
+        claw.targetJaw = 0.16;
 
+        // Magnetic 3D Talon Reach Assist so the claw feels rewarding & accurate
         if (!hitCandidate) {
           for (let i = 0; i < this.pileItems.length; i++) {
             const it = this.pileItems[i];
             if (it.extracted || it.inChute) continue;
-            const dist = Math.hypot(it.x - clawPxX, it.y - grabCenterY);
-            if (dist <= it.r * 1.38 && dist < minDist) {
-              minDist = dist;
+            const dXZ = Math.hypot(it.x - claw.x, it.z - claw.z);
+            if (dXZ <= it.r * 1.65 && dXZ < minDist) {
+              minDist = dXZ;
               hitCandidate = it;
             }
           }
@@ -2128,184 +2709,253 @@ class PlanetMaxiController {
         if (hitCandidate) {
           claw.grabbedItem = hitCandidate;
           sfx.playBeep(880, 0.09, 'triangle');
-          this.updateMarqueeStatus(`CLAMP LOCKED // ${hitCandidate.cit.rank} ${hitCandidate.cit.name}`);
+          this.updateMarqueeStatus(`3D TALONS LOCKED // ${hitCandidate.cit.rank} ${hitCandidate.cit.name}`);
         } else {
           sfx.playBeep(300, 0.09, 'sine');
-          this.updateMarqueeStatus('CLAMP MISSED // RETRACTING GANTRY');
+          this.updateMarqueeStatus('CLAMP MISSED // RETRACTING 3D GANTRY');
         }
       }
     } else if (claw.state === 'CLAMPING') {
       claw.stateTimer += dt;
-      claw.targetJaw = claw.grabbedItem ? 0.20 : 0.14;
+      claw.targetJaw = claw.grabbedItem ? 0.18 : 0.12;
       if (claw.grabbedItem) {
-        const targetX = claw.x * w;
-        const targetY = claw.y + 42;
-        claw.grabbedItem.x += (targetX - claw.grabbedItem.x) * 0.35;
-        claw.grabbedItem.y += (targetY - claw.grabbedItem.y) * 0.35;
-        claw.grabbedItem.vx = 0;
-        claw.grabbedItem.vy = 0;
+        claw.grabbedItem.x += (claw.x - claw.grabbedItem.x) * 0.35;
+        claw.grabbedItem.y += (claw.y - 16 - claw.grabbedItem.y) * 0.35;
+        claw.grabbedItem.z += (claw.z - claw.grabbedItem.z) * 0.35;
       }
-      if (claw.stateTimer >= 0.32) {
+      if (claw.stateTimer >= 0.34) {
         claw.state = 'HOISTING';
         claw.stateTimer = 0;
         sfx.playBeep(660, 0.08, 'sine');
       }
     } else if (claw.state === 'HOISTING') {
-      const hoistSpeed = this.isOverdrive ? 370 : 290;
-      claw.y -= hoistSpeed * dt;
-      if (claw.y <= claw.homeY) {
+      const hoistSpeed = this.isOverdrive ? 105 : 82;
+      claw.y += hoistSpeed * dt;
+      if (claw.y >= claw.homeY) {
         claw.y = claw.homeY;
         if (claw.grabbedItem) {
           claw.state = 'CARRYING';
           claw.stateTimer = 0;
-          this.updateMarqueeStatus(`TRANSPORTING ${claw.grabbedItem.cit.rank} TO EXTRACTION CHUTE`);
+          this.updateMarqueeStatus(`CARRYING ${claw.grabbedItem.cit.rank} TO 3D EXTRACTION CHUTE`);
         } else {
           claw.state = 'IDLE';
           claw.targetJaw = 0.58;
-          this.updateMarqueeStatus('GANTRY READY // AIM & DROP CLAW');
+          this.updateMarqueeStatus('3D GANTRY READY // AIM & DROP CLAW');
         }
       }
     } else if (claw.state === 'CARRYING') {
-      const chuteCenterNorm = (chuteW * 0.52) / w;
-      const carrySpeed = this.isOverdrive ? 0.52 : 0.38;
-      if (claw.x > chuteCenterNorm) {
-        claw.x = Math.max(chuteCenterNorm, claw.x - carrySpeed * dt);
+      const chuteTargetX = (b.minX + b.chuteMaxX) * 0.5;
+      const chuteTargetZ = 0;
+      const carrySpeed = this.isOverdrive ? 96 : 72;
+
+      const dx = chuteTargetX - claw.x;
+      const dz = chuteTargetZ - claw.z;
+      const dist = Math.hypot(dx, dz);
+
+      if (dist > 2.5) {
+        const step = Math.min(dist, carrySpeed * dt);
+        claw.x += (dx / dist) * step;
+        claw.z += (dz / dist) * step;
         claw.targetX = claw.x;
+        claw.targetZ = claw.z;
       } else {
         claw.state = 'RELEASING';
         claw.stateTimer = 0;
-        claw.targetJaw = 0.66;
+        claw.targetJaw = 0.68;
         if (claw.grabbedItem) {
           claw.grabbedItem.inChute = true;
           claw.grabbedItem.vx = 0;
-          claw.grabbedItem.vy = 3.2;
+          claw.grabbedItem.vz = 0;
+          claw.grabbedItem.vy = -45;
           claw.grabbedItem = null;
         }
         sfx.playBeep(990, 0.1, 'triangle');
       }
     } else if (claw.state === 'RELEASING') {
       claw.stateTimer += dt;
-      claw.targetJaw = 0.66;
+      claw.targetJaw = 0.68;
       if (claw.stateTimer >= 0.45) {
         claw.state = 'IDLE';
-        claw.targetX = 0.54;
+        claw.targetX = 18;
+        claw.targetZ = 0;
       }
     }
 
+    // Smooth 3D Pendulum Cable Swing & Finger Articulation
     claw.jawAngle += (claw.targetJaw - claw.jawAngle) * Math.min(1, dt * 14);
-    const clawVelX = (claw.x * w - prevClawX) / Math.max(0.001, dt);
-    claw.swingVel += (-clawVelX * 0.0012 - claw.swingAngle * 14) * dt;
-    claw.swingVel *= 0.90;
-    claw.swingAngle = Math.max(-0.35, Math.min(0.35, claw.swingAngle + claw.swingVel));
+    const vx = (claw.x - prevX) / Math.max(0.001, dt);
+    const vz = (claw.z - prevZ) / Math.max(0.001, dt);
+    claw.velX = claw.velX * 0.88 + (-vx * 0.003 - claw.swingX * 14) * dt;
+    claw.velZ = claw.velZ * 0.88 + (-vz * 0.003 - claw.swingZ * 14) * dt;
+    claw.swingX = Math.max(-0.32, Math.min(0.32, claw.swingX + claw.velX));
+    claw.swingZ = Math.max(-0.32, Math.min(0.32, claw.swingZ + claw.velZ));
 
-    if (claw.grabbedItem) {
-      const grabX = claw.x * w + Math.sin(claw.swingAngle) * 18;
-      const grabY = claw.y + 42;
-      claw.grabbedItem.x = grabX;
-      claw.grabbedItem.y = grabY;
-      claw.grabbedItem.vx = 0;
-      claw.grabbedItem.vy = 0;
-      claw.grabbedItem.angle = claw.swingAngle * 0.55;
+    // Apply Transforms to 3D Gantry Bridge, Trolley, Hoist Cable, & 3-Prong Claw
+    if (this.gantryBridgeGroup && this.trolleyGroup && this.clawHeadGroup && this.cableMesh) {
+      this.gantryBridgeGroup.position.x = claw.x;
+      this.trolleyGroup.position.set(claw.x, b.railY, claw.z);
+
+      const hubX = claw.x + Math.sin(claw.swingX) * 6;
+      const hubZ = claw.z + Math.sin(claw.swingZ) * 6;
+      this.clawHeadGroup.position.set(hubX, claw.y, hubZ);
+      this.clawHeadGroup.rotation.z = claw.swingX;
+      this.clawHeadGroup.rotation.x = -claw.swingZ;
+
+      const cableLen = Math.max(2, b.railY - claw.y);
+      this.cableMesh.scale.set(1, cableLen, 1);
+      this.cableMesh.position.set(
+        (claw.x + hubX) * 0.5,
+        claw.y + cableLen * 0.5,
+        (claw.z + hubZ) * 0.5
+      );
+
+      // Rotate all 3 articulated hydraulic fingers
+      for (let f = 0; f < this.clawFingers.length; f++) {
+        this.clawFingers[f].rotation.z = claw.jawAngle - 0.35;
+      }
+
+      // Update 3D Vertical Laser Sight & Floor Reticle
+      const showLaser = claw.state === 'IDLE' || claw.state === 'DROPPING';
+      if (this.laserBeamMesh && this.floorReticleMesh) {
+        this.laserBeamMesh.visible = showLaser;
+        this.floorReticleMesh.visible = showLaser;
+        if (showLaser) {
+          const laserLen = Math.max(4, claw.y - b.floorY - 4);
+          this.laserBeamMesh.scale.set(1, laserLen / 120, 1);
+          this.laserBeamMesh.position.set(hubX, b.floorY + laserLen * 0.5, hubZ);
+          this.floorReticleMesh.position.set(hubX, b.floorY + 0.5, hubZ);
+          this.floorReticleMesh.rotation.z = timeSec * 1.8;
+        }
+      }
     }
 
-    // 2. Natural Character Cutout Rigid-Body Physics (Tighter torso packing + upright bias)
-    const gravity = 780 * dt;
+    if (claw.grabbedItem) {
+      const it = claw.grabbedItem;
+      it.x = this.clawHeadGroup.position.x;
+      it.y = this.clawHeadGroup.position.y - 16.5;
+      it.z = this.clawHeadGroup.position.z;
+      it.vx = 0;
+      it.vy = 0;
+      it.vz = 0;
+      it.rotZ = claw.swingX * 0.8;
+      it.rotX = -claw.swingZ * 0.8;
+    }
+
+    // 2. 3D Rigid-Body Sphere-Standee Physics in the Containment Pit
+    const gravity = -240 * dt;
     for (let i = 0; i < this.pileItems.length; i++) {
       const it = this.pileItems[i];
       if (it.extracted || it === claw.grabbedItem) continue;
 
       it.vy += gravity;
-      it.x += it.vx;
-      it.y += it.vy * dt * 60;
-      it.vx *= 0.94;
-      it.vy *= 0.94;
-      it.angle += it.vAngle;
-      it.vAngle *= 0.88;
-      // Gentle upright self-righting torque so characters don't sit upside-down
-      it.angle *= 0.985;
-      it.angle = Math.max(-0.48, Math.min(0.48, it.angle));
+      it.x += it.vx * dt;
+      it.y += it.vy * dt;
+      it.z += it.vz * dt;
 
-      const bodyR = it.r * 0.84;
+      it.vx *= 0.92;
+      it.vy *= 0.95;
+      it.vz *= 0.92;
 
-      if (it.inChute || it.x < chuteW) {
-        if (it.x - bodyR < 12) {
-          it.x = 12 + bodyR;
-          it.vx = Math.abs(it.vx) * 0.35;
+      // Self-righting torque so 3D Standees stand naturally on their collector bases
+      it.rotX *= 0.92;
+      it.rotZ *= 0.92;
+      it.rotY *= 0.96;
+
+      if (it.inChute || it.x < b.chuteMaxX) {
+        // Inside Left 3D Extraction Chute Well
+        if (it.x - it.r < b.minX + 4) {
+          it.x = b.minX + 4 + it.r;
+          it.vx = Math.abs(it.vx) * 0.3;
         }
-        if (it.x + bodyR > chuteW - 8) {
-          it.x = chuteW - 8 - bodyR;
-          it.vx = -Math.abs(it.vx) * 0.35;
+        if (it.x + it.r > b.chuteMaxX - 3) {
+          it.x = b.chuteMaxX - 3 - it.r;
+          it.vx = -Math.abs(it.vx) * 0.3;
         }
-        if (it.y > h - 36 && !it.extracted) {
+        if (it.y < b.floorY - 12 && !it.extracted) {
           it.extracted = true;
+          if (it.mesh && this.pileGroup) {
+            this.pileGroup.remove(it.mesh);
+          }
           this.triggerExtractionReveal(it);
         }
       } else {
-        if (it.y + bodyR > floorY) {
-          it.y = floorY - bodyR;
-          it.vy = -Math.abs(it.vy) * 0.2;
+        // Inside Main 3D Containment Pit
+        const restY = b.floorY + it.r * 0.95;
+        if (it.y < restY) {
+          it.y = restY;
+          it.vy = -Math.abs(it.vy) * 0.18;
           it.vx *= 0.82;
-          it.vAngle = it.vx * 0.008;
+          it.vz *= 0.82;
         }
-        if (it.x + bodyR > w - 16) {
-          it.x = w - 16 - bodyR;
-          it.vx = -Math.abs(it.vx) * 0.35;
+        if (it.x + it.r > b.pitMaxX) {
+          it.x = b.pitMaxX - it.r;
+          it.vx = -Math.abs(it.vx) * 0.4;
         }
-        if (it.y + bodyR > dividerTopY && it.x - bodyR < chuteW + 10) {
-          it.x = chuteW + 10 + bodyR;
-          it.vx = Math.abs(it.vx) * 0.4 + 0.3;
+        if (it.z - it.r < b.minZ) {
+          it.z = b.minZ + it.r;
+          it.vz = Math.abs(it.vz) * 0.4;
+        }
+        if (it.z + it.r > b.maxZ) {
+          it.z = b.maxZ - it.r;
+          it.vz = -Math.abs(it.vz) * 0.4;
+        }
+        // Chute Divider Wall Collision
+        if (it.y - it.r < b.floorY + b.dividerHeight && it.x - it.r < b.chuteMaxX + 4) {
+          it.x = b.chuteMaxX + 4 + it.r;
+          it.vx = Math.abs(it.vx) * 0.4 + 4;
         }
       }
     }
 
-    // 3. Natural Character Torso Packing (0.76 overlap factor so cutouts nest organically shoulder-to-shoulder)
+    // 3. 3D Pairwise Standee Collision Resolution
     for (let pass = 0; pass < 3; pass++) {
       for (let i = 0; i < this.pileItems.length; i++) {
         const a = this.pileItems[i];
         if (a.extracted || a.inChute || a === claw.grabbedItem) continue;
 
         for (let j = i + 1; j < this.pileItems.length; j++) {
-          const b = this.pileItems[j];
-          if (b.extracted || b.inChute || b === claw.grabbedItem) continue;
+          const bItem = this.pileItems[j];
+          if (bItem.extracted || bItem.inChute || bItem === claw.grabbedItem) continue;
 
-          const dx = b.x - a.x;
-          const dy = b.y - a.y;
-          const distSq = dx * dx + dy * dy;
-          const minDist = (a.r + b.r) * 0.76;
+          const dx = bItem.x - a.x;
+          const dy = bItem.y - a.y;
+          const dz = bItem.z - a.z;
+          const distSq = dx * dx + dy * dy + dz * dz;
+          const minDist = (a.r + bItem.r) * 0.82;
 
           if (distSq > 0.0001 && distSq < minDist * minDist) {
             const dist = Math.sqrt(distSq);
             const overlap = (minDist - dist) * 0.5;
             const nx = dx / dist;
             const ny = dy / dist;
+            const nz = dz / dist;
 
             a.x -= nx * overlap;
             a.y -= ny * overlap;
-            b.x += nx * overlap;
-            b.y += ny * overlap;
+            a.z -= nz * overlap;
+            bItem.x += nx * overlap;
+            bItem.y += ny * overlap;
+            bItem.z += nz * overlap;
 
-            const aBody = a.r * 0.84;
-            const bBody = b.r * 0.84;
-            if (a.y + aBody > floorY) a.y = floorY - aBody;
-            if (b.y + bBody > floorY) b.y = floorY - bBody;
-            if (a.x - aBody < chuteW + 10) a.x = chuteW + 10 + aBody;
-            if (b.x - bBody < chuteW + 10) b.x = chuteW + 10 + bBody;
-            if (a.x + aBody > w - 16) a.x = w - 16 - aBody;
-            if (b.x + bBody > w - 16) b.x = w - 16 - bBody;
+            const aRestY = b.floorY + a.r * 0.95;
+            const bRestY = b.floorY + bItem.r * 0.95;
+            if (a.y < aRestY) a.y = aRestY;
+            if (bItem.y < bRestY) bItem.y = bRestY;
 
-            const dvx = b.vx - a.vx;
-            const dvy = b.vy - a.vy;
-            const relVel = dvx * nx + dvy * ny;
-            if (relVel < 0) {
-              const imp = relVel * 0.3;
-              a.vx += nx * imp;
-              a.vy += ny * imp;
-              b.vx -= nx * imp;
-              b.vy -= ny * imp;
-            }
+            // Slight natural tilt on contact
+            a.rotZ = Math.max(-0.28, Math.min(0.28, a.rotZ - nx * 0.02));
+            bItem.rotZ = Math.max(-0.28, Math.min(0.28, bItem.rotZ + nx * 0.02));
           }
         }
       }
+    }
+
+    // Sync 3D Mesh Positions & Orientations
+    for (let i = 0; i < this.pileItems.length; i++) {
+      const it = this.pileItems[i];
+      if (!it.mesh || it.extracted) continue;
+      it.mesh.position.set(it.x, it.y, it.z);
+      it.mesh.rotation.set(it.rotX, it.rotY, it.rotZ);
     }
 
     if (this.pileItems.some((it) => it.extracted)) {
@@ -2314,421 +2964,25 @@ class PlanetMaxiController {
         this.spawnClawPile(false);
       }
     }
-
-    for (let i = this.sparkParticles.length - 1; i >= 0; i--) {
-      const sp = this.sparkParticles[i];
-      sp.x += sp.vx;
-      sp.y += sp.vy;
-      sp.vy += 0.18;
-      sp.life -= dt * 1.6;
-      if (sp.life <= 0) this.sparkParticles.splice(i, 1);
-    }
   }
 
-  renderClawMachineCanvas(timeSec) {
-    if (!this.clawCtx || !this.clawCanvas) return;
-    const ctx = this.clawCtx;
-    const w = this.bayW || 980;
-    const h = this.bayH || 520;
-    const chuteW = Math.max(135, Math.min(210, w * this.chuteWidthRatio));
-    const dividerTopY = h - Math.min(210, h * 0.42);
-    const floorY = h - 18;
+  render3DClawScene() {
+    if (!this.clawRenderer || !this.clawScene || !this.clawCamera) return;
 
-    ctx.clearRect(0, 0, w, h);
-    ctx.imageSmoothingEnabled = true;
-    ctx.imageSmoothingQuality = 'high';
+    // Smooth 3D Camera Parallax & Gantry Tracking
+    const followX = this.claw.x * 0.14;
+    this.camYaw += (this.targetCamYaw - this.camYaw) * 0.08;
+    this.camPitch += (this.targetCamPitch - this.camPitch) * 0.08;
 
-    // 1. Transparent Architectural Glass Grid (Allows 3D Planet Maxi to shine through behind the tank!)
-    ctx.strokeStyle = 'rgba(255, 255, 255, 0.04)';
-    ctx.lineWidth = 1;
-    const gridStep = 48;
-    for (let gx = chuteW; gx < w; gx += gridStep) {
-      ctx.beginPath();
-      ctx.moveTo(gx, 0);
-      ctx.lineTo(gx, floorY);
-      ctx.stroke();
-    }
-    for (let gy = 30; gy < floorY; gy += gridStep) {
-      ctx.beginPath();
-      ctx.moveTo(0, gy);
-      ctx.lineTo(w, gy);
-      ctx.stroke();
-    }
+    const radius = 232;
+    const camX = followX + Math.sin(this.camYaw) * radius;
+    const camY = 14 + Math.sin(this.camPitch) * 95;
+    const camZ = Math.cos(this.camYaw) * Math.cos(this.camPitch) * radius;
 
-    // 2. Left 3D Extraction Chute ("DROP ZONE")
-    const chuteGrad = ctx.createLinearGradient(0, dividerTopY, 0, h);
-    chuteGrad.addColorStop(0, 'rgba(52, 211, 153, 0.05)');
-    chuteGrad.addColorStop(1, 'rgba(52, 211, 153, 0.22)');
-    ctx.fillStyle = chuteGrad;
-    ctx.fillRect(6, dividerTopY, chuteW - 6, h - dividerTopY - 6);
+    this.clawCamera.position.set(camX, camY, camZ);
+    this.clawCamera.lookAt(followX * 0.5, -10, 0);
 
-    // Animated Chute Laser Tripwire Sensor
-    const laserY = h - 46;
-    ctx.save();
-    ctx.strokeStyle = '#34d399';
-    ctx.lineWidth = 2;
-    ctx.setLineDash([7, 5]);
-    ctx.lineDashOffset = -timeSec * 38;
-    ctx.beginPath();
-    ctx.moveTo(14, laserY);
-    ctx.lineTo(chuteW - 10, laserY);
-    ctx.stroke();
-    ctx.restore();
-
-    ctx.save();
-    ctx.fillStyle = '#34d399';
-    ctx.font = '800 10.5px "JetBrains Mono", monospace';
-    ctx.textAlign = 'center';
-    ctx.fillText('PRIZE CHUTE', chuteW * 0.5, dividerTopY + 24);
-    ctx.fillStyle = 'rgba(226, 232, 240, 0.65)';
-    ctx.font = '700 9px "JetBrains Mono", monospace';
-    ctx.fillText('▼ EXTRACTION BAY ▼', chuteW * 0.5, dividerTopY + 40);
-    ctx.restore();
-
-    // 3D Metallic Chute Divider Wall
-    const wallGrad = ctx.createLinearGradient(chuteW - 4, 0, chuteW + 8, 0);
-    wallGrad.addColorStop(0, '#0f172a');
-    wallGrad.addColorStop(0.5, '#334155');
-    wallGrad.addColorStop(1, '#090d16');
-    ctx.fillStyle = wallGrad;
-    ctx.strokeStyle = this.isOverdrive ? '#34d399' : '#e5b869';
-    ctx.lineWidth = 1.5;
-    ctx.fillRect(chuteW - 4, dividerTopY, 10, h - dividerTopY);
-    ctx.strokeRect(chuteW - 4, dividerTopY, 10, h - dividerTopY);
-
-    const beaconPulse = 0.5 + 0.5 * Math.sin(timeSec * 6);
-    ctx.fillStyle = `rgba(52, 211, 153, ${0.45 + beaconPulse * 0.55})`;
-    ctx.beginPath();
-    ctx.arc(chuteW + 1, dividerTopY, 6, 0, Math.PI * 2);
-    ctx.fill();
-
-    // 3D Brushed Steel Containment Floor Deck
-    const floorGrad = ctx.createLinearGradient(0, floorY, 0, h);
-    floorGrad.addColorStop(0, '#1e293b');
-    floorGrad.addColorStop(0.3, '#0f172a');
-    floorGrad.addColorStop(1, '#05070c');
-    ctx.fillStyle = floorGrad;
-    ctx.fillRect(0, floorY, w, h - floorY);
-    ctx.strokeStyle = 'rgba(229, 184, 105, 0.55)';
-    ctx.lineWidth = 1.5;
-    ctx.beginPath();
-    ctx.moveTo(chuteW + 6, floorY);
-    ctx.lineTo(w, floorY);
-    ctx.stroke();
-
-    // 3. Top 3D Cylindrical Metallic Gantry Rail Beam
-    const railY = this.claw.railY;
-    const railGrad = ctx.createLinearGradient(0, railY - 11, 0, railY + 9);
-    railGrad.addColorStop(0, '#090d16');
-    railGrad.addColorStop(0.35, '#475569');
-    railGrad.addColorStop(0.6, '#1e293b');
-    railGrad.addColorStop(1, '#05080f');
-    ctx.fillStyle = railGrad;
-    ctx.fillRect(0, railY - 11, w, 20);
-    ctx.strokeStyle = 'rgba(229, 184, 105, 0.35)';
-    ctx.lineWidth = 1;
-    ctx.beginPath();
-    ctx.moveTo(0, railY + 9);
-    ctx.lineTo(w, railY + 9);
-    ctx.stroke();
-
-    // 4. Volumetric Spotlight Cone & Laser Sight from Claw Carriage
-    const clawPxX = this.claw.x * w;
-    const clawHeadY = this.claw.y;
-
-    if (this.claw.state === 'IDLE' || this.claw.state === 'DROPPING') {
-      ctx.save();
-      const coneGrad = ctx.createLinearGradient(clawPxX, clawHeadY + 10, clawPxX, floorY);
-      const laserRgb = this.isOverdrive ? '52, 211, 153' : '229, 184, 105';
-      coneGrad.addColorStop(0, `rgba(${laserRgb}, 0.16)`);
-      coneGrad.addColorStop(1, `rgba(${laserRgb}, 0.01)`);
-      ctx.fillStyle = coneGrad;
-      ctx.beginPath();
-      ctx.moveTo(clawPxX - 10, clawHeadY + 14);
-      ctx.lineTo(clawPxX + 10, clawHeadY + 14);
-      ctx.lineTo(clawPxX + 64, floorY);
-      ctx.lineTo(clawPxX - 64, floorY);
-      ctx.closePath();
-      ctx.fill();
-
-      const laserGrad = ctx.createLinearGradient(clawPxX, clawHeadY + 24, clawPxX, floorY);
-      laserGrad.addColorStop(0, `rgba(${laserRgb}, 0.85)`);
-      laserGrad.addColorStop(1, `rgba(${laserRgb}, 0.12)`);
-      ctx.strokeStyle = laserGrad;
-      ctx.lineWidth = 1.8;
-      ctx.setLineDash([6, 5]);
-      ctx.lineDashOffset = -timeSec * 45;
-      ctx.beginPath();
-      ctx.moveTo(clawPxX, clawHeadY + 24);
-      ctx.lineTo(clawPxX, floorY);
-      ctx.stroke();
-      ctx.restore();
-    }
-
-    // 5. Render Pile of Full-Res Un-Tinted Background-Removed Maxi Cutouts
-    // Sort by Y slightly so front cutouts layer cleanly over back cutouts
-    const sortedPile = [...this.pileItems].sort((a, b) => a.y - b.y);
-    for (let i = 0; i < sortedPile.length; i++) {
-      const it = sortedPile[i];
-      if (it.extracted || it === this.claw.grabbedItem) continue;
-      this.drawNaturalMaxiCutout(ctx, it, timeSec, false);
-    }
-
-    if (this.claw.grabbedItem) {
-      this.drawNaturalMaxiCutout(ctx, this.claw.grabbedItem, timeSec, true);
-    }
-
-    // 6. Render 3D Metallic Gantry Trolley, Braided Steel Cable, & Articulated 3-Prong Claw
-    this.drawRoboticClawAssembly(ctx, clawPxX, clawHeadY, railY, timeSec);
-
-    // 7. Render Extraction Sparks
-    for (let i = 0; i < this.sparkParticles.length; i++) {
-      const sp = this.sparkParticles[i];
-      ctx.save();
-      ctx.globalAlpha = Math.max(0, sp.life);
-      ctx.fillStyle = sp.color;
-      ctx.beginPath();
-      ctx.arc(sp.x, sp.y, sp.size, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.restore();
-    }
-  }
-
-  drawNaturalMaxiCutout(ctx, it, timeSec, isGrabbed) {
-    const cit = it.cit;
-    const r = it.r;
-    const img = this.getSprite(cit.src);
-
-    const rimColor = cit.isOg
-      ? '#f3d285'
-      : cit.isMythic || cit.rank === '#037'
-      ? '#34d399'
-      : isGrabbed
-      ? '#f3d285'
-      : 'rgba(226, 232, 240, 0.45)';
-
-    ctx.save();
-    ctx.translate(it.x, it.y);
-
-    // Subtle Ground Pedestal Aura Ring BEHIND the feet (Zero dark bubble tint over the artwork!)
-    ctx.save();
-    ctx.translate(0, r * 0.62);
-    ctx.scale(1, 0.32);
-    const pedGrad = ctx.createRadialGradient(0, 0, 2, 0, 0, r * 0.95);
-    if (cit.isOg || isGrabbed) {
-      pedGrad.addColorStop(0, 'rgba(229, 184, 105, 0.55)');
-      pedGrad.addColorStop(1, 'rgba(229, 184, 105, 0.0)');
-    } else if (cit.isMythic || cit.rank === '#037') {
-      pedGrad.addColorStop(0, 'rgba(52, 211, 153, 0.45)');
-      pedGrad.addColorStop(1, 'rgba(52, 211, 153, 0.0)');
-    } else {
-      pedGrad.addColorStop(0, 'rgba(0, 0, 0, 0.65)');
-      pedGrad.addColorStop(1, 'rgba(0, 0, 0, 0.0)');
-    }
-    ctx.fillStyle = pedGrad;
-    ctx.beginPath();
-    ctx.arc(0, 0, r * 0.95, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.restore();
-
-    // Rotate & Draw Full-Resolution Un-Tinted Background-Removed Maxi Cutout
-    ctx.save();
-    ctx.rotate(it.angle);
-
-    // Subtle Backlight Rim Halo for OG Maxi & Mythics
-    if (cit.isOg || cit.isMythic || isGrabbed) {
-      const auraGrad = ctx.createRadialGradient(0, 0, r * 0.15, 0, 0, r * 1.15);
-      auraGrad.addColorStop(
-        0,
-        cit.isOg || isGrabbed ? 'rgba(229, 184, 105, 0.34)' : 'rgba(52, 211, 153, 0.26)'
-      );
-      auraGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
-      ctx.fillStyle = auraGrad;
-      ctx.beginPath();
-      ctx.arc(0, 0, r * 1.15, 0, Math.PI * 2);
-      ctx.fill();
-    }
-
-    if (img && img.complete && img.naturalWidth > 0) {
-      const iw = img.naturalWidth;
-      const ih = img.naturalHeight;
-      // Draw large, 100% full vibrancy & sharpness
-      const maxDim = r * 2.25;
-      const scale = Math.min(maxDim / iw, maxDim / ih);
-      const dw = iw * scale;
-      const dh = ih * scale;
-
-      ctx.shadowColor = 'rgba(0, 0, 0, 0.88)';
-      ctx.shadowBlur = 14;
-      ctx.shadowOffsetY = 6;
-      ctx.drawImage(img, -dw * 0.5, -dh * 0.52, dw, dh);
-      ctx.shadowBlur = 0;
-      ctx.shadowOffsetY = 0;
-    } else {
-      ctx.fillStyle = '#e5b869';
-      ctx.font = '800 11px "JetBrains Mono", monospace';
-      ctx.textAlign = 'center';
-      ctx.fillText(cit.rank, 0, 4);
-    }
-    ctx.restore();
-
-    // Crisp Metallic Collar Tag at Feet
-    ctx.save();
-    ctx.translate(0, r * 0.78);
-    const labelText = cit.isOg ? '👑 #001 OG' : cit.rank;
-    const pillW = cit.isOg ? 64 : 38;
-    const pillH = 15;
-
-    ctx.fillStyle = cit.isOg ? '#e5b869' : 'rgba(7, 10, 18, 0.92)';
-    ctx.strokeStyle = rimColor;
-    ctx.lineWidth = cit.isOg ? 1.5 : 1;
-    ctx.beginPath();
-    ctx.roundRect(-pillW * 0.5, -pillH * 0.5, pillW, pillH, 4);
-    ctx.fill();
-    ctx.stroke();
-
-    ctx.fillStyle = cit.isOg ? '#05070c' : '#f8fafc';
-    ctx.font = '800 9.5px "JetBrains Mono", monospace';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillText(labelText, 0, 0.5);
-    ctx.restore();
-
-    ctx.restore();
-  }
-
-  drawRoboticClawAssembly(ctx, clawPxX, clawHeadY, railY, timeSec) {
-    const accent = this.isOverdrive ? '#34d399' : '#e5b869';
-
-    // 1. 3D Brushed-Steel Gantry Trolley Carriage with Rollers
-    ctx.save();
-    const trolleyGrad = ctx.createLinearGradient(clawPxX - 36, railY - 12, clawPxX + 36, railY + 12);
-    trolleyGrad.addColorStop(0, '#1e293b');
-    trolleyGrad.addColorStop(0.5, '#475569');
-    trolleyGrad.addColorStop(1, '#0f172a');
-    ctx.fillStyle = trolleyGrad;
-    ctx.strokeStyle = accent;
-    ctx.lineWidth = 1.8;
-    ctx.beginPath();
-    ctx.roundRect(clawPxX - 34, railY - 10, 68, 22, 5);
-    ctx.fill();
-    ctx.stroke();
-
-    // Mechanical Rollers & Status Beacons
-    ctx.fillStyle = '#090d16';
-    ctx.beginPath();
-    ctx.arc(clawPxX - 22, railY + 1, 5, 0, Math.PI * 2);
-    ctx.arc(clawPxX + 22, railY + 1, 5, 0, Math.PI * 2);
-    ctx.fill();
-
-    ctx.fillStyle = '#34d399';
-    ctx.beginPath();
-    ctx.arc(clawPxX - 10, railY + 1, 2.8, 0, Math.PI * 2);
-    ctx.arc(clawPxX + 10, railY + 1, 2.8, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.restore();
-
-    // 2. Heavy-Duty Braided Steel Hoist Cable
-    const hubX = clawPxX + Math.sin(this.claw.swingAngle) * 10;
-    const hubY = clawHeadY;
-
-    ctx.save();
-    ctx.strokeStyle = '#64748b';
-    ctx.lineWidth = 5;
-    ctx.beginPath();
-    ctx.moveTo(clawPxX, railY + 12);
-    ctx.lineTo(hubX, hubY);
-    ctx.stroke();
-
-    ctx.strokeStyle = '#e2e8f0';
-    ctx.lineWidth = 1.5;
-    ctx.setLineDash([5, 4]);
-    ctx.beginPath();
-    ctx.moveTo(clawPxX, railY + 12);
-    ctx.lineTo(hubX, hubY);
-    ctx.stroke();
-    ctx.restore();
-
-    // 3. 3D Metallic Hydraulic 3-Prong Claw Assembly
-    ctx.save();
-    ctx.translate(hubX, hubY);
-    ctx.rotate(this.claw.swingAngle * 0.7);
-
-    const jaw = this.claw.jawAngle;
-
-    // Center Back Prong
-    ctx.strokeStyle = 'rgba(148, 163, 184, 0.75)';
-    ctx.lineWidth = 5;
-    ctx.lineCap = 'round';
-    ctx.beginPath();
-    ctx.moveTo(0, 8);
-    ctx.lineTo(0, 46 + Math.cos(jaw) * 10);
-    ctx.stroke();
-
-    // Left & Right Articulated Chrome Hydraulic Talons
-    [-1, 1].forEach((dir) => {
-      ctx.save();
-      ctx.rotate(dir * jaw);
-
-      // Hydraulic Piston Strut
-      ctx.strokeStyle = accent;
-      ctx.lineWidth = 2.5;
-      ctx.beginPath();
-      ctx.moveTo(dir * 8, 12);
-      ctx.lineTo(dir * 26, 26);
-      ctx.stroke();
-
-      // Upper Brushed-Metal Arm
-      ctx.strokeStyle = '#f1f5f9';
-      ctx.lineWidth = 6.5;
-      ctx.lineCap = 'round';
-      ctx.beginPath();
-      ctx.moveTo(dir * 12, 4);
-      ctx.lineTo(dir * 36, 28);
-      ctx.stroke();
-
-      // Lower Curved Gold/Emerald Talon Blade
-      ctx.strokeStyle = accent;
-      ctx.lineWidth = 5.5;
-      ctx.beginPath();
-      ctx.moveTo(dir * 36, 28);
-      ctx.lineTo(dir * 18, 60);
-      ctx.stroke();
-
-      // Machined Pivot Joint Bolt
-      ctx.fillStyle = '#0f172a';
-      ctx.strokeStyle = accent;
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.arc(dir * 36, 28, 4.5, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.stroke();
-
-      ctx.restore();
-    });
-
-    // 3D Beveled Motor Housing Block
-    const hubGrad = ctx.createLinearGradient(-22, -10, 22, 14);
-    hubGrad.addColorStop(0, '#334155');
-    hubGrad.addColorStop(0.5, '#0f172a');
-    hubGrad.addColorStop(1, '#1e293b');
-    ctx.fillStyle = hubGrad;
-    ctx.strokeStyle = accent;
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.roundRect(-22, -10, 44, 22, 6);
-    ctx.fill();
-    ctx.stroke();
-
-    // Glowing Laser Core Lens
-    const corePulse = 0.65 + 0.35 * Math.sin(timeSec * 8);
-    ctx.fillStyle = this.claw.grabbedItem ? '#34d399' : accent;
-    ctx.globalAlpha = corePulse;
-    ctx.beginPath();
-    ctx.arc(0, 1, 5.5, 0, Math.PI * 2);
-    ctx.fill();
-
-    ctx.restore();
+    this.clawRenderer.render(this.clawScene, this.clawCamera);
   }
 
   drawSpaceBackdrop() {
@@ -2848,34 +3102,40 @@ class PlanetMaxiController {
       if (btn) btn.addEventListener('click', () => this.spawnClawPile(true));
     });
 
-    // Claw Machine Control Deck Buttons
+    // 3D Claw Machine Control Deck Buttons (X & Z Gantry + Drop Trigger)
     const leftBtn = document.getElementById('clawMoveLeftBtn');
     const rightBtn = document.getElementById('clawMoveRightBtn');
+    const backBtn = document.getElementById('clawMoveBackBtn');
+    const fwdBtn = document.getElementById('clawMoveFwdBtn');
     const dropBtn = document.getElementById('clawDropBtn');
     const aimOgBtn = document.getElementById('clawAimOgBtn');
     const snapOgBtn = document.getElementById('snapOgBtn');
     const focusOgBtn = document.getElementById('focusOgBtn');
     const shuffleBtn = document.getElementById('clawShuffleBtn');
 
-    const bindHoldDir = (btn, dir) => {
+    const bindHoldAxis = (btn, axis, dir) => {
       if (!btn) return;
       const startMove = (e) => {
         e.preventDefault();
         if (this.claw.state === 'IDLE') {
-          this.claw.moveDir = dir;
+          if (axis === 'x') this.claw.moveDirX = dir;
+          else this.claw.moveDirZ = dir;
           sfx.playBeep(dir < 0 ? 480 : 540, 0.04, 'sine');
         }
       };
       const stopMove = () => {
-        if (this.claw.moveDir === dir) this.claw.moveDir = 0;
+        if (axis === 'x' && this.claw.moveDirX === dir) this.claw.moveDirX = 0;
+        if (axis === 'z' && this.claw.moveDirZ === dir) this.claw.moveDirZ = 0;
       };
       btn.addEventListener('pointerdown', startMove);
       window.addEventListener('pointerup', stopMove);
       btn.addEventListener('pointerleave', stopMove);
     };
 
-    bindHoldDir(leftBtn, -1);
-    bindHoldDir(rightBtn, 1);
+    bindHoldAxis(leftBtn, 'x', -1);
+    bindHoldAxis(rightBtn, 'x', 1);
+    bindHoldAxis(backBtn, 'z', -1);
+    bindHoldAxis(fwdBtn, 'z', 1);
 
     if (dropBtn) {
       dropBtn.addEventListener('click', (e) => {
@@ -2900,30 +3160,78 @@ class PlanetMaxiController {
       });
     }
 
+    // Direct 3D Aiming & Camera Parallax on the Glass Bay
     if (this.clawGlassBay) {
       let isAimingGlass = false;
-      const updateAimFromPointer = (clientX) => {
-        if (this.claw.state !== 'IDLE') return;
+      const b = this.tankBounds;
+      const update3DAimFromPointer = (clientX, clientY) => {
         const rect = this.clawGlassBay.getBoundingClientRect();
-        if (!rect.width) return;
-        const relX = (clientX - rect.left) / rect.width;
-        this.claw.targetX = Math.max(this.chuteWidthRatio + 0.04, Math.min(0.94, relX));
+        if (!rect.width || !rect.height) return;
+        const relX = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
+        const relY = Math.max(0, Math.min(1, (clientY - rect.top) / rect.height));
+
+        // Subtle 3D camera parallax tilt as you move across the glass
+        this.targetCamYaw = (relX - 0.5) * 0.28;
+        this.targetCamPitch = 0.12 + (0.5 - relY) * 0.16;
+
+        if (this.claw.state === 'IDLE') {
+          this.claw.targetX = Math.max(
+            b.pitMinX + 4,
+            Math.min(b.pitMaxX - 4, b.minX + relX * (b.maxX - b.minX))
+          );
+          this.claw.targetZ = Math.max(
+            b.minZ + 6,
+            Math.min(b.maxZ - 6, b.minZ + relY * (b.maxZ - b.minZ))
+          );
+        }
       };
 
       this.clawGlassBay.addEventListener('pointerdown', (e) => {
         if (e.target.closest('.pull-reveal-overlay')) return;
         isAimingGlass = true;
-        updateAimFromPointer(e.clientX);
+        update3DAimFromPointer(e.clientX, e.clientY);
       });
 
       window.addEventListener('pointermove', (e) => {
         if (!isAimingGlass) return;
-        updateAimFromPointer(e.clientX);
+        update3DAimFromPointer(e.clientX, e.clientY);
       });
 
       window.addEventListener('pointerup', () => {
         isAimingGlass = false;
       });
+    }
+
+    // Live 1000x1000 PFP Forger Controls inside the Pull Reveal Card
+    const themeStrip = document.getElementById('pullPfpThemeStrip');
+    if (themeStrip) {
+      themeStrip.querySelectorAll('.pull-theme-chip').forEach((chip) => {
+        chip.addEventListener('click', () => {
+          themeStrip.querySelectorAll('.pull-theme-chip').forEach((c) => c.classList.remove('active'));
+          chip.classList.add('active');
+          this.pullPfpTheme = chip.dataset.pullBg || 'OBSIDIAN';
+          sfx.playBeep(760, 0.06, 'triangle');
+          this.renderPullPfpCanvas();
+        });
+      });
+    }
+
+    const badgeInput = document.getElementById('pullCustomBadgeInput');
+    if (badgeInput) {
+      badgeInput.addEventListener('input', () => {
+        this.pullPfpBadgeText = badgeInput.value;
+        this.renderPullPfpCanvas();
+      });
+    }
+
+    const savePfpBtn = document.getElementById('pullSavePfpBtn');
+    if (savePfpBtn) {
+      savePfpBtn.addEventListener('click', () => this.downloadPullPfp());
+    }
+
+    const copyPfpBtn = document.getElementById('pullCopyPfpBtn');
+    if (copyPfpBtn) {
+      copyPfpBtn.addEventListener('click', () => this.copyPullPfpToClipboard());
     }
 
     const closePullBtn = document.getElementById('closePullRevealBtn');
@@ -2938,6 +3246,7 @@ class PlanetMaxiController {
       }
     });
 
+    // Keyboard 3D Arcade Controls (WASD / Arrow Keys + Spacebar)
     window.addEventListener('keydown', (e) => {
       if (this.state !== 'LOCKED') return;
       if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA')) return;
@@ -2945,9 +3254,15 @@ class PlanetMaxiController {
       if (anyModalOpen) return;
 
       if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') {
-        this.claw.moveDir = -1;
+        this.claw.moveDirX = -1;
       } else if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') {
-        this.claw.moveDir = 1;
+        this.claw.moveDirX = 1;
+      } else if (e.key === 'ArrowUp' || e.key === 'w' || e.key === 'W') {
+        e.preventDefault();
+        this.claw.moveDirZ = -1;
+      } else if (e.key === 'ArrowDown' || e.key === 's' || e.key === 'S') {
+        e.preventDefault();
+        this.claw.moveDirZ = 1;
       } else if (e.key === ' ') {
         e.preventDefault();
         this.triggerClawDrop();
@@ -2957,14 +3272,24 @@ class PlanetMaxiController {
     window.addEventListener('keyup', (e) => {
       if (
         (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') &&
-        this.claw.moveDir === -1
+        this.claw.moveDirX === -1
       ) {
-        this.claw.moveDir = 0;
+        this.claw.moveDirX = 0;
       } else if (
         (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') &&
-        this.claw.moveDir === 1
+        this.claw.moveDirX === 1
       ) {
-        this.claw.moveDir = 0;
+        this.claw.moveDirX = 0;
+      } else if (
+        (e.key === 'ArrowUp' || e.key === 'w' || e.key === 'W') &&
+        this.claw.moveDirZ === -1
+      ) {
+        this.claw.moveDirZ = 0;
+      } else if (
+        (e.key === 'ArrowDown' || e.key === 's' || e.key === 'S') &&
+        this.claw.moveDirZ === 1
+      ) {
+        this.claw.moveDirZ = 0;
       }
     });
 
@@ -3002,7 +3327,7 @@ class PlanetMaxiController {
     this.lastFrameTime = now;
     const timeSec = now / 1000;
 
-    // Continuously animate 3D Planet Maxi in both Intro Gate & behind the Claw Machine glass
+    // 1. Render Background 3D Planet Maxi
     if (this.planetGroup && this.renderer && this.scene && this.camera) {
       if (this.cloudMesh) this.cloudMesh.rotation.y = timeSec * 0.015;
       if (this.orbitSpinMode === 'gyro') {
@@ -3016,9 +3341,10 @@ class PlanetMaxiController {
       this.renderer.render(this.scene, this.camera);
     }
 
+    // 2. Update & Render True 3D WebGL Claw Machine Scene
     if (this.state === 'LOCKED') {
-      this.updateClawAndPilePhysics(dt);
-      this.renderClawMachineCanvas(timeSec);
+      this.update3DClawAndPilePhysics(dt, timeSec);
+      this.render3DClawScene();
     }
 
     this.drawSpaceBackdrop();

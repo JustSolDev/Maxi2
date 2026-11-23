@@ -106,113 +106,156 @@
       <!-- 2. 3D WebGL Planet Maxi (Live in Intro Gate + Visible Through Glass Claw Vault) -->
       <div id="planetWebGLContainer" class="planet-webgl-bg"></div>
 
-      <!-- 3. Flagship Luxury 3D Metallic Solana Degen Vault Claw Machine Cabinet -->
+      <!-- 3. Flagship Full-3D WebGL Solana Degen Vault Claw Machine & Live PFP Forger -->
       <div id="clawCabinetStage" class="claw-cabinet-stage">
         <div class="claw-machine-cabinet" id="clawMachineCabinet">
           <!-- Beveled Metallic Crown & Top Industrial Marquee Header -->
           <div class="claw-marquee-bar">
             <div class="marquee-left">
               <span class="marquee-beacon"></span>
-              <span class="marquee-tag">SOLANA DEGEN VAULT // MK.V</span>
+              <span class="marquee-tag">3D WEBGL CLAW VAULT // MK.VI</span>
             </div>
             <div class="marquee-center">
-              <span class="marquee-title" id="clawStatusReadout">MAXI WORLD ORDER // CLAW EXTRACTION UNIT</span>
+              <span class="marquee-title" id="clawStatusReadout">DRAG OR WASD TO AIM 3D GANTRY · SPACE TO DROP CLAW</span>
             </div>
             <div class="marquee-right">
               <span class="marquee-stat" id="clawExtractedCount">EXTRACTED: 0 / 100</span>
-              <span class="marquee-credits">FREE PLAY // ∞</span>
+              <span class="marquee-credits">3D PHYSICS // 60FPS</span>
             </div>
           </div>
 
-          <!-- Crystal-Clear Armored Glass Tank Bay (Full-Res Un-Tinted Cutout Pile + 3D Metallic Claw) -->
+          <!-- Full-Viewport 3D WebGL Claw Machine Viewport -->
           <div class="claw-glass-bay" id="clawGlassBay">
-            <!-- Corner Structural Rivets & Interior Spotlights -->
-            <div class="bay-spotlight spot-left"></div>
-            <div class="bay-spotlight spot-right"></div>
+            <!-- Three.js WebGL 3D Claw Machine Canvas renders directly here -->
             <canvas id="clawMachineCanvas"></canvas>
 
-            <!-- Live Laser Lock Readout Pill Floating Inside Glass -->
+            <!-- Live 3D Laser Lock Readout Pill Floating Inside Glass -->
             <div class="claw-glass-hud-pill" id="clawLaserReadout">
-              AIM LASER &amp; PRESS SPACE OR DROP CLAW
+              LASER LOCK // #001 OG MAXI · X=50% Z=50%
             </div>
 
-            <!-- Prize Extraction Reveal Card Overlay (Appears when Claw drops a Maxi into Chute) -->
+            <!-- Prize Extraction & Instant PFP Mint Reveal Overlay (Appears when 3D Claw drops a Maxi into Chute) -->
             <div class="pull-reveal-overlay hidden" id="pullRevealOverlay">
               <div class="pull-reveal-card">
                 <div class="pull-reveal-header">
-                  <span class="pull-tier-badge" id="pullRevealTier">SOVEREIGN JACKPOT // #001</span>
+                  <div class="pull-header-left">
+                    <span class="pull-tier-badge" id="pullRevealTier">SOVEREIGN JACKPOT // #001</span>
+                    <span class="pull-kicker-inline" id="pullRevealRank">CITIZEN #001 / 100</span>
+                  </div>
                   <button type="button" class="pull-close-btn" id="closePullRevealBtn">✕</button>
                 </div>
 
                 <div class="pull-reveal-body">
-                  <div class="pull-reveal-stage">
-                    <div class="pull-aura-ring"></div>
-                    <img src="maxi Background Removed.png" alt="Extracted Maxi" id="pullRevealImg" />
+                  <!-- Live 1000x1000 High-Res PFP Forger Canvas directly inside the Pull Modal! -->
+                  <div class="pull-pfp-forger-col">
+                    <div class="pull-pfp-canvas-frame">
+                      <canvas id="pullPfpCanvas" width="1000" height="1000"></canvas>
+                      <span class="pull-pfp-res-tag">1000×1000 HD PFP</span>
+                    </div>
+                    <!-- Instant PFP Theme Switcher Pills -->
+                    <div class="pull-pfp-theme-strip" id="pullPfpThemeStrip">
+                      <button type="button" class="pull-theme-chip active" data-pull-bg="OBSIDIAN">OBSIDIAN GOLD</button>
+                      <button type="button" class="pull-theme-chip" data-pull-bg="CANDLE">GREEN CANDLE</button>
+                      <button type="button" class="pull-theme-chip" data-pull-bg="SOLANA">SOLANA CYBER</button>
+                      <button type="button" class="pull-theme-chip" data-pull-bg="ROYAL">SOVEREIGN CRIMSON</button>
+                    </div>
                   </div>
+
                   <div class="pull-reveal-info">
-                    <div class="pull-kicker" id="pullRevealRank">EXTRACTED SPECIMEN #001</div>
                     <h3 class="pull-title" id="pullRevealName">OG MAXI</h3>
                     <div class="pull-subtitle" id="pullRevealTitle">SUPREME SOVEREIGN OF MAXI WORLD ORDER</div>
                     <p class="pull-lore" id="pullRevealLore">
                       Supreme Sovereign of the Maxi World Order. 240 lbs lean extracted directly from the Genesis Vault.
                     </p>
-                  </div>
-                </div>
 
-                <div class="pull-reveal-actions">
-                  <button type="button" class="suite-primary-btn compact" id="pullAgainBtn">
-                    <span>⬇ DROP CLAW AGAIN</span>
-                  </button>
-                  <button type="button" class="suite-secondary-btn compact" id="pullToStudioBtn">
-                    <span>OPEN IN PFP STUDIO</span>
-                  </button>
-                  <a
-                    href="https://x.com/intent/tweet?text=Just%20extracted%20OG%20MAXI%20from%20the%20MAXI%20WORLD%20ORDER%20Claw%20Vault%20%24MAXI%20%40maxiworldorder%0ACA%3A%20EBCpGdXuS34WZuX13thrku2KmuLSe3Tf2gMtMKndpump"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="suite-secondary-btn compact"
-                    id="pullShareXLink"
-                  >
-                    <span>FLEX ON 𝕏 ↗</span>
-                  </a>
-                  <a
-                    href="maxi Background Removed.png"
-                    download="maxi-extracted.png"
-                    class="suite-secondary-btn compact"
-                    id="pullDownloadLink"
-                  >
-                    <span>PNG ⬇</span>
-                  </a>
+                    <!-- Custom PFP Caption Input right inside the pull card -->
+                    <div class="pull-custom-tag-row">
+                      <label for="pullCustomBadgeInput" class="pull-tag-lbl">PFP BADGE TEXT</label>
+                      <input
+                        type="text"
+                        id="pullCustomBadgeInput"
+                        class="pull-tag-input"
+                        value="MAXI WORLD ORDER"
+                        maxlength="24"
+                        placeholder="MAXI WORLD ORDER"
+                      />
+                    </div>
+
+                    <!-- Primary 1-Click Save PFP & Copy PFP Buttons -->
+                    <div class="pull-primary-save-grid">
+                      <button type="button" class="pull-save-pfp-btn" id="pullSavePfpBtn">
+                        <span>⬇ SAVE AS PFP (1000×1000 PNG)</span>
+                      </button>
+                      <button type="button" class="pull-copy-pfp-btn" id="pullCopyPfpBtn">
+                        <span id="pullCopyPfpLabel">📋 COPY PFP IMAGE</span>
+                      </button>
+                    </div>
+
+                    <!-- Secondary Actions: Full Studio, Raw Cutout PNG, Flex on X, Play Again -->
+                    <div class="pull-reveal-actions">
+                      <button type="button" class="suite-secondary-btn compact" id="pullToStudioBtn">
+                        <span>🎨 FULL PFP &amp; BANNER STUDIO</span>
+                      </button>
+                      <a
+                        href="maxi Background Removed.png"
+                        download="maxi-extracted.png"
+                        class="suite-secondary-btn compact"
+                        id="pullDownloadLink"
+                      >
+                        <span>RAW CUTOUT PNG ⬇</span>
+                      </a>
+                      <a
+                        href="https://x.com/intent/tweet?text=Just%20extracted%20OG%20MAXI%20from%20the%20MAXI%20WORLD%20ORDER%20Claw%20Vault%20%24MAXI%20%40maxiworldorder%0ACA%3A%20EBCpGdXuS34WZuX13thrku2KmuLSe3Tf2gMtMKndpump"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="suite-secondary-btn compact"
+                        id="pullShareXLink"
+                      >
+                        <span>FLEX ON 𝕏 ↗</span>
+                      </a>
+                      <button type="button" class="suite-primary-btn compact" id="pullAgainBtn">
+                        <span>🦾 DROP CLAW AGAIN</span>
+                      </button>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
 
-          <!-- Physical 3D Brushed-Steel Arcade Control Console -->
+          <!-- Physical 3D Brushed-Steel Arcade Control Console (X & Z 3D Gantry + Drop Trigger) -->
           <div class="claw-control-deck">
             <div class="deck-group deck-dpad">
-              <button type="button" class="claw-deck-btn tactile-key" id="clawMoveLeftBtn" title="Hold or press A / Left Arrow">
+              <button type="button" class="claw-deck-btn tactile-key" id="clawMoveLeftBtn" title="Move Gantry Left (A / Left Arrow)">
                 <span class="key-cap">A / ◀</span>
-                <span class="key-lbl">GANTRY LEFT</span>
+                <span class="key-lbl">LEFT</span>
               </button>
-              <button type="button" class="claw-deck-btn tactile-key" id="clawMoveRightBtn" title="Hold or press D / Right Arrow">
-                <span class="key-lbl">GANTRY RIGHT</span>
+              <button type="button" class="claw-deck-btn tactile-key" id="clawMoveRightBtn" title="Move Gantry Right (D / Right Arrow)">
+                <span class="key-lbl">RIGHT</span>
                 <span class="key-cap">▶ / D</span>
+              </button>
+              <button type="button" class="claw-deck-btn tactile-key" id="clawMoveBackBtn" title="Move Gantry Deeper (W / Up Arrow)">
+                <span class="key-cap">W / ▲</span>
+                <span class="key-lbl">BACK</span>
+              </button>
+              <button type="button" class="claw-deck-btn tactile-key" id="clawMoveFwdBtn" title="Move Gantry Forward (S / Down Arrow)">
+                <span class="key-cap">S / ▼</span>
+                <span class="key-lbl">FRONT</span>
               </button>
             </div>
 
-            <button type="button" class="claw-drop-trigger" id="clawDropBtn" title="Press SPACEBAR or Click to Drop Laser Claw">
+            <button type="button" class="claw-drop-trigger" id="clawDropBtn" title="Press SPACEBAR or Click to Drop 3D Hydraulic Claw">
               <span class="drop-led"></span>
-              <span id="clawDropBtnLabel">⬇ DROP CLAW // EXTRACT MAXI</span>
+              <span id="clawDropBtnLabel">⬇ DROP 3D CLAW // EXTRACT &amp; MINT PFP</span>
               <span class="drop-hotkey">[SPACE]</span>
             </button>
 
             <div class="deck-group deck-utils">
-              <button type="button" class="claw-deck-btn gold-outline" id="clawAimOgBtn" title="Auto-Align Laser on OG Maxi (#001)">
-                <span>🎯 LOCK OG #001</span>
+              <button type="button" class="claw-deck-btn gold-outline" id="clawAimOgBtn" title="Auto-Lock 3D Gantry on OG Maxi (#001) & Drop">
+                <span>🎯 AUTO-CLAW OG #001</span>
               </button>
-              <button type="button" class="claw-deck-btn" id="clawShuffleBtn" title="Drop a Fresh Batch of Maxis from the 100-Citizen Vault">
-                <span>RESTOCK PILE ↻</span>
+              <button type="button" class="claw-deck-btn" id="clawShuffleBtn" title="Drop a Fresh 3D Batch of Maxis from the 100-Citizen Vault">
+                <span>RESTOCK 3D PILE ↻</span>
               </button>
             </div>
           </div>
