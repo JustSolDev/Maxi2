@@ -96,24 +96,27 @@
   </header>
 
   <!-- =======================================================================
-       UNIFIED HERO & INTRO GATE VIEWPORT (SOLANA DEGEN VAULT CLAW MACHINE)
+       UNIFIED HERO & INTRO GATE VIEWPORT (3D PLANET + LUXURY VAULT CLAW MACHINE)
        ======================================================================= -->
   <section class="hero-viewport" id="hero">
     <div class="stage-container" id="stageContainer">
       <!-- 1. Deep Space & Green-Candle Backdrop Canvas -->
       <canvas id="intro-canvas" class="intro-canvas"></canvas>
 
-      <!-- 2. Flagship Solana Degen Vault Claw Machine Cabinet -->
+      <!-- 2. 3D WebGL Planet Maxi (Live in Intro Gate + Visible Through Glass Claw Vault) -->
+      <div id="planetWebGLContainer" class="planet-webgl-bg"></div>
+
+      <!-- 3. Flagship Luxury 3D Metallic Solana Degen Vault Claw Machine Cabinet -->
       <div id="clawCabinetStage" class="claw-cabinet-stage">
         <div class="claw-machine-cabinet" id="clawMachineCabinet">
-          <!-- Top Industrial Marquee Header -->
+          <!-- Beveled Metallic Crown & Top Industrial Marquee Header -->
           <div class="claw-marquee-bar">
             <div class="marquee-left">
               <span class="marquee-beacon"></span>
-              <span class="marquee-tag">SOLANA DEGEN VAULT // MK.IV</span>
+              <span class="marquee-tag">SOLANA DEGEN VAULT // MK.V</span>
             </div>
             <div class="marquee-center">
-              <span class="marquee-title">MAXI WORLD ORDER // CLAW EXTRACTION UNIT</span>
+              <span class="marquee-title" id="clawStatusReadout">MAXI WORLD ORDER // CLAW EXTRACTION UNIT</span>
             </div>
             <div class="marquee-right">
               <span class="marquee-stat" id="clawExtractedCount">EXTRACTED: 0 / 100</span>
@@ -121,8 +124,11 @@
             </div>
           </div>
 
-          <!-- Armored Glass Tank Bay (Live 2D Physics Pile + Laser Robotic Claw) -->
+          <!-- Crystal-Clear Armored Glass Tank Bay (Full-Res Un-Tinted Cutout Pile + 3D Metallic Claw) -->
           <div class="claw-glass-bay" id="clawGlassBay">
+            <!-- Corner Structural Rivets & Interior Spotlights -->
+            <div class="bay-spotlight spot-left"></div>
+            <div class="bay-spotlight spot-right"></div>
             <canvas id="clawMachineCanvas"></canvas>
 
             <!-- Live Laser Lock Readout Pill Floating Inside Glass -->
@@ -145,7 +151,8 @@
                   </div>
                   <div class="pull-reveal-info">
                     <div class="pull-kicker" id="pullRevealRank">EXTRACTED SPECIMEN #001</div>
-                    <h3 class="pull-title" id="pullRevealTitle">OG MAXI</h3>
+                    <h3 class="pull-title" id="pullRevealName">OG MAXI</h3>
+                    <div class="pull-subtitle" id="pullRevealTitle">SUPREME SOVEREIGN OF MAXI WORLD ORDER</div>
                     <p class="pull-lore" id="pullRevealLore">
                       Supreme Sovereign of the Maxi World Order. 240 lbs lean extracted directly from the Genesis Vault.
                     </p>
@@ -181,25 +188,28 @@
             </div>
           </div>
 
-          <!-- Physical Industrial Arcade Control Deck -->
+          <!-- Physical 3D Brushed-Steel Arcade Control Console -->
           <div class="claw-control-deck">
             <div class="deck-group deck-dpad">
-              <button type="button" class="claw-deck-btn" id="clawMoveLeftBtn" title="Hold or press A / Left Arrow">
-                <span>◀ GANTRY LEFT</span>
+              <button type="button" class="claw-deck-btn tactile-key" id="clawMoveLeftBtn" title="Hold or press A / Left Arrow">
+                <span class="key-cap">A / ◀</span>
+                <span class="key-lbl">GANTRY LEFT</span>
               </button>
-              <button type="button" class="claw-deck-btn" id="clawMoveRightBtn" title="Hold or press D / Right Arrow">
-                <span>GANTRY RIGHT ▶</span>
+              <button type="button" class="claw-deck-btn tactile-key" id="clawMoveRightBtn" title="Hold or press D / Right Arrow">
+                <span class="key-lbl">GANTRY RIGHT</span>
+                <span class="key-cap">▶ / D</span>
               </button>
             </div>
 
             <button type="button" class="claw-drop-trigger" id="clawDropBtn" title="Press SPACEBAR or Click to Drop Laser Claw">
               <span class="drop-led"></span>
               <span id="clawDropBtnLabel">⬇ DROP CLAW // EXTRACT MAXI</span>
+              <span class="drop-hotkey">[SPACE]</span>
             </button>
 
             <div class="deck-group deck-utils">
               <button type="button" class="claw-deck-btn gold-outline" id="clawAimOgBtn" title="Auto-Align Laser on OG Maxi (#001)">
-                <span>LOCK OG #001</span>
+                <span>🎯 LOCK OG #001</span>
               </button>
               <button type="button" class="claw-deck-btn" id="clawShuffleBtn" title="Drop a Fresh Batch of Maxis from the 100-Citizen Vault">
                 <span>RESTOCK PILE ↻</span>
@@ -209,11 +219,11 @@
         </div>
       </div>
 
-      <!-- 3. Atmospheric Green-Candle FX Canvas -->
+      <!-- 4. Atmospheric Green-Candle FX Canvas -->
       <canvas id="diveFxCanvas"></canvas>
 
       <!-- ===================================================================
-           LAYER A: OPENING GATE ("WELCOME TO THE MAXI WORLD ORDER")
+           LAYER A: REVAMPED OPENING GATE ("MAXI WORLD ORDER // SOVEREIGN VAULT")
            =================================================================== -->
       <div id="intro-screen" class="intro-gate-overlay" aria-label="Maxi World Order Intro Gate">
         <div class="floodlights" aria-hidden="true">
@@ -231,7 +241,7 @@
           </div>
 
           <div class="hud-center-status">
-            <span class="hud-mono" id="hud-status-text">SOLANA DEGEN CLAW VAULT — 100 CITIZENS LOADED</span>
+            <span class="hud-mono" id="hud-status-text">SOVEREIGN CLAW VAULT — 100 VERIFIED CITIZENS ON-CHAIN</span>
           </div>
 
           <div class="hud-corner">
@@ -239,21 +249,52 @@
           </div>
         </header>
 
-        <!-- Centerpiece: Orbital Rings Framing OG Maxi & The Claw Vault -->
+        <!-- Centerpiece: Interactive 3D Planet & Live 100-Citizen Cutout Showcase -->
         <div class="intro-centerpiece">
-          <div class="logo-stage" id="logo-stage">
-            <div class="plasma-core"></div>
-            <div class="holo-ring ring-outer"></div>
-            <div class="holo-ring ring-middle"></div>
-            <div class="holo-ring ring-inner"></div>
-
-            <!-- Floating OG Maxi Cutout Crest -->
-            <div class="earth-crest-floating" id="logo-spinner">
+          <div class="intro-showcase-stage" id="logo-stage">
+            <!-- Left Orbiting Mythic Preview Cutout -->
+            <div class="intro-side-cutout side-left" id="introSideLeftCard" title="Click to preview next MWO Citizen">
+              <div class="side-cutout-tag" id="introSideLeftTag">#037 PUMP PILL</div>
               <img
-                id="intro-logo-front"
-                src="maxi Background Removed.png"
-                alt="OG Maxi"
-                class="earth-badge-img"
+                src="Photos/Removed backgrounds /photo_2026-11-23_18-44-33 Background Removed.png"
+                alt="Pump Pill Maxi"
+                id="introSideLeftImg"
+                draggable="false"
+              />
+            </div>
+
+            <!-- Center Sovereign OG Maxi Hero Pedestal over 3D Planet Maxi -->
+            <div class="intro-hero-pedestal">
+              <div class="plasma-core"></div>
+              <div class="holo-ring ring-outer"></div>
+              <div class="holo-ring ring-middle"></div>
+              <div class="holo-ring ring-inner"></div>
+
+              <div class="intro-prime-figure" id="introPrimeCard" title="Click to cycle 100 MWO Citizens">
+                <div class="prime-overhead-pill">
+                  <span class="prime-pill-rank" id="introPrimeRank">👑 #001</span>
+                  <span class="prime-pill-name" id="introPrimeName">OG MAXI</span>
+                </div>
+                <img
+                  id="intro-logo-front"
+                  src="maxi Background Removed.png"
+                  alt="OG Maxi"
+                  class="intro-prime-cutout"
+                  draggable="false"
+                />
+                <div class="prime-base-plate">
+                  <span>CLICK SPECIMEN TO PREVIEW 100 CITIZENS ↻</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right Orbiting Mythic Preview Cutout -->
+            <div class="intro-side-cutout side-right" id="introSideRightCard" title="Click to preview next MWO Citizen">
+              <div class="side-cutout-tag" id="introSideRightTag">#002 GOLD</div>
+              <img
+                src="Photos/Removed backgrounds /photo_2026-11-18_22-41-37 Background Removed.png"
+                alt="Golden Bullion Maxi"
+                id="introSideRightImg"
                 draggable="false"
               />
             </div>
@@ -263,21 +304,26 @@
           <div class="enter-cta-wrapper">
             <div class="tagline-pill">
               <span class="tagline-line"></span>
-              <span class="tagline-text">SOLANA DEGEN CLAW VAULT · 100 CITIZENS · JACKPOT: OG MAXI</span>
+              <span class="tagline-text">SOLANA DEGEN CLAW VAULT · 100 1-OF-1 CUTOUTS · $MAXI</span>
               <span class="tagline-line"></span>
             </div>
 
             <h1 class="welcome-headline">
-              <span class="wh-top">WELCOME TO THE</span>
+              <span class="wh-top">SOVEREIGN EXTRACTION PROTOCOL</span>
               <span class="wh-main">MAXI WORLD ORDER</span>
             </h1>
 
-            <button id="enter-btn" class="enter-btn" type="button">
-              <span class="btn-label">ENTER THE CLAW VAULT</span>
-              <svg class="btn-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M5 12h14M13 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-            </button>
+            <div class="intro-cta-row">
+              <button id="enter-btn" class="enter-btn" type="button">
+                <span class="btn-label">LAUNCH CLAW MACHINE</span>
+                <svg class="btn-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                  <path d="M5 12h14M13 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </button>
+              <button id="introCycleCitizenBtn" class="intro-secondary-btn" type="button" title="Cycle through all 100 cutouts right on the gate">
+                <span>PREVIEW 100 CUTOUTS ↻</span>
+              </button>
+            </div>
 
             <!-- Live CA Box -->
             <div class="intro-ca-box">
@@ -325,11 +371,11 @@
         <!-- Bottom Bar -->
         <footer class="hud-bottom">
           <div class="hud-corner">
-            <span class="hud-mono">JACKPOT // <strong>#001 OG MAXI (240 LBS LEAN)</strong></span>
+            <span class="hud-mono">SUPREME JACKPOT // <strong>#001 OG MAXI (240 LBS LEAN)</strong></span>
           </div>
 
           <div class="spin-controls" role="group" aria-label="Vault Modes">
-            <button type="button" class="hud-chip active" data-spin="3d">VAULT READY</button>
+            <button type="button" class="hud-chip active" data-spin="3d">ORBITAL VIEW</button>
             <button type="button" class="hud-chip" data-spin="gyro">OVERDRIVE</button>
             <button type="button" class="hud-chip" data-spin="lock">JACKPOT #001</button>
           </div>

@@ -717,7 +717,7 @@ body.intro-locked .hero-viewport {
   color: var(--text-main);
 }
 
-/* Centerpiece: Orbital Rings framing 3D Planet Maxi */
+/* Centerpiece: Interactive 3D Planet & Live 100-Citizen Cutout Showcase */
 .intro-centerpiece {
   position: relative;
   z-index: 10;
@@ -727,34 +727,44 @@ body.intro-locked .hero-viewport {
   justify-content: center;
   flex: 1;
   width: 100%;
-  max-width: 960px;
+  max-width: 1040px;
   padding: 0 20px;
-  gap: clamp(12px, 2vh, 24px);
+  gap: clamp(10px, 1.8vh, 22px);
 }
 
-.logo-stage {
+.intro-showcase-stage {
   position: relative;
-  width: clamp(270px, 38vh, 400px);
-  height: clamp(250px, 35vh, 370px);
+  width: min(820px, 94vw);
+  height: clamp(230px, 34vh, 360px);
   display: flex;
   align-items: center;
   justify-content: center;
   perspective: 1400px;
-  pointer-events: none;
+  pointer-events: auto;
+}
+
+.intro-hero-pedestal {
+  position: relative;
+  width: clamp(240px, 33vh, 340px);
+  height: clamp(230px, 32vh, 330px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 6;
 }
 
 .plasma-core {
   position: absolute;
-  width: 92%;
-  height: 92%;
+  width: 96%;
+  height: 96%;
   border-radius: 50%;
   background: radial-gradient(
     circle,
-    rgba(56, 189, 248, 0.18) 0%,
-    rgba(229, 184, 105, 0.1) 50%,
+    rgba(229, 184, 105, 0.22) 0%,
+    rgba(52, 211, 153, 0.12) 48%,
     transparent 74%
   );
-  filter: blur(28px);
+  filter: blur(26px);
   pointer-events: none;
   z-index: 1;
 }
@@ -769,7 +779,7 @@ body.intro-locked .hero-viewport {
 .ring-outer {
   width: 118%;
   height: 118%;
-  border: 1px dashed rgba(255, 255, 255, 0.22);
+  border: 1px dashed rgba(255, 255, 255, 0.24);
   animation: orbitOuter 26s linear infinite;
 }
 
@@ -777,17 +787,17 @@ body.intro-locked .hero-viewport {
   width: 103%;
   height: 103%;
   border: 1.5px solid transparent;
-  border-top-color: rgba(229, 184, 105, 0.65);
-  border-bottom-color: rgba(125, 211, 252, 0.45);
+  border-top-color: rgba(229, 184, 105, 0.78);
+  border-bottom-color: rgba(52, 211, 153, 0.55);
   animation: orbitMiddle 14s linear infinite;
 }
 
 .ring-inner {
   width: 88%;
   height: 88%;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-left: 2px solid rgba(255, 255, 255, 0.45);
-  border-right: 2px solid rgba(229, 184, 105, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-left: 2px solid rgba(255, 255, 255, 0.52);
+  border-right: 2px solid rgba(229, 184, 105, 0.65);
   animation: orbitInner 9s linear infinite reverse;
 }
 
@@ -806,27 +816,132 @@ body.intro-locked .hero-viewport {
   100% { transform: rotateX(62deg) rotateY(0deg) rotateZ(360deg); }
 }
 
-.earth-crest-floating {
-  position: absolute;
-  bottom: 0%;
-  right: 2%;
-  width: 76px;
-  height: 76px;
-  z-index: 6;
-  animation: floatBadge 3.6s ease-in-out infinite;
-  pointer-events: none;
+/* Center Sovereign Prime Cutout Figure on Opening Gate */
+.intro-prime-figure {
+  position: relative;
+  z-index: 7;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  animation: floatBadge 4s ease-in-out infinite;
+  transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.earth-badge-img {
-  width: 100%;
-  height: 100%;
+.intro-prime-figure:hover {
+  transform: scale(1.06);
+}
+
+.prime-overhead-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: 6px;
+  background: rgba(6, 9, 15, 0.92);
+  border: 1px solid var(--gold);
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.9), 0 0 18px rgba(229, 184, 105, 0.25);
+  font-family: var(--font-mono);
+  margin-bottom: 6px;
+}
+
+.prime-pill-rank {
+  font-size: 0.65rem;
+  font-weight: 800;
+  color: var(--gold);
+}
+
+.prime-pill-name {
+  font-size: 0.68rem;
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: 0.08em;
+}
+
+.intro-prime-cutout {
+  width: clamp(140px, 21vh, 210px);
+  height: clamp(140px, 21vh, 210px);
   object-fit: contain;
-  filter: drop-shadow(0 10px 24px rgba(0, 0, 0, 0.95));
+  filter: drop-shadow(0 18px 32px rgba(0, 0, 0, 0.96)) drop-shadow(0 0 22px rgba(229, 184, 105, 0.24));
+  transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.prime-base-plate {
+  margin-top: 4px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: rgba(5, 8, 14, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  font-family: var(--font-mono);
+  font-size: 0.56rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+/* Orbiting Left & Right Side Mythic Cutout Preview Cards */
+.intro-side-cutout {
+  position: absolute;
+  top: 50%;
+  width: clamp(110px, 15vw, 152px);
+  height: clamp(125px, 18vh, 168px);
+  background: linear-gradient(180deg, rgba(14, 20, 32, 0.72) 0%, rgba(6, 9, 15, 0.88) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 12px;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 20px 44px rgba(0, 0, 0, 0.85);
+  cursor: pointer;
+  z-index: 5;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.intro-side-cutout.side-left {
+  left: 4%;
+  transform: translateY(-50%) rotate(-5deg);
+  border-color: rgba(52, 211, 153, 0.38);
+}
+
+.intro-side-cutout.side-right {
+  right: 4%;
+  transform: translateY(-50%) rotate(5deg);
+  border-color: rgba(229, 184, 105, 0.38);
+}
+
+.intro-side-cutout:hover {
+  transform: translateY(-54%) scale(1.07) rotate(0deg);
+  border-color: var(--gold-bright);
+  box-shadow: 0 24px 54px rgba(0, 0, 0, 0.95), 0 0 24px rgba(229, 184, 105, 0.28);
+}
+
+.side-cutout-tag {
+  font-family: var(--font-mono);
+  font-size: 0.56rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--text-main);
+  background: rgba(0, 0, 0, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 2px 7px;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+.intro-side-cutout img {
+  width: 100%;
+  height: calc(100% - 22px);
+  object-fit: contain;
+  filter: drop-shadow(0 10px 18px rgba(0, 0, 0, 0.95));
 }
 
 @keyframes floatBadge {
-  0%, 100% { transform: translateY(0px) scale(1); }
-  50% { transform: translateY(-8px) scale(1.04); }
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-7px); }
 }
 
 /* Welcome Typography & High-Craft Enter CTA */
@@ -834,7 +949,7 @@ body.intro-locked .hero-viewport {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12px;
+  gap: 11px;
   z-index: 15;
 }
 
@@ -853,9 +968,9 @@ body.intro-locked .hero-viewport {
 .tagline-text {
   font-family: var(--font-mono);
   font-size: 0.68rem;
-  font-weight: 500;
-  letter-spacing: 0.2em;
-  color: var(--text-muted);
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  color: var(--emerald);
 }
 
 .welcome-headline {
@@ -866,14 +981,14 @@ body.intro-locked .hero-viewport {
   text-align: center;
   width: 100%;
   line-height: 1;
-  margin: 2px 0 8px;
+  margin: 2px 0 6px;
 }
 
 .wh-top {
   font-family: var(--font-mono);
   font-size: 0.72rem;
   font-weight: 600;
-  letter-spacing: 0.38em;
+  letter-spacing: 0.36em;
   color: var(--gold);
   margin-bottom: 8px;
   text-align: center;
@@ -889,17 +1004,25 @@ body.intro-locked .hero-viewport {
   white-space: nowrap;
 }
 
+.intro-cta-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
 .enter-btn {
   position: relative;
-  min-width: 280px;
-  padding: 15px 36px;
-  background: #ffffff;
-  border: 1px solid #ffffff;
+  min-width: 260px;
+  padding: 15px 32px;
+  background: linear-gradient(180deg, #f3d285 0%, #d4a048 100%);
+  border: 1px solid #f6dc9b;
   border-radius: 8px;
   color: #050608;
   font-family: var(--font-sans);
   font-size: 0.86rem;
-  font-weight: 800;
+  font-weight: 900;
   letter-spacing: 0.14em;
   text-transform: uppercase;
   cursor: pointer;
@@ -907,15 +1030,40 @@ body.intro-locked .hero-viewport {
   align-items: center;
   justify-content: center;
   gap: 12px;
-  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.65), 0 0 28px rgba(255, 255, 255, 0.18);
+  box-shadow:
+    0 12px 36px rgba(0, 0, 0, 0.75),
+    0 0 32px rgba(229, 184, 105, 0.32),
+    inset 0 1px 0 rgba(255, 255, 255, 0.65);
   transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .enter-btn:hover {
   transform: translateY(-2px);
-  background: var(--gold-bright);
-  border-color: var(--gold-bright);
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.75), 0 0 36px rgba(229, 184, 105, 0.4);
+  background: linear-gradient(180deg, #ffe39e 0%, #e5b869 100%);
+  box-shadow:
+    0 16px 42px rgba(0, 0, 0, 0.85),
+    0 0 42px rgba(229, 184, 105, 0.5);
+}
+
+.intro-secondary-btn {
+  padding: 15px 20px;
+  background: rgba(10, 14, 24, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  color: var(--text-main);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  backdrop-filter: blur(12px);
+  transition: all 0.18s ease;
+}
+
+.intro-secondary-btn:hover {
+  border-color: var(--gold);
+  color: var(--gold);
+  background: rgba(229, 184, 105, 0.12);
 }
 
 .btn-arrow {
@@ -2662,8 +2810,22 @@ body.mwo-overdrive .zoom-progress-fill {
 }
 
 /* =========================================================================
-   SOLANA DEGEN VAULT CLAW MACHINE CABINET & PRIZE EXTRACTION REVEAL
+   SOLANA DEGEN VAULT 3D LUXURY METALLIC CLAW MACHINE & PRIZE EXTRACTION
    ========================================================================= */
+.planet-webgl-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  opacity: 0.92;
+  transition: opacity 0.6s ease, transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+body:not(.intro-locked) .planet-webgl-bg {
+  opacity: 0.48;
+  transform: scale(1.06);
+}
+
 .claw-cabinet-stage {
   position: absolute;
   inset: 0;
@@ -2671,27 +2833,31 @@ body.mwo-overdrive .zoom-progress-fill {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 14px 20px;
+  padding: 12px 20px;
   transition: opacity 0.65s ease, transform 0.65s cubic-bezier(0.16, 1, 0.3, 1), filter 0.65s ease;
 }
 
 body.intro-locked .claw-cabinet-stage {
-  opacity: 0.22;
+  opacity: 0.14;
   transform: scale(0.94);
-  filter: blur(5px);
+  filter: blur(8px);
   pointer-events: none;
 }
 
 .claw-machine-cabinet {
-  width: min(940px, 100%);
-  height: min(760px, 100%);
-  background: linear-gradient(180deg, #0b0e15 0%, #05070b 100%);
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  border-radius: 14px;
+  width: min(1040px, 100%);
+  height: min(820px, 100%);
+  background: linear-gradient(180deg, rgba(16, 22, 34, 0.78) 0%, rgba(7, 10, 16, 0.86) 100%);
+  border: 2px solid rgba(229, 184, 105, 0.38);
+  border-radius: 16px;
   box-shadow:
-    0 28px 90px rgba(0, 0, 0, 0.95),
-    0 0 0 1px rgba(229, 184, 105, 0.12),
-    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+    0 34px 110px rgba(0, 0, 0, 0.96),
+    0 0 0 1px rgba(255, 255, 255, 0.08),
+    0 0 60px rgba(229, 184, 105, 0.12),
+    inset 0 2px 0 rgba(255, 255, 255, 0.22),
+    inset 0 -3px 0 rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -2699,24 +2865,30 @@ body.intro-locked .claw-cabinet-stage {
 }
 
 body.mwo-overdrive .claw-machine-cabinet {
-  border-color: rgba(52, 211, 153, 0.55);
+  border-color: rgba(52, 211, 153, 0.72);
   box-shadow:
-    0 28px 90px rgba(0, 0, 0, 0.95),
-    0 0 42px rgba(52, 211, 153, 0.24);
+    0 34px 110px rgba(0, 0, 0, 0.96),
+    0 0 55px rgba(52, 211, 153, 0.32),
+    inset 0 2px 0 rgba(52, 211, 153, 0.35);
 }
 
-/* 1. Top Industrial Marquee Bar */
+/* 1. Top 3D Beveled Metallic Marquee Bar */
 .claw-marquee-bar {
-  height: 46px;
-  padding: 0 18px;
-  background: #06080d;
-  border-bottom: 1px solid var(--border-hairline);
+  height: 50px;
+  padding: 0 20px;
+  background: linear-gradient(180deg, #161d2e 0%, #090c14 55%, #05070c 100%);
+  border-bottom: 1.5px solid rgba(229, 184, 105, 0.35);
+  box-shadow:
+    0 6px 20px rgba(0, 0, 0, 0.75),
+    inset 0 1px 0 rgba(255, 255, 255, 0.16);
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
   font-family: var(--font-mono);
   flex-shrink: 0;
+  position: relative;
+  z-index: 6;
 }
 
 .marquee-left,
@@ -2727,62 +2899,95 @@ body.mwo-overdrive .claw-machine-cabinet {
 }
 
 .marquee-beacon {
-  width: 7px;
-  height: 7px;
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
   background: var(--emerald);
-  box-shadow: 0 0 10px var(--emerald);
+  box-shadow: 0 0 12px var(--emerald);
 }
 
 .marquee-tag {
-  font-size: 0.62rem;
-  font-weight: 700;
+  font-size: 0.64rem;
+  font-weight: 800;
   color: var(--text-muted);
   letter-spacing: 0.1em;
 }
 
 .marquee-title {
   font-family: var(--font-sans);
-  font-size: 0.8rem;
-  font-weight: 800;
+  font-size: 0.82rem;
+  font-weight: 900;
   letter-spacing: 0.14em;
-  color: var(--gold);
+  color: var(--gold-bright);
+  text-shadow: 0 0 18px rgba(229, 184, 105, 0.35);
   white-space: nowrap;
 }
 
 .marquee-stat {
-  font-size: 0.64rem;
-  font-weight: 700;
+  font-size: 0.66rem;
+  font-weight: 800;
   color: var(--text-main);
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid var(--border-hairline);
-  padding: 3px 9px;
-  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  padding: 4px 10px;
+  border-radius: 5px;
 }
 
 .marquee-credits {
-  font-size: 0.62rem;
-  font-weight: 700;
+  font-size: 0.64rem;
+  font-weight: 800;
   color: var(--emerald);
-  background: rgba(52, 211, 153, 0.1);
-  border: 1px solid rgba(52, 211, 153, 0.3);
-  padding: 3px 8px;
-  border-radius: 4px;
+  background: rgba(52, 211, 153, 0.12);
+  border: 1px solid rgba(52, 211, 153, 0.4);
+  padding: 4px 9px;
+  border-radius: 5px;
 }
 
-/* 2. Armored Glass Tank Bay */
+/* 2. Crystal-Clear Armored Glass Tank Bay (Shows 3D Planet Behind) */
 .claw-glass-bay {
   position: relative;
   flex: 1;
   width: 100%;
   min-height: 0;
-  background: radial-gradient(circle at 55% 35%, #101726 0%, #05070c 70%, #030407 100%);
+  background:
+    radial-gradient(circle at 50% 0%, rgba(229, 184, 105, 0.12) 0%, transparent 55%),
+    linear-gradient(180deg, rgba(6, 10, 18, 0.35) 0%, rgba(4, 6, 11, 0.62) 100%);
+  box-shadow:
+    inset 0 12px 32px rgba(0, 0, 0, 0.75),
+    inset 12px 0 24px rgba(255, 255, 255, 0.025),
+    inset -12px 0 24px rgba(255, 255, 255, 0.025);
   overflow: hidden;
   cursor: crosshair;
   touch-action: none;
 }
 
+/* Interior Volumetric Overhead Spotlights */
+.bay-spotlight {
+  position: absolute;
+  top: -30px;
+  width: 280px;
+  height: 85%;
+  pointer-events: none;
+  z-index: 1;
+  filter: blur(28px);
+  opacity: 0.65;
+}
+
+.bay-spotlight.spot-left {
+  left: 16%;
+  transform: rotate(-10deg);
+  background: linear-gradient(180deg, rgba(52, 211, 153, 0.14) 0%, transparent 85%);
+}
+
+.bay-spotlight.spot-right {
+  right: 12%;
+  transform: rotate(10deg);
+  background: linear-gradient(180deg, rgba(229, 184, 105, 0.18) 0%, transparent 85%);
+}
+
 #clawMachineCanvas {
+  position: relative;
+  z-index: 2;
   width: 100%;
   height: 100%;
   display: block;
@@ -2793,42 +2998,50 @@ body.mwo-overdrive .claw-machine-cabinet {
   top: 12px;
   right: 14px;
   z-index: 5;
-  background: rgba(5, 7, 12, 0.86);
-  border: 1px solid var(--border-hairline);
+  background: rgba(5, 8, 14, 0.9);
+  border: 1px solid rgba(229, 184, 105, 0.4);
   border-radius: 6px;
-  padding: 5px 11px;
+  padding: 5px 12px;
   font-family: var(--font-mono);
-  font-size: 0.62rem;
-  font-weight: 600;
+  font-size: 0.64rem;
+  font-weight: 700;
   letter-spacing: 0.08em;
-  color: var(--text-muted);
+  color: var(--gold-bright);
   pointer-events: none;
   backdrop-filter: blur(10px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.8);
 }
 
-/* 3. Physical Industrial Arcade Control Deck */
+/* 3. Physical 3D Brushed-Steel Arcade Control Console */
 .claw-control-deck {
-  height: 68px;
-  padding: 0 18px;
-  background: linear-gradient(180deg, #090c13 0%, #05060a 100%);
-  border-top: 1px solid var(--border-hairline);
+  height: 76px;
+  padding: 0 20px;
+  background:
+    linear-gradient(180deg, #182032 0%, #0b0f19 35%, #05070c 100%);
+  border-top: 2px solid rgba(229, 184, 105, 0.38);
+  box-shadow:
+    0 -10px 28px rgba(0, 0, 0, 0.8),
+    inset 0 1px 0 rgba(255, 255, 255, 0.22);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
+  gap: 14px;
   flex-shrink: 0;
+  position: relative;
+  z-index: 6;
 }
 
 .deck-group {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 9px;
 }
 
 .claw-deck-btn {
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid var(--border-hairline);
-  border-radius: 7px;
+  background: linear-gradient(180deg, #1e273b 0%, #0f1420 100%);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-bottom: 3px solid #04060a;
+  border-radius: 8px;
   padding: 10px 14px;
   color: var(--text-main);
   font-family: var(--font-mono);
@@ -2836,68 +3049,100 @@ body.mwo-overdrive .claw-machine-cabinet {
   font-weight: 700;
   letter-spacing: 0.06em;
   cursor: pointer;
-  transition: all 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  box-shadow:
+    0 5px 14px rgba(0, 0, 0, 0.7),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  transition: all 0.12s ease;
   white-space: nowrap;
 }
 
-.claw-deck-btn:hover,
+.claw-deck-btn:hover {
+  background: linear-gradient(180deg, #27324b 0%, #151c2c 100%);
+  border-color: rgba(255, 255, 255, 0.34);
+  transform: translateY(-1px);
+}
+
 .claw-deck-btn:active {
-  background: rgba(255, 255, 255, 0.1);
-  border-color: var(--border-hover);
+  transform: translateY(2px);
+  border-bottom-width: 1px;
+}
+
+.key-cap {
+  background: rgba(0, 0, 0, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  color: var(--gold-bright);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.6rem;
+  font-weight: 800;
 }
 
 .claw-deck-btn.gold-outline {
-  border-color: var(--border-gold);
-  color: var(--gold);
+  border-color: rgba(229, 184, 105, 0.55);
+  color: var(--gold-bright);
+  background: linear-gradient(180deg, rgba(229, 184, 105, 0.18) 0%, rgba(15, 20, 32, 0.95) 100%);
 }
 
 .claw-deck-btn.gold-outline:hover {
-  background: rgba(229, 184, 105, 0.14);
+  background: linear-gradient(180deg, rgba(229, 184, 105, 0.28) 0%, rgba(22, 29, 45, 0.98) 100%);
+  border-color: var(--gold-bright);
 }
 
 .claw-drop-trigger {
   flex: 1;
-  max-width: 340px;
-  height: 44px;
-  background: var(--emerald);
-  border: 1px solid var(--emerald);
-  border-radius: 8px;
-  color: #030605;
+  max-width: 370px;
+  height: 48px;
+  background: linear-gradient(180deg, #4ade80 0%, #22c55e 55%, #16a34a 100%);
+  border: 1px solid #86efac;
+  border-bottom: 4px solid #064e3b;
+  border-radius: 10px;
+  color: #020805;
   font-family: var(--font-mono);
-  font-size: 0.76rem;
-  font-weight: 800;
+  font-size: 0.78rem;
+  font-weight: 900;
   letter-spacing: 0.1em;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 10px;
-  box-shadow: 0 8px 26px rgba(52, 211, 153, 0.28);
-  transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow:
+    0 10px 28px rgba(34, 197, 94, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.65);
+  transition: all 0.14s cubic-bezier(0.16, 1, 0.3, 1);
   white-space: nowrap;
 }
 
 .claw-drop-trigger:hover {
   transform: translateY(-1px);
-  background: #4ade80;
-  border-color: #4ade80;
-  box-shadow: 0 12px 32px rgba(52, 211, 153, 0.42);
+  background: linear-gradient(180deg, #6ee7b7 0%, #34d399 55%, #10b981 100%);
+  box-shadow:
+    0 14px 36px rgba(52, 211, 153, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
 }
 
-.claw-drop-trigger:disabled {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: var(--border-hairline);
-  color: var(--text-muted);
-  box-shadow: none;
-  cursor: not-allowed;
-  transform: none;
+.claw-drop-trigger:active {
+  transform: translateY(2px);
+  border-bottom-width: 1px;
+}
+
+.drop-hotkey {
+  background: rgba(0, 0, 0, 0.22);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.62rem;
+  font-weight: 800;
 }
 
 .drop-led {
-  width: 8px;
-  height: 8px;
+  width: 9px;
+  height: 9px;
   border-radius: 50%;
-  background: #030605;
+  background: #022c22;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.8);
 }
 
 /* 4. Prize Extraction Reveal Overlay Card */
@@ -2905,9 +3150,9 @@ body.mwo-overdrive .claw-machine-cabinet {
   position: absolute;
   inset: 0;
   z-index: 25;
-  background: rgba(3, 5, 9, 0.84);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  background: rgba(3, 5, 9, 0.86);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2921,12 +3166,15 @@ body.mwo-overdrive .claw-machine-cabinet {
 }
 
 .pull-reveal-card {
-  width: min(560px, 100%);
-  background: #080b12;
-  border: 1px solid var(--border-gold);
-  border-radius: 14px;
-  padding: 18px 20px;
-  box-shadow: 0 28px 80px rgba(0, 0, 0, 0.95), 0 0 40px rgba(229, 184, 105, 0.22);
+  width: min(580px, 100%);
+  background: linear-gradient(180deg, #0d121d 0%, #070a10 100%);
+  border: 1.5px solid var(--gold);
+  border-radius: 16px;
+  padding: 20px 22px;
+  box-shadow:
+    0 32px 90px rgba(0, 0, 0, 0.96),
+    0 0 48px rgba(229, 184, 105, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.18);
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -2943,13 +3191,13 @@ body.mwo-overdrive .claw-machine-cabinet {
 .pull-tier-badge {
   font-family: var(--font-mono);
   font-size: 0.66rem;
-  font-weight: 700;
+  font-weight: 800;
   letter-spacing: 0.12em;
   padding: 4px 10px;
   border-radius: 5px;
-  background: rgba(229, 184, 105, 0.16);
+  background: rgba(229, 184, 105, 0.18);
   border: 1px solid var(--border-gold);
-  color: var(--gold);
+  color: var(--gold-bright);
 }
 
 .pull-close-btn {
@@ -2970,13 +3218,13 @@ body.mwo-overdrive .claw-machine-cabinet {
 .pull-reveal-body {
   display: flex;
   align-items: center;
-  gap: 18px;
+  gap: 20px;
 }
 
 .pull-reveal-stage {
   position: relative;
-  width: 150px;
-  height: 150px;
+  width: 165px;
+  height: 165px;
   flex-shrink: 0;
   display: flex;
   align-items: center;
@@ -2987,9 +3235,9 @@ body.mwo-overdrive .claw-machine-cabinet {
   position: absolute;
   inset: 6px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(229, 184, 105, 0.22) 0%, rgba(8, 11, 18, 0.95) 75%);
-  border: 1px solid var(--border-gold);
-  box-shadow: 0 0 28px rgba(229, 184, 105, 0.25);
+  background: radial-gradient(circle, rgba(229, 184, 105, 0.25) 0%, rgba(8, 11, 18, 0.65) 75%);
+  border: 1.5px solid var(--gold);
+  box-shadow: 0 0 32px rgba(229, 184, 105, 0.3);
 }
 
 .pull-reveal-stage img {
@@ -2998,7 +3246,7 @@ body.mwo-overdrive .claw-machine-cabinet {
   max-width: 100%;
   max-height: 100%;
   object-fit: contain;
-  filter: drop-shadow(0 12px 24px rgba(0, 0, 0, 0.95));
+  filter: drop-shadow(0 14px 26px rgba(0, 0, 0, 0.96));
 }
 
 .pull-reveal-info {
@@ -3009,7 +3257,7 @@ body.mwo-overdrive .claw-machine-cabinet {
 .pull-kicker {
   font-family: var(--font-mono);
   font-size: 0.64rem;
-  font-weight: 700;
+  font-weight: 800;
   color: var(--emerald);
   letter-spacing: 0.1em;
   margin-bottom: 4px;
@@ -3017,19 +3265,27 @@ body.mwo-overdrive .claw-machine-cabinet {
 
 .pull-title {
   font-family: var(--font-display);
-  font-size: 1.5rem;
+  font-size: 1.55rem;
   font-weight: 800;
   color: var(--text-main);
+  margin-bottom: 4px;
+}
+
+.pull-subtitle {
+  font-family: var(--font-mono);
+  font-size: 0.64rem;
+  font-weight: 700;
+  color: var(--gold);
+  letter-spacing: 0.08em;
   margin-bottom: 8px;
 }
 
 .pull-lore {
-  font-size: 0.82rem;
+  font-size: 0.84rem;
   line-height: 1.45;
   color: var(--text-muted);
 }
 
-.pull- lore strong,
 .pull-lore strong {
   color: var(--text-main);
 }
@@ -3064,6 +3320,25 @@ body.mwo-overdrive .claw-machine-cabinet {
 }
 
 @media (max-width: 720px) {
+  .intro-side-cutout {
+    width: 82px;
+    height: 98px;
+    padding: 5px;
+  }
+
+  .intro-side-cutout.side-left {
+    left: 0%;
+  }
+
+  .intro-side-cutout.side-right {
+    right: 0%;
+  }
+
+  .side-cutout-tag {
+    font-size: 0.46rem;
+    padding: 1px 4px;
+  }
+
   .claw-cabinet-stage {
     padding: 6px 8px;
   }
@@ -3114,6 +3389,12 @@ body.mwo-overdrive .claw-machine-cabinet {
     flex: 1;
     padding: 9px 8px;
     font-size: 0.58rem;
+    justify-content: center;
+  }
+
+  .key-cap,
+  .drop-hotkey {
+    display: none;
   }
 
   .claw-drop-trigger {
@@ -3121,7 +3402,7 @@ body.mwo-overdrive .claw-machine-cabinet {
     width: 100%;
     max-width: none;
     flex: 1 0 100%;
-    height: 40px;
+    height: 42px;
     font-size: 0.7rem;
   }
 
@@ -3141,12 +3422,12 @@ body.mwo-overdrive .claw-machine-cabinet {
   }
 
   .pull-reveal-stage {
-    width: 115px;
-    height: 115px;
+    width: 120px;
+    height: 120px;
   }
 
   .pull-title {
-    font-size: 1.2rem;
+    font-size: 1.25rem;
   }
 }
 
