@@ -1743,12 +1743,17 @@ class PlanetMaxiController {
     this.clawCamera.position.set(0, 18, 232);
     this.clawCamera.lookAt(0, -8, 0);
 
-    this.clawRenderer = new THREE.WebGLRenderer({
-      canvas: this.clawCanvas,
-      alpha: true,
-      antialias: true,
-      powerPreference: 'high-performance'
-    });
+    try {
+      this.clawRenderer = new THREE.WebGLRenderer({
+        canvas: this.clawCanvas,
+        alpha: true,
+        antialias: true,
+        powerPreference: 'high-performance'
+      });
+    } catch (err) {
+      console.error('[MAXI] Claw WebGLRenderer failed:', err);
+      return;
+    }
     this.clawRenderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
     this.clawRenderer.outputEncoding = THREE.sRGBEncoding;
 
@@ -2623,12 +2628,17 @@ class PlanetMaxiController {
     this.councilCamera.position.set(0, 76, 238);
     this.councilCamera.lookAt(0, -10, 0);
 
-    this.councilRenderer = new THREE.WebGLRenderer({
-      canvas: this.councilCanvas,
-      alpha: true,
-      antialias: true,
-      powerPreference: 'high-performance'
-    });
+    try {
+      this.councilRenderer = new THREE.WebGLRenderer({
+        canvas: this.councilCanvas,
+        alpha: true,
+        antialias: true,
+        powerPreference: 'high-performance'
+      });
+    } catch (err) {
+      console.error('[MAXI] Council WebGLRenderer failed:', err);
+      return;
+    }
     this.councilRenderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
     this.councilRenderer.outputEncoding = THREE.sRGBEncoding;
 
@@ -4509,8 +4519,20 @@ class PlanetMaxiController {
 const LIVE_CA = 'EBCpGdXuS34WZuX13thrku2KmuLSe3Tf2gMtMKndpump';
 
 document.addEventListener('DOMContentLoaded', () => {
-  const controller = new PlanetMaxiController();
-  window.__planetMaxiController = controller;
+  let controller = null;
+  try {
+    controller = new PlanetMaxiController();
+    window.__planetMaxiController = controller;
+  } catch (err) {
+    console.error('[MAXI] PlanetMaxiController init error:', err);
+  }
+
+  // Always initialize Community Suite (PFP Studio, 100 Specimen Index, Rank Dossier, Market Poller)
+  try {
+    window.__communitySuite = new CommunitySuiteController(controller || { activeCitizenIndex: 0 });
+  } catch (err) {
+    console.error('[MAXI] CommunitySuiteController init error:', err);
+  }
 
   const logoStage = document.getElementById('logo-stage');
   const hudTelemetry = document.getElementById('hud-telemetry');
@@ -5670,12 +5692,3 @@ class CommunitySuiteController {
     ctx.fillText('𝕏 @MAXIWORLDORDER · T.ME/MAXICOLLECTIVE', w - 56, h - 48);
   }
 }
-
-// Initialize the Community Suite once DOM is ready
-document.addEventListener('DOMContentLoaded', () => {
-  setTimeout(() => {
-    if (window.__planetMaxiController) {
-      new CommunitySuiteController(window.__planetMaxiController);
-    }
-  }, 50);
-});
