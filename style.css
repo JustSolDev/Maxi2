@@ -476,10 +476,28 @@ body {
   cursor: grabbing;
 }
 
-#clawMachineCanvas {
+.council-section {
+  padding: 52px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+#clawMachineCanvas,
+#councilTableCanvas {
   width: 100%;
   height: 100%;
   display: block;
+}
+
+.claw-glass-bay {
+  cursor: crosshair;
+}
+
+.council-glass-bay {
+  cursor: grab;
+}
+
+.council-glass-bay:active {
+  cursor: grabbing;
 }
 
 /* Floating Architectural Telemetry Plaque for Active Council Seat */
@@ -692,16 +710,16 @@ body {
    4. "YOU CAUGHT A MAXI" — 3D COLLECTOR CARD POP-UP & SAVE MODAL
    ========================================================================= */
 .pull-reveal-overlay {
-  position: absolute;
+  position: fixed;
   inset: 0;
-  z-index: 35;
+  z-index: 300;
   background: rgba(6, 6, 8, 0.92);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 18px;
+  padding: 20px;
   animation: caughtOverlayIn 0.26s cubic-bezier(0.16, 1, 0.3, 1);
 }
 

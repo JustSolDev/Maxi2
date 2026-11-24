@@ -1425,6 +1425,10 @@ class PlanetMaxiController {
     this.clawGlassBay = document.getElementById('clawGlassBay');
     this.clawCabinetStage = document.getElementById('clawCabinetStage');
 
+    // Dedicated Standalone 3D Council Table Canvas & Container (Section 02)
+    this.councilCanvas = document.getElementById('councilTableCanvas');
+    this.councilGlassBay = document.getElementById('councilGlassBay');
+
     this.stageContainer = document.getElementById('stageContainer');
     this.logoStage = document.getElementById('logo-stage');
 
@@ -1435,7 +1439,7 @@ class PlanetMaxiController {
     this.reticleHud = document.getElementById('reticleHud');
     this.arrivedCard = document.getElementById('arrivedCard');
 
-    this.state = 'LOCKED'; // Immediately active 3D WebGL Claw Machine on the Pop-Arcade Storefront
+    this.state = 'LOCKED';
     this.orbitSpinMode = '3d';
     this.paletteIdx = 0;
     this.activeCitizenIndex = 0; // 0 = OG MAXI (#001)
@@ -1459,18 +1463,15 @@ class PlanetMaxiController {
     this.mouseY = 0;
     this.starColors = ['#ffbe2e', '#70f8ff', '#fff6e0', '#38bdf8', '#ffffff'];
 
-    // Texture & Sprite Caches
+    // Independent Texture & Sprite Caches (One per WebGL Context!)
     this.imageCache = new Map();
-    this.textureCache = new Map();
+    this.textureCache = new Map();        // For Claw Machine WebGLRenderer
+    this.councilTextureCache = new Map(); // For Council Table WebGLRenderer
     this.extractedSet = new Set();
     this.pileItems = [];
     this.pileBatchOffset = 0;
 
     // 3D Claw Tank Bounds (in Three.js World Units)
-    // Tank Width: X in [-105 .. +105]
-    // Left Extraction Chute: X in [-105 .. -55], Z in [-58 .. +58]
-    // Main Prize Containment Pit: X in [-48 .. +100], Z in [-55 .. +55]
-    // Floor Y = -56, Top Gantry Bridge Y = +64
     this.tankBounds = {
       minX: -102,
       maxX: 102,
@@ -1485,43 +1486,44 @@ class PlanetMaxiController {
     };
 
     this.claw = {
-      x: 24,            // World X in [-90..92]
+      x: 24,
       targetX: 24,
-      z: 6,             // World Z in [-46..46]
+      z: 6,
       targetZ: 6,
-      y: 44,            // Current 3D Claw Hub Y
+      y: 44,
       homeY: 44,
-      state: 'IDLE',    // 'IDLE' | 'DROPPING' | 'CLAMPING' | 'HOISTING' | 'CARRYING' | 'RELEASING'
+      state: 'IDLE',
       stateTimer: 0,
-      jawAngle: 0.56,   // Radians (0.62 = open wide, 0.15 = clamped tight)
+      jawAngle: 0.56,
       targetJaw: 0.56,
       swingX: 0,
       swingZ: 0,
       velX: 0,
       velZ: 0,
       grabbedItem: null,
-      moveDirX: 0,      // -1 left, +1 right
-      moveDirZ: 0       // -1 back, +1 front
+      moveDirX: 0,
+      moveDirZ: 0
     };
 
-    // 3D Stage Experience Mode ('CLAW' = 3D Claw Machine, 'COUNCIL' = The 3D Council Table War Room)
-    this.stage3DMode = 'CLAW';
+    // Standalone 3D Council Table State (Section 02)
     this.councilSeatCount = 12;
-    this.councilBatchIndex = 0;       // Which batch of 12 Maxis (0..8)
-    this.activeSeatSlot = 0;          // 0..11 around the circular table
-    this.councilOrbitAngle = 0;       // Current camera orbit angle around the Council Table
-    this.targetCouncilOrbitAngle = 0; // Target orbit angle
-    this.councilZoomDist = 238;       // Camera distance from center of Council Table
-    this.targetCouncilZoomDist = 238;
-    this.councilCamHeight = 76;
-    this.targetCouncilCamHeight = 76;
+    this.councilBatchIndex = 0;
+    this.activeSeatSlot = 0;
+    this.councilOrbitAngle = Math.PI;       // Start across the table looking directly at Seat I (#001 OG MAXI)
+    this.targetCouncilOrbitAngle = Math.PI;
+    this.councilZoomDist = 232;
+    this.targetCouncilZoomDist = 232;
+    this.councilCamHeight = 74;
+    this.targetCouncilCamHeight = 74;
+    this.councilCamMode = 'TABLE';
     this.councilSeats = [];
 
-    // 3D Camera Parallax & Orbit (for Claw Mode)
+    // 3D Camera Parallax & Orbit (for Claw Machine Section 01)
     this.camYaw = 0;
     this.targetCamYaw = 0;
     this.camPitch = 0.16;
     this.targetCamPitch = 0.16;
+    this.cameraViewMode = 'FRONT';
 
     this.preloadCitizenSprites();
     this.buildRosterStrip();
@@ -1532,7 +1534,6 @@ class PlanetMaxiController {
     this.resizeCanvases();
     this.spawnClawPile(false);
     this.populateCouncilSeats(0, false);
-    this.setStage3DMode('CLAW', false);
     this.loadCaughtLockerFromStorage();
     this.bindEvents();
 
@@ -1547,11 +1548,15 @@ class PlanetMaxiController {
         if (this.imageCache.has(cit.src)) return;
         const img = new Image();
         img.onload = () => {
-          // If texture already requested, update it
           if (this.textureCache.has(cit.src)) {
             const tex = this.textureCache.get(cit.src);
             tex.image = img;
             tex.needsUpdate = true;
+          }
+          if (this.councilTextureCache.has(cit.src)) {
+            const cTex = this.councilTextureCache.get(cit.src);
+            cTex.image = img;
+            cTex.needsUpdate = true;
           }
           if (idx === this.activeCitizenIndex) {
             this.renderPullPfpCanvas();
@@ -1579,26 +1584,33 @@ class PlanetMaxiController {
         tex.image = img;
         tex.needsUpdate = true;
       }
+      if (this.councilTextureCache.has(src)) {
+        const cTex = this.councilTextureCache.get(src);
+        cTex.image = img;
+        cTex.needsUpdate = true;
+      }
     };
     img.src = src;
     this.imageCache.set(src, img);
     return img;
   }
 
-  getCitizenThreeTexture(src) {
-    if (this.textureCache.has(src)) {
-      return this.textureCache.get(src);
+  getCitizenThreeTexture(src, forCouncil = false) {
+    const cache = forCouncil ? this.councilTextureCache : this.textureCache;
+    const renderer = forCouncil ? this.councilRenderer : this.clawRenderer;
+    if (cache.has(src)) {
+      return cache.get(src);
     }
     const img = this.getSprite(src);
     const tex = new THREE.Texture(img);
     tex.encoding = THREE.sRGBEncoding;
-    tex.anisotropy = this.clawRenderer
-      ? Math.min(8, this.clawRenderer.capabilities.getMaxAnisotropy())
+    tex.anisotropy = renderer
+      ? Math.min(8, renderer.capabilities.getMaxAnisotropy())
       : 4;
     if (img.complete && img.naturalWidth > 0) {
       tex.needsUpdate = true;
     }
-    this.textureCache.set(src, tex);
+    cache.set(src, tex);
     return tex;
   }
 
@@ -1977,19 +1989,22 @@ class PlanetMaxiController {
     this.pedestalRingGeo = new THREE.CylinderGeometry(10.85, 10.85, 1.1, 28);
   }
 
-  create3DMaxiStandeeMesh(cit, scaleMultiplier = 1.0) {
+  create3DMaxiStandeeMesh(cit, scaleMultiplier = 1.0, forCouncil = false) {
     const group = new THREE.Group();
 
     const isOg = Boolean(cit.isOg);
     const isMythic = Boolean(cit.isMythic || cit.rank === '#037');
 
-    // 1. 3D Collector Pedestal Puck Base
+    // 1. 3D Collector Pedestal Puck Base (Use context-local geometry)
+    const cylGeo = forCouncil ? this.councilPedestalCylGeo : this.pedestalCylGeo;
+    const ringGeo = forCouncil ? this.councilPedestalRingGeo : this.pedestalRingGeo;
+
     const baseMat = new THREE.MeshStandardMaterial({
       color: isOg ? 0x2a1f0d : isMythic ? 0x092218 : 0x111827,
       roughness: 0.3,
       metalness: 0.85
     });
-    const baseMesh = new THREE.Mesh(this.pedestalCylGeo, baseMat);
+    const baseMesh = new THREE.Mesh(cylGeo, baseMat);
     baseMesh.position.y = -11.5;
     group.add(baseMesh);
 
@@ -2000,12 +2015,12 @@ class PlanetMaxiController {
       emissive: isOg ? 0xe5b869 : isMythic ? 0x34d399 : 0x000000,
       emissiveIntensity: isOg ? 0.3 : isMythic ? 0.22 : 0
     });
-    const rimMesh = new THREE.Mesh(this.pedestalRingGeo, rimMat);
+    const rimMesh = new THREE.Mesh(ringGeo, rimMat);
     rimMesh.position.y = -11.2;
     group.add(rimMesh);
 
     // 2. High-Resolution Un-Tinted Double-Sided Acrylic Cutout Standee Plane
-    const tex = this.getCitizenThreeTexture(cit.src);
+    const tex = this.getCitizenThreeTexture(cit.src, forCouncil);
     const standeeH = 25.5;
     const standeeW = 24.0;
     const planeGeo = new THREE.PlaneGeometry(standeeW, standeeH);
@@ -2597,13 +2612,44 @@ class PlanetMaxiController {
   }
 
   /* -----------------------------------------------------------------------
-     B2. 3D MAXI WORLD ORDER COUNCIL TABLE & OBSIDIAN MONOLITH CORE
+     B2. STANDALONE 3D MAXI WORLD ORDER COUNCIL TABLE & OBSIDIAN MONOLITH CORE
      ----------------------------------------------------------------------- */
   initThreeCouncilTable() {
-    if (!this.clawScene || typeof THREE === 'undefined') return;
+    if (!this.councilCanvas || typeof THREE === 'undefined') return;
+
+    this.councilScene = new THREE.Scene();
+
+    this.councilCamera = new THREE.PerspectiveCamera(38, 16 / 9, 1, 1600);
+    this.councilCamera.position.set(0, 76, 238);
+    this.councilCamera.lookAt(0, -10, 0);
+
+    this.councilRenderer = new THREE.WebGLRenderer({
+      canvas: this.councilCanvas,
+      alpha: true,
+      antialias: true,
+      powerPreference: 'high-performance'
+    });
+    this.councilRenderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    this.councilRenderer.outputEncoding = THREE.sRGBEncoding;
+
+    // Context-local Pedestal Geometries for Council Standees
+    this.councilPedestalCylGeo = new THREE.CylinderGeometry(9.5, 10.6, 3.2, 28);
+    this.councilPedestalRingGeo = new THREE.CylinderGeometry(10.85, 10.85, 1.1, 28);
+
+    // War Room Base Studio Lighting
+    const ambient = new THREE.AmbientLight(0xe2e8f0, 0.95);
+    this.councilScene.add(ambient);
+
+    const keyLight = new THREE.DirectionalLight(0xfff7ed, 1.25);
+    keyLight.position.set(110, 170, 140);
+    this.councilScene.add(keyLight);
+
+    const rimLight = new THREE.DirectionalLight(0x38bdf8, 0.7);
+    rimLight.position.set(-90, 90, -140);
+    this.councilScene.add(rimLight);
 
     this.councilWorldGroup = new THREE.Group();
-    this.clawScene.add(this.councilWorldGroup);
+    this.councilScene.add(this.councilWorldGroup);
 
     const floorY = -36;
     this.councilFloorY = floorY;
@@ -2787,8 +2833,8 @@ class PlanetMaxiController {
     const monoEdges = new THREE.LineSegments(monoEdgeGeo, monoEdgeMat);
     this.monolithGroup.add(monoEdges);
 
-    // Front & Back Embossed $MAXI Sovereign Crest on the Obsidian Monolith
-    const ogTex = this.getCitizenThreeTexture(MAXI_CITIZENS[0].src);
+    // Front & Back Embossed $MAXI Sovereign Crest on the Obsidian Monolith (Council WebGL Context)
+    const ogTex = this.getCitizenThreeTexture(MAXI_CITIZENS[0].src, true);
     const crestGeo = new THREE.PlaneGeometry(14.5, 14.5);
     const crestMat = new THREE.MeshBasicMaterial({
       map: ogTex,
@@ -2914,10 +2960,9 @@ class PlanetMaxiController {
     this.councilSeats = [];
 
     for (let s = 0; s < 12; s++) {
-      // Seat I in Batch 0 is always #001 OG MAXI; other batches cycle all 100 citizens
       const citIdx = (this.councilBatchIndex * 12 + s) % MAXI_CITIZENS.length;
       const cit = MAXI_CITIZENS[citIdx];
-      const angle = (s * Math.PI * 2) / 12; // Seat 0 is at angle 0 (front +Z)
+      const angle = (s * Math.PI * 2) / 12;
 
       const seatNode = new THREE.Group();
       this.councilSeatsGroup.add(seatNode);
@@ -2942,7 +2987,6 @@ class PlanetMaxiController {
       throneBack.rotation.y = angle;
       seatNode.add(throneBack);
 
-      // Brushed Metallic Trim Edge on the Throne Monolith
       const throneEdgeGeo = new THREE.EdgesGeometry(throneBackGeo);
       const throneEdgeMat = new THREE.LineBasicMaterial({
         color: isOg ? 0xf3d285 : isMythic ? 0x10b981 : 0x64748b,
@@ -2952,9 +2996,9 @@ class PlanetMaxiController {
       const throneEdges = new THREE.LineSegments(throneEdgeGeo, throneEdgeMat);
       throneBack.add(throneEdges);
 
-      // 2. 3D Maxi Cutout Seated at the High Table (Billboards toward camera every frame!)
+      // 2. 3D Maxi Cutout Seated at the High Table (Uses Council WebGL context!)
       const standeeScale = isOg ? 1.38 : isMythic ? 1.22 : 1.15;
-      const standeeMesh = this.create3DMaxiStandeeMesh(cit, standeeScale);
+      const standeeMesh = this.create3DMaxiStandeeMesh(cit, standeeScale, true);
       standeeMesh.position.set(
         Math.sin(angle) * seatRadius,
         floorY + 23,
@@ -3012,12 +3056,11 @@ class PlanetMaxiController {
       });
     }
 
-    // Update Delegation Header Meta
     const startNum = String(this.councilBatchIndex * 12 + 1).padStart(3, '0');
     const endNum = String(Math.min(100, this.councilBatchIndex * 12 + 12)).padStart(3, '0');
-    const metaVal = document.getElementById('metaPrimaryVal');
-    if (metaVal && this.stage3DMode === 'COUNCIL') {
-      metaVal.textContent = `TABLE ${romans[this.councilBatchIndex] || 'I'} (#${startNum}–#${endNum})`;
+    const delEl = document.getElementById('councilDelegationReadout');
+    if (delEl) {
+      delEl.textContent = `TABLE ${romans[this.councilBatchIndex] || 'I'} (#${startNum}–#${endNum})`;
     }
 
     this.focusCouncilSeatSlot(0, false);
@@ -3028,6 +3071,23 @@ class PlanetMaxiController {
     }
   }
 
+  updateCouncilSeatHud(seat) {
+    if (!seat) return;
+    const seatNumEl = document.getElementById('councilHudSeatNum');
+    const rankEl = document.getElementById('councilHudRank');
+    const nameEl = document.getElementById('councilHudName');
+    const roleEl = document.getElementById('councilHudRole');
+    const laserEl = document.getElementById('councilLaserReadout');
+    const activeSeatEl = document.getElementById('councilActiveSeatReadout');
+
+    if (seatNumEl) seatNumEl.textContent = `SEAT ${seat.roman} OF XII`;
+    if (rankEl) rankEl.textContent = `${seat.cit.rank} / 100`;
+    if (nameEl) nameEl.textContent = seat.cit.name;
+    if (roleEl) roleEl.textContent = seat.cit.title.replace(/^[👑★]\s*/, '');
+    if (laserEl) laserEl.textContent = `SEAT ${seat.roman} // ${seat.cit.rank} ${seat.cit.name}`;
+    if (activeSeatEl) activeSeatEl.textContent = `SEAT ${seat.roman} // ${seat.cit.name}`;
+  }
+
   focusCouncilSeatSlot(slotIndex, playSfx = true) {
     if (!this.councilSeats.length) return;
     const normalized = ((slotIndex % 12) + 12) % 12;
@@ -3035,43 +3095,21 @@ class PlanetMaxiController {
     const seat = this.councilSeats[normalized];
     if (!seat) return;
 
-    this.activeCitizenIndex = seat.citizenIndex;
-
-    // Shortest angular path for smooth 360° camera orbit around the Council Table
-    const targetAng = seat.angle;
+    const targetAng = seat.angle + Math.PI;
     const diff = Math.atan2(
       Math.sin(targetAng - this.targetCouncilOrbitAngle),
       Math.cos(targetAng - this.targetCouncilOrbitAngle)
     );
     this.targetCouncilOrbitAngle += diff;
 
-    // Highlight active seat halo & dim others
     this.councilSeats.forEach((s, idx) => {
       const isFocused = idx === normalized;
-      if (s.ringMat) {
-        s.ringMat.opacity = isFocused ? 0.95 : 0.24;
-      }
-      if (s.throneEdgeMat) {
-        s.throneEdgeMat.opacity = isFocused ? 1.0 : 0.55;
-      }
+      if (s.ringMat) s.ringMat.opacity = isFocused ? 0.95 : 0.24;
+      if (s.throneEdgeMat) s.throneEdgeMat.opacity = isFocused ? 1.0 : 0.55;
     });
 
-    // Update Floating Council Seat HUD Plaque & Top Bar
-    const seatNumEl = document.getElementById('councilHudSeatNum');
-    const rankEl = document.getElementById('councilHudRank');
-    const nameEl = document.getElementById('councilHudName');
-    const roleEl = document.getElementById('councilHudRole');
-    const laserEl = document.getElementById('clawLaserReadout');
+    this.updateCouncilSeatHud(seat);
 
-    if (seatNumEl) seatNumEl.textContent = `SEAT ${seat.roman} OF XII`;
-    if (rankEl) rankEl.textContent = `${seat.cit.rank} / 100`;
-    if (nameEl) nameEl.textContent = seat.cit.name;
-    if (roleEl) roleEl.textContent = seat.cit.title.replace(/^[👑★]\s*/, '');
-    if (laserEl && this.stage3DMode === 'COUNCIL') {
-      laserEl.textContent = `SEAT ${seat.roman} // ${seat.cit.rank} ${seat.cit.name}`;
-    }
-
-    this.updateSideHudReadouts(seat.cit);
     if (playSfx) {
       sfx.playBeep(seat.cit.isOg ? 920 : 660, 0.06, 'triangle');
     }
@@ -3083,88 +3121,39 @@ class PlanetMaxiController {
 
   cycleCouncilDelegation() {
     this.populateCouncilSeats(this.councilBatchIndex + 1, true);
-    this.updateMarqueeStatus('COUNCIL ROTATED // NEXT 12 SOVEREIGN OPERATIVES SEATED');
+    const statusEl = document.getElementById('councilStatusReadout');
+    if (statusEl) {
+      statusEl.textContent = 'COUNCIL ROTATED // NEXT 12 SOVEREIGN OPERATIVES SEATED';
+    }
+  }
+
+  cycleCouncilCameraView() {
+    const cModes = ['TABLE', 'THRONE', 'OVERHEAD'];
+    const cur = cModes.indexOf(this.councilCamMode || 'TABLE');
+    this.councilCamMode = cModes[(cur + 1) % cModes.length];
+
+    if (this.councilCamMode === 'TABLE') {
+      this.targetCouncilZoomDist = 238;
+      this.targetCouncilCamHeight = 76;
+    } else if (this.councilCamMode === 'THRONE') {
+      this.targetCouncilZoomDist = 175;
+      this.targetCouncilCamHeight = 32;
+    } else if (this.councilCamMode === 'OVERHEAD') {
+      this.targetCouncilZoomDist = 245;
+      this.targetCouncilCamHeight = 165;
+    }
+
+    const cBtn = document.getElementById('councilCamBtn');
+    const cDeckBtn = document.getElementById('councilDeckCamBtn');
+    if (cBtn) cBtn.textContent = `CAM: ${this.councilCamMode}`;
+    if (cDeckBtn) cDeckBtn.textContent = `CAM: ${this.councilCamMode}`;
+    sfx.playBeep(720, 0.07, 'triangle');
   }
 
   summonActiveCouncilSeat() {
     const seat = this.councilSeats[this.activeSeatSlot];
-    const citIdx = seat ? seat.citizenIndex : this.activeCitizenIndex;
+    const citIdx = seat ? seat.citizenIndex : 0;
     this.openCaughtCardForCitizen(citIdx, true);
-  }
-
-  setStage3DMode(mode, playSfx = true) {
-    this.stage3DMode = mode === 'CLAW' ? 'CLAW' : 'COUNCIL';
-    const isCouncil = this.stage3DMode === 'COUNCIL';
-
-    if (this.councilWorldGroup) this.councilWorldGroup.visible = isCouncil;
-    if (this.clawWorldGroup) this.clawWorldGroup.visible = !isCouncil;
-
-    const councilHud = document.getElementById('councilSeatHud');
-    if (councilHud) councilHud.classList.toggle('hidden', !isCouncil);
-
-    const modeCouncilBtn = document.getElementById('modeCouncilBtn');
-    const modeClawBtn = document.getElementById('modeClawBtn');
-    if (modeCouncilBtn) modeCouncilBtn.classList.toggle('active', isCouncil);
-    if (modeClawBtn) modeClawBtn.classList.toggle('active', !isCouncil);
-
-    const kickerEl = document.getElementById('stageKickerLabel');
-    const metaKeyEl = document.getElementById('metaPrimaryKey');
-    const metaValEl = document.getElementById('metaPrimaryVal');
-    const modeTagEl = document.getElementById('clawModeTag');
-    const joltBtn = document.getElementById('clawJoltBtn');
-    const deckJoltBtn = document.getElementById('clawDeckJoltBtn');
-    const camBtn = document.getElementById('clawCamBtn');
-    const snapOgBtn = document.getElementById('snapOgBtn');
-    const aimOgBtn = document.getElementById('clawAimOgBtn');
-    const shuffleBtn = document.getElementById('clawShuffleBtn');
-    const dropLbl = document.getElementById('clawDropBtnLabel');
-    const leftLbl = document.getElementById('deckLeftLabel');
-    const rightLbl = document.getElementById('deckRightLabel');
-    const upLbl = document.getElementById('deckUpLabel');
-    const downLbl = document.getElementById('deckDownLabel');
-
-    if (isCouncil) {
-      if (kickerEl) kickerEl.textContent = '01 / HIGH TABLE WAR ROOM · 3D WEBGL';
-      if (metaKeyEl) metaKeyEl.textContent = 'COUNCIL DELEGATION';
-      const startNum = String(this.councilBatchIndex * 12 + 1).padStart(3, '0');
-      const endNum = String(Math.min(100, this.councilBatchIndex * 12 + 12)).padStart(3, '0');
-      if (metaValEl) metaValEl.textContent = `SEATS #${startNum}–#${endNum}`;
-      if (modeTagEl) modeTagEl.textContent = 'CHAMBER // 12 SOVEREIGN SEATS · OBSIDIAN MONOLITH CORE';
-      this.updateMarqueeStatus('DRAG OR A/D TO ORBIT COUNCIL TABLE · SPACE TO SUMMON SEAT');
-      if (joltBtn) joltBtn.textContent = 'NEXT 12 SEATS ↻';
-      if (deckJoltBtn) deckJoltBtn.textContent = 'NEXT 12 ↻';
-      if (camBtn) camBtn.textContent = `CAM: ${this.councilCamMode || 'TABLE'}`;
-      if (snapOgBtn) snapOgBtn.textContent = 'SEAT I (#001)';
-      if (aimOgBtn) aimOgBtn.textContent = 'SEAT I (#001)';
-      if (shuffleBtn) shuffleBtn.textContent = '3D CLAW MACHINE →';
-      if (dropLbl) dropLbl.textContent = 'SUMMON COUNCIL SEAT & CLAIM PFP';
-      if (leftLbl) leftLbl.textContent = 'PREV SEAT';
-      if (rightLbl) rightLbl.textContent = 'NEXT SEAT';
-      if (upLbl) upLbl.textContent = 'ZOOM IN';
-      if (downLbl) downLbl.textContent = 'WIDE VIEW';
-      this.focusCouncilSeatSlot(this.activeSeatSlot, false);
-    } else {
-      if (kickerEl) kickerEl.textContent = '01 / 3D EXTRACTION UNIT · WEBGL';
-      if (metaKeyEl) metaKeyEl.textContent = 'EDITION';
-      if (metaValEl) metaValEl.textContent = '100 1-OF-1 CUTOUTS';
-      if (modeTagEl) modeTagEl.textContent = 'GANTRY // X-Y-Z 3D PHYSICS';
-      this.updateMarqueeStatus('DRAG OR WASD TO AIM · SPACE TO DROP CLAW');
-      if (joltBtn) joltBtn.textContent = 'JOLT TANK';
-      if (deckJoltBtn) deckJoltBtn.textContent = 'JOLT';
-      if (camBtn) camBtn.textContent = `CAM: ${this.cameraViewMode || 'FRONT'}`;
-      if (snapOgBtn) snapOgBtn.textContent = 'LOCK #001';
-      if (aimOgBtn) aimOgBtn.textContent = 'TARGET #001';
-      if (shuffleBtn) shuffleBtn.textContent = 'RESTOCK';
-      if (dropLbl) dropLbl.textContent = 'DROP CLAW & CATCH MAXI';
-      if (leftLbl) leftLbl.textContent = 'LEFT';
-      if (rightLbl) rightLbl.textContent = 'RIGHT';
-      if (upLbl) upLbl.textContent = 'BACK';
-      if (downLbl) downLbl.textContent = 'FRONT';
-    }
-
-    if (playSfx) {
-      sfx.playBeep(isCouncil ? 680 : 820, 0.08, 'triangle');
-    }
   }
 
   update3DCouncilScene(dt, timeSec) {
@@ -3172,7 +3161,6 @@ class PlanetMaxiController {
 
     const floorY = this.councilFloorY || -36;
 
-    // 1. Float & Rotate the Central $MAXI Obsidian Monolith & Gyroscopic Rings
     if (this.monolithGroup) {
       this.monolithGroup.rotation.y = timeSec * 0.55;
       this.monolithGroup.position.y = floorY + 46 + Math.sin(timeSec * 1.8) * 2.5;
@@ -3189,7 +3177,6 @@ class PlanetMaxiController {
       this.sovereignSealGroup.rotation.y = -timeSec * 0.28;
     }
 
-    // Pulse the Bottomless Light Well Rings
     if (this.wellRings) {
       this.wellRings.forEach((ring, idx) => {
         const pulse = 0.5 + 0.32 * Math.sin(timeSec * 2.6 - idx * 0.55);
@@ -3197,12 +3184,10 @@ class PlanetMaxiController {
       });
     }
 
-    // 2. Smoothly Interpolate Camera Orbit Around the Circular Table
     this.councilOrbitAngle += (this.targetCouncilOrbitAngle - this.councilOrbitAngle) * Math.min(1, dt * 7.5);
     this.councilZoomDist += (this.targetCouncilZoomDist - this.councilZoomDist) * Math.min(1, dt * 7.5);
     this.councilCamHeight += (this.targetCouncilCamHeight - this.councilCamHeight) * Math.min(1, dt * 7.5);
 
-    // Move the Overhead Inspection Spotlight above the currently focused Council Seat
     const seat = this.councilSeats[this.activeSeatSlot];
     if (seat && this.seatInspectionLight) {
       const targetSpotX = Math.sin(seat.angle) * 112;
@@ -3211,20 +3196,17 @@ class PlanetMaxiController {
       this.seatInspectionLight.position.z += (targetSpotZ - this.seatInspectionLight.position.z) * 0.14;
     }
 
-    // Billboard all 12 Maxi Standees toward the camera so every single Council Member is clearly visible,
-    // and elevate + scale up the active front seat!
     this.councilSeats.forEach((s, idx) => {
       if (!s.standeeMesh) return;
       const isFocused = idx === this.activeSeatSlot;
       const targetY = floorY + (isFocused ? 27.5 + Math.sin(timeSec * 3.0) * 1.4 : 21.5);
       s.standeeMesh.position.y += (targetY - s.standeeMesh.position.y) * 0.16;
-      // Face the camera horizontally so none of the 12 cutouts are ever edge-on or invisible
       s.standeeMesh.rotation.y = this.councilOrbitAngle;
     });
   }
 
   render3DCouncilScene() {
-    if (!this.clawRenderer || !this.clawScene || !this.clawCamera) return;
+    if (!this.councilRenderer || !this.councilScene || !this.councilCamera) return;
 
     const ang = this.councilOrbitAngle;
     const dist = this.councilZoomDist;
@@ -3232,18 +3214,13 @@ class PlanetMaxiController {
     const camZ = Math.cos(ang) * dist;
     const camY = this.councilCamHeight;
 
-    this.clawCamera.position.set(camX, camY, camZ);
-    // Look directly at the center of the Circular Council Table & Rotating Obsidian Monolith
-    this.clawCamera.lookAt(0, -10, 0);
+    this.councilCamera.position.set(camX, camY, camZ);
+    this.councilCamera.lookAt(0, -10, 0);
 
-    this.clawRenderer.render(this.clawScene, this.clawCamera);
+    this.councilRenderer.render(this.councilScene, this.councilCamera);
   }
 
   joltClawTank() {
-    if (this.stage3DMode === 'COUNCIL') {
-      this.cycleCouncilDelegation();
-      return;
-    }
     this.pileItems.forEach((it) => {
       if (it.extracted || it.inChute || it === this.claw.grabbedItem) return;
       it.vy = 75 + Math.random() * 65;
@@ -3253,7 +3230,6 @@ class PlanetMaxiController {
       it.rotZ = (Math.random() - 0.5) * 0.45;
     });
 
-    // Brief camera shake pulse
     this.camPitch = Math.min(0.45, this.camPitch + 0.08);
     sfx.playBeep(220, 0.11, 'sawtooth');
     setTimeout(() => sfx.playBeep(360, 0.09, 'triangle'), 60);
@@ -3261,30 +3237,6 @@ class PlanetMaxiController {
   }
 
   cycle3DCameraView() {
-    if (this.stage3DMode === 'COUNCIL') {
-      const cModes = ['TABLE', 'THRONE', 'OVERHEAD'];
-      const cur = cModes.indexOf(this.councilCamMode || 'TABLE');
-      this.councilCamMode = cModes[(cur + 1) % cModes.length];
-
-      if (this.councilCamMode === 'TABLE') {
-        this.targetCouncilZoomDist = 204;
-        this.targetCouncilCamHeight = 52;
-      } else if (this.councilCamMode === 'THRONE') {
-        this.targetCouncilZoomDist = 166;
-        this.targetCouncilCamHeight = 20;
-      } else if (this.councilCamMode === 'OVERHEAD') {
-        this.targetCouncilZoomDist = 235;
-        this.targetCouncilCamHeight = 148;
-      }
-
-      const camBtn = document.getElementById('clawCamBtn');
-      const deckCamBtn = document.getElementById('clawDeckCamBtn');
-      if (camBtn) camBtn.textContent = `CAM: ${this.councilCamMode}`;
-      if (deckCamBtn) deckCamBtn.textContent = `CAM: ${this.councilCamMode}`;
-      sfx.playBeep(720, 0.07, 'triangle');
-      return;
-    }
-
     const modes = ['FRONT', 'SNIPER', 'ISO'];
     const currentIdx = modes.indexOf(this.cameraViewMode || 'FRONT');
     this.cameraViewMode = modes[(currentIdx + 1) % modes.length];
@@ -3294,10 +3246,10 @@ class PlanetMaxiController {
       this.targetCamPitch = 0.16;
     } else if (this.cameraViewMode === 'SNIPER') {
       this.targetCamYaw = 0;
-      this.targetCamPitch = 0.68; // High overhead laser aiming view
+      this.targetCamPitch = 0.68;
     } else if (this.cameraViewMode === 'ISO') {
       this.targetCamYaw = 0.42;
-      this.targetCamPitch = 0.30; // 3D Isometric view
+      this.targetCamPitch = 0.30;
     }
 
     const camBtn = document.getElementById('clawCamBtn');
@@ -3333,19 +3285,6 @@ class PlanetMaxiController {
     const cit = MAXI_CITIZENS[this.activeCitizenIndex];
     sfx.playBeep(cit.isOg ? 980 : 760, 0.08, 'triangle');
 
-    if (this.stage3DMode === 'COUNCIL') {
-      const targetBatch = Math.floor(this.activeCitizenIndex / 12);
-      const targetSlot = this.activeCitizenIndex % 12;
-      if (targetBatch !== this.councilBatchIndex) {
-        this.populateCouncilSeats(targetBatch, false);
-      }
-      this.focusCouncilSeatSlot(targetSlot, false);
-      if (triggerDrop) {
-        setTimeout(() => this.summonActiveCouncilSeat(), 240);
-      }
-      return;
-    }
-
     let targetItem = this.pileItems.find(
       (it) => it.citizenIndex === this.activeCitizenIndex && !it.extracted
     );
@@ -3357,7 +3296,7 @@ class PlanetMaxiController {
       const z = (Math.random() - 0.5) * 30;
       const y = b.floorY + radius + 16;
 
-      const mesh = this.create3DMaxiStandeeMesh(cit, scale);
+      const mesh = this.create3DMaxiStandeeMesh(cit, scale, false);
       mesh.position.set(x, y, z);
       this.pileGroup.add(mesh);
 
@@ -3407,11 +3346,6 @@ class PlanetMaxiController {
     const overlay = document.getElementById('pullRevealOverlay');
     if (overlay && !overlay.classList.contains('hidden')) {
       overlay.classList.add('hidden');
-    }
-
-    if (this.stage3DMode === 'COUNCIL') {
-      this.summonActiveCouncilSeat();
-      return;
     }
 
     if (this.claw.state !== 'IDLE') return;
@@ -3602,9 +3536,19 @@ class PlanetMaxiController {
       this.bayH = bayH;
       this.clawRenderer.setSize(bayW, bayH, false);
       this.clawCamera.aspect = bayW / bayH;
-      // Widen FOV slightly on portrait mobile screens so the entire 3D tank fits comfortably
       this.clawCamera.fov = bayW < 640 ? 48 : 37;
       this.clawCamera.updateProjectionMatrix();
+    }
+
+    if (this.councilRenderer && this.councilCamera && this.councilGlassBay) {
+      const cRect = this.councilGlassBay.getBoundingClientRect();
+      const cW = Math.max(320, Math.floor(cRect.width || 980));
+      const cH = Math.max(260, Math.floor(cRect.height || 520));
+
+      this.councilRenderer.setSize(cW, cH, false);
+      this.councilCamera.aspect = cW / cH;
+      this.councilCamera.fov = cW < 640 ? 48 : 38;
+      this.councilCamera.updateProjectionMatrix();
     }
   }
 
@@ -4100,31 +4044,9 @@ class PlanetMaxiController {
       if (btn) btn.addEventListener('click', () => this.spawnClawPile(true));
     });
 
-    // 3D Stage Mode Switcher (The Council Table vs 3D Claw Machine)
-    const modeCouncilBtn = document.getElementById('modeCouncilBtn');
-    const modeClawBtn = document.getElementById('modeClawBtn');
-    if (modeCouncilBtn) {
-      modeCouncilBtn.addEventListener('click', (e) => {
-        e.preventDefault();
-        this.setStage3DMode('COUNCIL', true);
-      });
-    }
-    if (modeClawBtn) {
-      modeClawBtn.addEventListener('click', (e) => {
-        e.preventDefault();
-        this.setStage3DMode('CLAW', true);
-      });
-    }
-
-    const councilHudSummonBtn = document.getElementById('councilHudSummonBtn');
-    if (councilHudSummonBtn) {
-      councilHudSummonBtn.addEventListener('click', (e) => {
-        e.preventDefault();
-        this.summonActiveCouncilSeat();
-      });
-    }
-
-    // 3D Control Deck Buttons (Adapts to Council Table or 3D Claw Machine)
+    // =========================================================================
+    // SECTION 01: 3D CLAW MACHINE DEDICATED CONTROLS
+    // =========================================================================
     const leftBtn = document.getElementById('clawMoveLeftBtn');
     const rightBtn = document.getElementById('clawMoveRightBtn');
     const backBtn = document.getElementById('clawMoveBackBtn');
@@ -4138,21 +4060,6 @@ class PlanetMaxiController {
       if (!btn) return;
       const startMove = (e) => {
         e.preventDefault();
-        if (this.stage3DMode === 'COUNCIL') {
-          if (axis === 'x') {
-            this.stepCouncilSeat(dir);
-          } else if (axis === 'z') {
-            if (dir < 0) {
-              this.targetCouncilZoomDist = 166;
-              this.targetCouncilCamHeight = 22;
-            } else {
-              this.targetCouncilZoomDist = 225;
-              this.targetCouncilCamHeight = 82;
-            }
-            sfx.playBeep(dir < 0 ? 740 : 520, 0.05, 'triangle');
-          }
-          return;
-        }
         if (this.claw.state === 'IDLE') {
           if (axis === 'x') this.claw.moveDirX = dir;
           else this.claw.moveDirZ = dir;
@@ -4184,7 +4091,7 @@ class PlanetMaxiController {
       if (btn) {
         btn.addEventListener('click', (e) => {
           e.preventDefault();
-          this.selectCitizen(0, this.stage3DMode === 'CLAW');
+          this.selectCitizen(0, true);
         });
       }
     });
@@ -4192,19 +4099,13 @@ class PlanetMaxiController {
     if (shuffleBtn) {
       shuffleBtn.addEventListener('click', (e) => {
         e.preventDefault();
-        if (this.stage3DMode === 'COUNCIL') {
-          this.setStage3DMode('CLAW', true);
-        } else {
-          this.spawnClawPile(true);
-        }
+        this.spawnClawPile(true);
       });
     }
 
-    // Direct 3D Orbiting (Council Mode) & Gantry Aiming (Claw Mode) on the Glass Bay
+    // Direct 3D Gantry Aiming on the Claw Glass Bay
     if (this.clawGlassBay) {
       let isAimingGlass = false;
-      let dragStartX = 0;
-      let dragStartOrbit = 0;
       const b = this.tankBounds;
 
       const update3DAimFromPointer = (clientX, clientY) => {
@@ -4213,7 +4114,6 @@ class PlanetMaxiController {
         const relX = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
         const relY = Math.max(0, Math.min(1, (clientY - rect.top) / rect.height));
 
-        // Subtle 3D camera parallax tilt as you move across the glass
         this.targetCamYaw = (relX - 0.5) * 0.28;
         this.targetCamPitch = 0.12 + (0.5 - relY) * 0.16;
 
@@ -4230,64 +4130,25 @@ class PlanetMaxiController {
       };
 
       this.clawGlassBay.addEventListener('pointerdown', (e) => {
-        if (e.target.closest('.pull-reveal-overlay') || e.target.closest('.council-seat-hud')) return;
         isAimingGlass = true;
-        dragStartX = e.clientX;
-        dragStartOrbit = this.targetCouncilOrbitAngle;
-        if (this.stage3DMode === 'CLAW') {
-          update3DAimFromPointer(e.clientX, e.clientY);
-        }
+        update3DAimFromPointer(e.clientX, e.clientY);
       });
 
       window.addEventListener('pointermove', (e) => {
         if (!isAimingGlass) return;
-        if (this.stage3DMode === 'COUNCIL') {
-          const dx = e.clientX - dragStartX;
-          this.targetCouncilOrbitAngle = dragStartOrbit - dx * 0.0065;
-          // Snap active seat readout to whichever of the 12 Council Seats is closest to current orbit angle
-          const twoPi = Math.PI * 2;
-          const normAng = ((this.targetCouncilOrbitAngle % twoPi) + twoPi) % twoPi;
-          const nearestSlot = Math.round((normAng / twoPi) * 12) % 12;
-          if (nearestSlot !== this.activeSeatSlot && this.councilSeats[nearestSlot]) {
-            this.activeSeatSlot = nearestSlot;
-            const seat = this.councilSeats[nearestSlot];
-            this.activeCitizenIndex = seat.citizenIndex;
-            this.councilSeats.forEach((s, idx) => {
-              if (s.ringMat) s.ringMat.opacity = idx === nearestSlot ? 0.9 : 0.14;
-              if (s.throneEdgeMat) s.throneEdgeMat.opacity = idx === nearestSlot ? 1.0 : 0.4;
-            });
-            const seatNumEl = document.getElementById('councilHudSeatNum');
-            const rankEl = document.getElementById('councilHudRank');
-            const nameEl = document.getElementById('councilHudName');
-            const roleEl = document.getElementById('councilHudRole');
-            const laserEl = document.getElementById('clawLaserReadout');
-            if (seatNumEl) seatNumEl.textContent = `SEAT ${seat.roman} OF XII`;
-            if (rankEl) rankEl.textContent = `${seat.cit.rank} / 100`;
-            if (nameEl) nameEl.textContent = seat.cit.name;
-            if (roleEl) roleEl.textContent = seat.cit.title.replace(/^[👑★]\s*/, '');
-            if (laserEl) laserEl.textContent = `SEAT ${seat.roman} // ${seat.cit.rank} ${seat.cit.name}`;
-            this.updateSideHudReadouts(seat.cit);
-          }
-        } else {
-          update3DAimFromPointer(e.clientX, e.clientY);
-        }
+        update3DAimFromPointer(e.clientX, e.clientY);
       });
 
       window.addEventListener('pointerup', () => {
-        if (isAimingGlass && this.stage3DMode === 'COUNCIL') {
-          // Gently lock onto the nearest seat angle on release
-          this.focusCouncilSeatSlot(this.activeSeatSlot, false);
-        }
         isAimingGlass = false;
       });
     }
 
-    // Jolt Tank / Next 12 Council Seats & 3D Camera View Switcher Buttons
-    const joltBtns = [
+    // Claw Jolt Tank & 3D Camera View Switcher Buttons
+    [
       document.getElementById('clawJoltBtn'),
       document.getElementById('clawDeckJoltBtn')
-    ];
-    joltBtns.forEach((btn) => {
+    ].forEach((btn) => {
       if (btn) {
         btn.addEventListener('click', (e) => {
           e.preventDefault();
@@ -4296,11 +4157,10 @@ class PlanetMaxiController {
       }
     });
 
-    const camBtns = [
+    [
       document.getElementById('clawCamBtn'),
       document.getElementById('clawDeckCamBtn')
-    ];
-    camBtns.forEach((btn) => {
+    ].forEach((btn) => {
       if (btn) {
         btn.addEventListener('click', (e) => {
           e.preventDefault();
@@ -4309,18 +4169,127 @@ class PlanetMaxiController {
       }
     });
 
-    const quickCatchBtn = document.getElementById('unlockStarterPackBtn');
-    if (quickCatchBtn) {
-      quickCatchBtn.addEventListener('click', (e) => {
+    // =========================================================================
+    // SECTION 02: 3D COUNCIL TABLE WAR ROOM DEDICATED CONTROLS
+    // =========================================================================
+    const councilPrevBtn = document.getElementById('councilPrevSeatBtn');
+    const councilNextBtn = document.getElementById('councilNextSeatBtn');
+    const councilZoomInBtn = document.getElementById('councilZoomInBtn');
+    const councilZoomOutBtn = document.getElementById('councilZoomOutBtn');
+    const councilSummonBtn = document.getElementById('councilSummonBtn');
+    const councilHudSummonBtn = document.getElementById('councilHudSummonBtn');
+    const councilSeatOgBtn = document.getElementById('councilSeatOgBtn');
+
+    if (councilPrevBtn) {
+      councilPrevBtn.addEventListener('click', (e) => {
         e.preventDefault();
-        const randIdx = Math.floor(Math.random() * MAXI_CITIZENS.length);
-        const stage = document.getElementById('topStage');
-        if (stage) stage.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        this.selectCitizen(randIdx, true);
+        this.stepCouncilSeat(-1);
+      });
+    }
+    if (councilNextBtn) {
+      councilNextBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        this.stepCouncilSeat(1);
+      });
+    }
+    if (councilZoomInBtn) {
+      councilZoomInBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        this.targetCouncilZoomDist = 175;
+        this.targetCouncilCamHeight = 32;
+        sfx.playBeep(740, 0.05, 'triangle');
+      });
+    }
+    if (councilZoomOutBtn) {
+      councilZoomOutBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        this.targetCouncilZoomDist = 248;
+        this.targetCouncilCamHeight = 96;
+        sfx.playBeep(520, 0.05, 'triangle');
+      });
+    }
+    [councilSummonBtn, councilHudSummonBtn].forEach((btn) => {
+      if (btn) {
+        btn.addEventListener('click', (e) => {
+          e.preventDefault();
+          this.summonActiveCouncilSeat();
+        });
+      }
+    });
+    if (councilSeatOgBtn) {
+      councilSeatOgBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        if (this.councilBatchIndex !== 0) {
+          this.populateCouncilSeats(0, false);
+        }
+        this.focusCouncilSeatSlot(0, true);
+      });
+    }
+    [
+      document.getElementById('councilNextBatchBtn'),
+      document.getElementById('councilDeckBatchBtn')
+    ].forEach((btn) => {
+      if (btn) {
+        btn.addEventListener('click', (e) => {
+          e.preventDefault();
+          this.cycleCouncilDelegation();
+        });
+      }
+    });
+    [
+      document.getElementById('councilCamBtn'),
+      document.getElementById('councilDeckCamBtn')
+    ].forEach((btn) => {
+      if (btn) {
+        btn.addEventListener('click', (e) => {
+          e.preventDefault();
+          this.cycleCouncilCameraView();
+        });
+      }
+    });
+
+    // Dedicated Pointer Drag Orbit on the 3D Council Table Viewport
+    if (this.councilGlassBay) {
+      let isOrbitingCouncil = false;
+      let dragStartX = 0;
+      let dragStartOrbit = 0;
+
+      this.councilGlassBay.addEventListener('pointerdown', (e) => {
+        if (e.target.closest('.council-seat-hud')) return;
+        isOrbitingCouncil = true;
+        dragStartX = e.clientX;
+        dragStartOrbit = this.targetCouncilOrbitAngle;
+      });
+
+      window.addEventListener('pointermove', (e) => {
+        if (!isOrbitingCouncil) return;
+        const dx = e.clientX - dragStartX;
+        this.targetCouncilOrbitAngle = dragStartOrbit - dx * 0.0065;
+        const twoPi = Math.PI * 2;
+        const normAng = (((this.targetCouncilOrbitAngle - Math.PI) % twoPi) + twoPi) % twoPi;
+        const nearestSlot = Math.round((normAng / twoPi) * 12) % 12;
+        if (nearestSlot !== this.activeSeatSlot && this.councilSeats[nearestSlot]) {
+          this.activeSeatSlot = nearestSlot;
+          const seat = this.councilSeats[nearestSlot];
+          this.councilSeats.forEach((s, idx) => {
+            if (s.ringMat) s.ringMat.opacity = idx === nearestSlot ? 0.95 : 0.24;
+            if (s.throneEdgeMat) s.throneEdgeMat.opacity = idx === nearestSlot ? 1.0 : 0.55;
+          });
+          this.updateCouncilSeatHud(seat);
+        }
+      });
+
+      window.addEventListener('pointerup', () => {
+        if (isOrbitingCouncil) {
+          this.focusCouncilSeatSlot(this.activeSeatSlot, false);
+        }
+        isOrbitingCouncil = false;
       });
     }
 
-    // Collector Card vs 1:1 PFP Toggle inside Caught Modal
+    // =========================================================================
+    // GLOBAL CAUGHT COLLECTOR CARD & 1:1 PFP SAVE MODAL CONTROLS
+    // =========================================================================
     const previewModeGroup = document.getElementById('caughtPreviewModeGroup');
     if (previewModeGroup) {
       previewModeGroup.querySelectorAll('.caught-tab').forEach((tab) => {
@@ -4339,7 +4308,6 @@ class PlanetMaxiController {
       });
     }
 
-    // Interactive 3D Holographic Tilt on the Caught Collector Card
     const tiltStage = document.getElementById('caughtTiltStage');
     const holoGlare = document.getElementById('caughtHoloGlare');
     if (tiltStage) {
@@ -4360,7 +4328,6 @@ class PlanetMaxiController {
       });
     }
 
-    // Live Collector Card & 1000x1000 PFP Forger Controls inside the Pull Reveal Card
     const themeStrip = document.getElementById('pullPfpThemeStrip');
     if (themeStrip) {
       themeStrip.querySelectorAll('.pull-theme-chip').forEach((chip) => {
@@ -4414,12 +4381,10 @@ class PlanetMaxiController {
       }
     });
 
-    // Keyboard 3D Controls (WASD / Arrow Keys + Spacebar — works for both Council Table & Claw Machine)
+    // Keyboard Controls: WASD / Arrows + Space for Claw Machine (and Escape closes modal)
     window.addEventListener('keydown', (e) => {
       if (this.state !== 'LOCKED') return;
       if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA')) return;
-      const anyModalOpen = document.querySelector('.suite-modal:not(.hidden)');
-      if (anyModalOpen) return;
 
       if (e.key === 'Escape') {
         const overlay = document.getElementById('pullRevealOverlay');
@@ -4429,39 +4394,25 @@ class PlanetMaxiController {
         return;
       }
 
-      if (this.stage3DMode === 'COUNCIL') {
-        if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') {
-          this.stepCouncilSeat(-1);
-        } else if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') {
-          this.stepCouncilSeat(1);
-        } else if (e.key === 'ArrowUp' || e.key === 'w' || e.key === 'W') {
-          e.preventDefault();
-          this.targetCouncilZoomDist = 166;
-          this.targetCouncilCamHeight = 22;
-        } else if (e.key === 'ArrowDown' || e.key === 's' || e.key === 'S') {
-          e.preventDefault();
-          this.targetCouncilZoomDist = 225;
-          this.targetCouncilCamHeight = 82;
-        } else if (e.key === ' ') {
-          e.preventDefault();
-          this.summonActiveCouncilSeat();
-        }
-        return;
-      }
-
       if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') {
         this.claw.moveDirX = -1;
       } else if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') {
         this.claw.moveDirX = 1;
       } else if (e.key === 'ArrowUp' || e.key === 'w' || e.key === 'W') {
-        e.preventDefault();
-        this.claw.moveDirZ = -1;
+        if (window.scrollY < 450) {
+          e.preventDefault();
+          this.claw.moveDirZ = -1;
+        }
       } else if (e.key === 'ArrowDown' || e.key === 's' || e.key === 'S') {
-        e.preventDefault();
-        this.claw.moveDirZ = 1;
+        if (window.scrollY < 450) {
+          e.preventDefault();
+          this.claw.moveDirZ = 1;
+        }
       } else if (e.key === ' ') {
-        e.preventDefault();
-        this.triggerClawDrop();
+        if (window.scrollY < 450) {
+          e.preventDefault();
+          this.triggerClawDrop();
+        }
       }
     });
 
@@ -4522,7 +4473,7 @@ class PlanetMaxiController {
     this.lastFrameTime = now;
     const timeSec = now / 1000;
 
-    // 1. Render Background 3D Planet Maxi
+    // 1. Render Background 3D Planet Maxi (if container exists)
     if (this.planetGroup && this.renderer && this.scene && this.camera) {
       if (this.cloudMesh) this.cloudMesh.rotation.y = timeSec * 0.015;
       if (this.orbitSpinMode === 'gyro') {
@@ -4536,15 +4487,15 @@ class PlanetMaxiController {
       this.renderer.render(this.scene, this.camera);
     }
 
-    // 2. Update & Render True 3D WebGL Scene (Council Table War Room OR 3D Claw Machine)
+    // 2. Update & Render BOTH Independent 3D WebGL Engines Every Frame:
+    //    - Section 01: 3D Claw Machine (#clawMachineCanvas)
+    //    - Section 02: 3D Council Table War Room (#councilTableCanvas)
     if (this.state === 'LOCKED') {
-      if (this.stage3DMode === 'COUNCIL') {
-        this.update3DCouncilScene(dt, timeSec);
-        this.render3DCouncilScene();
-      } else {
-        this.update3DClawAndPilePhysics(dt, timeSec);
-        this.render3DClawScene();
-      }
+      this.update3DClawAndPilePhysics(dt, timeSec);
+      this.render3DClawScene();
+
+      this.update3DCouncilScene(dt, timeSec);
+      this.render3DCouncilScene();
     }
 
     this.drawSpaceBackdrop();

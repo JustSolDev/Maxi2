@@ -14,7 +14,7 @@
   <!-- Three.js r128 (3D WebGL Claw Machine Engine) -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" crossorigin="anonymous"></script>
 
-  <link rel="stylesheet" href="style.css?v=20261123b" />
+  <link rel="stylesheet" href="style.css?v=20261124a" />
 </head>
 <body>
 
@@ -30,10 +30,11 @@
       </a>
 
       <nav class="nav-links">
-        <a href="#topStage" class="nav-link" id="focusOgBtn">01 / COUNCIL &amp; CLAW</a>
-        <a href="#pfpSection" class="nav-link" id="openPfpModalBtn">02 / PFP STUDIO</a>
-        <a href="#lookbookSection" class="nav-link" id="openVaultModalBtn">03 / INDEX (100)</a>
-        <a href="#rankSection" class="nav-link" id="openRankModalBtn">04 / DOSSIER &amp; CHART</a>
+        <a href="#topStage" class="nav-link" id="focusOgBtn">01 / CLAW MACHINE</a>
+        <a href="#councilSection" class="nav-link">02 / COUNCIL TABLE</a>
+        <a href="#pfpSection" class="nav-link" id="openPfpModalBtn">03 / PFP STUDIO</a>
+        <a href="#lookbookSection" class="nav-link" id="openVaultModalBtn">04 / INDEX (100)</a>
+        <a href="#rankSection" class="nav-link" id="openRankModalBtn">05 / DOSSIER &amp; CHART</a>
       </nav>
 
       <div class="nav-actions">
@@ -56,33 +57,22 @@
   <main class="editorial-main">
 
     <!-- =====================================================================
-         01. HERO: 3D MAXI WORLD ORDER COUNCIL TABLE + 3D CLAW EXTRACTION UNIT
+         01. 3D CLAW MACHINE EXTRACTION UNIT (DEDICATED STANDALONE 3D ENGINE)
          ===================================================================== -->
     <section class="stage-section" id="topStage">
       <div class="editorial-wrap">
 
-        <!-- Compact Editorial Title Bar & 3D Engine Mode Switcher -->
+        <!-- Compact Editorial Title Bar above the 3D Claw Machine -->
         <div class="stage-top-bar">
           <div class="stage-headline-col">
-            <span class="index-num" id="stageKickerLabel">01 / HIGH TABLE WAR ROOM · 3D WEBGL</span>
+            <span class="index-num">01 / 3D EXTRACTION UNIT</span>
             <h1 class="stage-title">MAXI WORLD ORDER</h1>
-          </div>
-
-          <!-- Primary 3D Experience Switcher: 3D Claw Machine vs The Council Table -->
-          <div class="stage-mode-switcher" id="stage3DModeGroup">
-            <button type="button" class="stage-mode-btn active" id="modeClawBtn" data-stage-mode="CLAW">
-              <span class="mode-dot"></span>
-              <span>3D CLAW MACHINE</span>
-            </button>
-            <button type="button" class="stage-mode-btn" id="modeCouncilBtn" data-stage-mode="COUNCIL">
-              <span>THE COUNCIL TABLE (3D)</span>
-            </button>
           </div>
 
           <div class="stage-meta-col">
             <div class="meta-cell">
-              <span class="meta-k" id="metaPrimaryKey">COUNCIL DELEGATION</span>
-              <span class="meta-v" id="metaPrimaryVal">TABLE I (SEATS 001–012)</span>
+              <span class="meta-k">EDITION</span>
+              <span class="meta-v">100 1-OF-1 CUTOUTS</span>
             </div>
             <div class="meta-cell">
               <span class="meta-k">ACTIVE SPECIMEN</span>
@@ -93,10 +83,10 @@
               <span class="meta-v" id="clawExtractedCount">0 / 100</span>
             </div>
             <div class="meta-actions">
-              <button type="button" class="line-btn" id="clawCamBtn" title="Cycle 3D Camera Angle">CAM: TABLE</button>
-              <button type="button" class="line-btn" id="clawJoltBtn" title="Rotate to Next 12 Council Members / Jolt Tank">NEXT 12 SEATS ↻</button>
-              <button type="button" class="line-btn" id="snapOgBtn">SEAT I (#001)</button>
-              <button type="button" class="line-btn hidden" id="triggerZoomBtn">RESTOCK</button>
+              <button type="button" class="line-btn" id="clawCamBtn" title="Cycle 3D Camera Angle (Front / Top-Down Sniper / Isometric)">CAM: FRONT</button>
+              <button type="button" class="line-btn" id="clawJoltBtn" title="Physically jolt the 3D tank to shake buried Maxis loose">JOLT TANK</button>
+              <button type="button" class="line-btn" id="snapOgBtn">LOCK #001</button>
+              <button type="button" class="line-btn" id="triggerZoomBtn">RESTOCK</button>
             </div>
           </div>
         </div>
@@ -105,190 +95,60 @@
         <canvas id="intro-canvas" class="hidden-util-canvas" width="200" height="200"></canvas>
         <canvas id="diveFxCanvas" class="hidden-util-canvas" width="200" height="200"></canvas>
 
-        <!-- 3D WebGL Main Stage Cabinet (Renders Council Table or 3D Claw Machine) -->
+        <!-- 3D WebGL Claw Machine Cabinet -->
         <div id="clawCabinetStage" class="claw-cabinet-stage">
           <div class="claw-machine-cabinet" id="clawMachineCabinet">
             <!-- Thin Technical Status Strip -->
             <div class="claw-marquee-bar">
-              <span class="marquee-tag" id="clawModeTag">CHAMBER // 12 SOVEREIGN SEATS · OBSIDIAN MONOLITH CORE</span>
-              <span class="marquee-title" id="clawStatusReadout">DRAG OR A/D TO ORBIT COUNCIL TABLE · SPACE TO SUMMON SEAT</span>
-              <span class="marquee-laser" id="clawLaserReadout">SEAT I // #001 OG MAXI</span>
+              <span class="marquee-tag">GANTRY // X-Y-Z 3D PHYSICS</span>
+              <span class="marquee-title" id="clawStatusReadout">DRAG OR WASD TO AIM · SPACE TO DROP CLAW</span>
+              <span class="marquee-laser" id="clawLaserReadout">READY</span>
             </div>
 
-            <!-- 3D WebGL Viewport -->
+            <!-- Dedicated 3D Claw WebGL Viewport -->
             <div class="claw-glass-bay" id="clawGlassBay">
               <canvas id="clawMachineCanvas"></canvas>
-
-              <!-- Floating Council Seat Telemetry Badge inside 3D Chamber -->
-              <div class="council-seat-hud" id="councilSeatHud">
-                <div class="c-hud-top">
-                  <span class="c-hud-seat" id="councilHudSeatNum">SEAT I OF XII</span>
-                  <span class="c-hud-rank" id="councilHudRank">#001 / 100</span>
-                </div>
-                <div class="c-hud-name" id="councilHudName">OG MAXI</div>
-                <div class="c-hud-role" id="councilHudRole">SUPREME SOVEREIGN · GENESIS THRONE</div>
-                <div class="c-hud-actions">
-                  <button type="button" class="c-hud-summon-btn" id="councilHudSummonBtn">SUMMON DOSSIER &amp; PFP [SPACE]</button>
-                </div>
-              </div>
-
-              <!-- ===========================================================
-                   "YOU CAUGHT A MAXI" — 3D COLLECTOR CARD POP-UP & SAVE MODAL
-                   =========================================================== -->
-              <div class="pull-reveal-overlay hidden" id="pullRevealOverlay">
-                <div class="caught-modal-shell">
-                  <div class="caught-top-banner">
-                    <div class="caught-banner-left">
-                      <span class="caught-flash-dot"></span>
-                      <span class="caught-headline-tag" id="caughtHeadlineBanner">SPECIMEN CAUGHT // VERIFIED EXTRACTION</span>
-                    </div>
-                    <button type="button" class="pull-close-btn" id="closePullRevealBtn">CLOSE [ESC]</button>
-                  </div>
-
-                  <div class="caught-modal-grid">
-                    <!-- Left: Interactive 3D-Tilt Collector Card Canvas (800x1040) & 1:1 PFP Toggle -->
-                    <div class="caught-card-showcase">
-                      <div class="caught-view-tabs" id="caughtPreviewModeGroup">
-                        <button type="button" class="caught-tab active" data-caught-mode="card">COLLECTOR CARD</button>
-                        <button type="button" class="caught-tab" data-caught-mode="pfp">1:1 PFP (1000×1000)</button>
-                      </div>
-
-                      <div class="caught-3d-tilt-wrap" id="caughtTiltStage">
-                        <!-- High-Res Collector Card Canvas (800x1040) -->
-                        <canvas id="caughtCollectorCardCanvas" width="800" height="1040"></canvas>
-                        <!-- High-Res 1:1 Square PFP Canvas (1000x1000) -->
-                        <canvas id="pullPfpCanvas" width="1000" height="1000" class="hidden"></canvas>
-                        <div class="caught-holo-glare" id="caughtHoloGlare"></div>
-                      </div>
-
-                      <div class="pull-pfp-theme-strip" id="pullPfpThemeStrip">
-                        <button type="button" class="pull-theme-chip active" data-pull-bg="OBSIDIAN">OBSIDIAN</button>
-                        <button type="button" class="pull-theme-chip" data-pull-bg="CANDLE">EMERALD</button>
-                        <button type="button" class="pull-theme-chip" data-pull-bg="SOLANA">COBALT</button>
-                        <button type="button" class="pull-theme-chip" data-pull-bg="ROYAL">CRIMSON</button>
-                      </div>
-                    </div>
-
-                    <!-- Right: Specimen Dossier, Stats, & 1-Click Save Card / Save PFP Actions -->
-                    <div class="caught-details-col">
-                      <div class="caught-meta-head">
-                        <div class="caught-meta-badges">
-                          <span class="pull-tier-badge" id="pullRevealTier">PRIME #001</span>
-                          <span class="pull-kicker-inline" id="pullRevealRank">SPECIMEN 001 / 100</span>
-                        </div>
-                        <h3 class="pull-title" id="pullRevealName">OG MAXI</h3>
-                        <div class="pull-subtitle" id="pullRevealTitle">SUPREME SOVEREIGN</div>
-                        <p class="pull-lore" id="pullRevealLore">
-                          Supreme Sovereign of the Maxi World Order. 240 lbs lean extracted from the Genesis Vault.
-                        </p>
-                      </div>
-
-                      <!-- Specimen Technical Stats Matrix -->
-                      <div class="caught-stats-matrix">
-                        <div class="c-stat-cell">
-                          <span class="c-stat-k">CLASS</span>
-                          <span class="c-stat-v" id="caughtStatClass">SOVEREIGN</span>
-                        </div>
-                        <div class="c-stat-cell">
-                          <span class="c-stat-k">EDITION</span>
-                          <span class="c-stat-v" id="caughtStatEdition">1 OF 1</span>
-                        </div>
-                        <div class="c-stat-cell">
-                          <span class="c-stat-k">CONVICTION</span>
-                          <span class="c-stat-v" id="caughtStatConviction">100%</span>
-                        </div>
-                      </div>
-
-                      <!-- Custom Card / PFP Stamp Input -->
-                      <div class="pull-custom-tag-row">
-                        <label for="pullCustomBadgeInput" class="pull-tag-lbl">CUSTOM STAMP</label>
-                        <input
-                          type="text"
-                          id="pullCustomBadgeInput"
-                          class="pull-tag-input"
-                          value="MAXI WORLD ORDER"
-                          maxlength="24"
-                          placeholder="MAXI WORLD ORDER"
-                        />
-                      </div>
-
-                      <!-- Primary 1-Click Save Collector Card & Save 1:1 PFP -->
-                      <div class="caught-save-actions">
-                        <button type="button" class="pull-save-card-btn" id="pullSaveCardBtn">
-                          SAVE COLLECTOR CARD (PNG)
-                        </button>
-                        <button type="button" class="pull-save-pfp-btn" id="pullSavePfpBtn">
-                          SAVE 1:1 PFP (1000×1000 PNG)
-                        </button>
-                      </div>
-
-                      <div class="pull-primary-save-grid">
-                        <button type="button" class="pull-copy-pfp-btn" id="pullCopyCardBtn">
-                          <span id="pullCopyCardLabel">COPY COLLECTOR CARD</span>
-                        </button>
-                        <button type="button" class="pull-copy-pfp-btn" id="pullCopyPfpBtn">
-                          <span id="pullCopyPfpLabel">COPY 1:1 PFP</span>
-                        </button>
-                      </div>
-
-                      <!-- Secondary Actions -->
-                      <div class="pull-reveal-actions">
-                        <button type="button" class="line-btn" id="pullToStudioBtn">CUSTOMIZE IN PFP STUDIO</button>
-                        <a href="maxi Background Removed.png" download="maxi-cutout.png" class="line-btn" id="pullDownloadLink">RAW CUTOUT</a>
-                        <a
-                          href="https://x.com/intent/tweet?text=Caught%20from%20MAXI%20WORLD%20ORDER%20%24MAXI%20%40maxiworldorder"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          class="line-btn"
-                          id="pullShareXLink"
-                        >SHARE ON 𝕏 ↗</a>
-                        <button type="button" class="line-btn solid-white" id="pullAgainBtn">RETURN TO CHAMBER</button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
             </div>
 
-            <!-- Hardware Control Bar (Adapts dynamically to Council Table or 3D Claw Machine) -->
+            <!-- Hardware Control Bar for 3D Claw Machine -->
             <div class="claw-control-deck">
               <div class="deck-group deck-dpad">
                 <button type="button" class="claw-deck-btn" id="clawMoveLeftBtn">
                   <span class="key-cap">A</span>
-                  <span id="deckLeftLabel">PREV SEAT</span>
+                  <span>LEFT</span>
                 </button>
                 <button type="button" class="claw-deck-btn" id="clawMoveRightBtn">
                   <span class="key-cap">D</span>
-                  <span id="deckRightLabel">NEXT SEAT</span>
+                  <span>RIGHT</span>
                 </button>
                 <button type="button" class="claw-deck-btn" id="clawMoveBackBtn">
                   <span class="key-cap">W</span>
-                  <span id="deckUpLabel">ZOOM IN</span>
+                  <span>BACK</span>
                 </button>
                 <button type="button" class="claw-deck-btn" id="clawMoveFwdBtn">
                   <span class="key-cap">S</span>
-                  <span id="deckDownLabel">WIDE VIEW</span>
+                  <span>FRONT</span>
                 </button>
               </div>
 
               <button type="button" class="claw-drop-trigger" id="clawDropBtn">
-                <span id="clawDropBtnLabel">SUMMON COUNCIL SEAT &amp; CLAIM PFP</span>
+                <span id="clawDropBtnLabel">DROP CLAW &amp; CATCH MAXI</span>
                 <span class="drop-hotkey">SPACE</span>
               </button>
 
               <div class="deck-group deck-utils">
-                <button type="button" class="claw-deck-btn" id="clawDeckJoltBtn" title="Rotate Next 12 Council Members / Jolt Tank">NEXT 12 ↻</button>
+                <button type="button" class="claw-deck-btn" id="clawDeckJoltBtn" title="Shake 3D Pile">JOLT</button>
                 <button type="button" class="claw-deck-btn" id="clawDeckCamBtn" title="Switch 3D Camera Angle">CAM</button>
-                <button type="button" class="claw-deck-btn" id="clawAimOgBtn">SEAT I (#001)</button>
-                <button type="button" class="claw-deck-btn" id="clawShuffleBtn">SWITCH TO CLAW</button>
+                <button type="button" class="claw-deck-btn" id="clawAimOgBtn">TARGET #001</button>
+                <button type="button" class="claw-deck-btn" id="clawShuffleBtn">RESTOCK</button>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- Horizontal Index Strip under the machine -->
+        <!-- Horizontal Index Strip under the Claw Machine -->
         <div class="claw-roster-bar">
-          <span class="roster-bar-label">100 COUNCIL ROSTER</span>
+          <span class="roster-bar-label">LOAD SPECIMEN</span>
           <div class="citizen-roster-strip" id="citizenRosterStrip"></div>
         </div>
 
@@ -296,13 +156,101 @@
     </section>
 
     <!-- =====================================================================
-         02. PFP & BANNER STUDIO (CLEAN EDITORIAL WORKBENCH)
+         02. THE 3D COUNCIL TABLE WAR ROOM (DEDICATED STANDALONE 3D ENGINE)
+         ===================================================================== -->
+    <section class="council-section" id="councilSection">
+      <div class="editorial-wrap">
+
+        <div class="stage-top-bar">
+          <div class="stage-headline-col">
+            <span class="index-num">02 / HIGH TABLE WAR ROOM · 3D WEBGL</span>
+            <h2 class="section-heading">THE 3D COUNCIL TABLE</h2>
+          </div>
+
+          <div class="stage-meta-col">
+            <div class="meta-cell">
+              <span class="meta-k">COUNCIL DELEGATION</span>
+              <span class="meta-v" id="councilDelegationReadout">TABLE I (#001–#012)</span>
+            </div>
+            <div class="meta-cell">
+              <span class="meta-k">ACTIVE SEAT</span>
+              <span class="meta-v" id="councilActiveSeatReadout">SEAT I // OG MAXI</span>
+            </div>
+            <div class="meta-actions">
+              <button type="button" class="line-btn" id="councilCamBtn">CAM: TABLE</button>
+              <button type="button" class="line-btn" id="councilNextBatchBtn">NEXT 12 SEATS ↻</button>
+              <button type="button" class="line-btn" id="councilSeatOgBtn">SEAT I (#001)</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Dedicated 3D Council Table Cabinet -->
+        <div class="claw-machine-cabinet" id="councilCabinet">
+          <div class="claw-marquee-bar">
+            <span class="marquee-tag">CHAMBER // 12 SOVEREIGN THRONES · OBSIDIAN MONOLITH CORE</span>
+            <span class="marquee-title" id="councilStatusReadout">DRAG LEFT / RIGHT TO ORBIT TABLE · CLICK SUMMON TO CLAIM PFP</span>
+            <span class="marquee-laser" id="councilLaserReadout">SEAT I // #001 OG MAXI</span>
+          </div>
+
+          <!-- Dedicated 3D Council WebGL Viewport -->
+          <div class="claw-glass-bay council-glass-bay" id="councilGlassBay">
+            <canvas id="councilTableCanvas"></canvas>
+
+            <!-- Floating Council Seat Telemetry Plaque -->
+            <div class="council-seat-hud" id="councilSeatHud">
+              <div class="c-hud-top">
+                <span class="c-hud-seat" id="councilHudSeatNum">SEAT I OF XII</span>
+                <span class="c-hud-rank" id="councilHudRank">#001 / 100</span>
+              </div>
+              <div class="c-hud-name" id="councilHudName">OG MAXI</div>
+              <div class="c-hud-role" id="councilHudRole">MWO SUPREME SOVEREIGN · GENESIS #001</div>
+              <div class="c-hud-actions">
+                <button type="button" class="c-hud-summon-btn" id="councilHudSummonBtn">SUMMON DOSSIER &amp; CLAIM PFP</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Dedicated Hardware Control Bar for 3D Council Table -->
+          <div class="claw-control-deck">
+            <div class="deck-group deck-dpad">
+              <button type="button" class="claw-deck-btn" id="councilPrevSeatBtn">
+                <span class="key-cap">←</span>
+                <span>PREV SEAT</span>
+              </button>
+              <button type="button" class="claw-deck-btn" id="councilNextSeatBtn">
+                <span class="key-cap">→</span>
+                <span>NEXT SEAT</span>
+              </button>
+              <button type="button" class="claw-deck-btn" id="councilZoomInBtn">
+                <span>ZOOM IN</span>
+              </button>
+              <button type="button" class="claw-deck-btn" id="councilZoomOutBtn">
+                <span>WIDE VIEW</span>
+              </button>
+            </div>
+
+            <button type="button" class="claw-drop-trigger" id="councilSummonBtn">
+              <span>SUMMON COUNCIL SEAT &amp; CLAIM PFP</span>
+            </button>
+
+            <div class="deck-group deck-utils">
+              <button type="button" class="claw-deck-btn" id="councilDeckBatchBtn">NEXT 12 SEATS ↻</button>
+              <button type="button" class="claw-deck-btn" id="councilDeckCamBtn">CAM: TABLE</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         03. PFP & BANNER STUDIO (CLEAN EDITORIAL WORKBENCH)
          ===================================================================== -->
     <section class="studio-section" id="pfpSection">
       <div class="editorial-wrap">
         <div class="section-header-bar">
           <div>
-            <span class="index-num">02 / IDENTITY GENERATOR</span>
+            <span class="index-num">03 / IDENTITY GENERATOR</span>
             <h2 class="section-heading">PFP &amp; X-BANNER STUDIO</h2>
           </div>
           <span class="section-note">1000×1000 PFP &amp; 1500×500 HEADER EXPORT</span>
@@ -381,13 +329,13 @@
     </section>
 
     <!-- =====================================================================
-         03. ARCHIVE INDEX (100 CUTOUTS IN A RAZOR-CLEAN 1PX CATALOG GRID)
+         04. ARCHIVE INDEX (100 CUTOUTS IN A RAZOR-CLEAN 1PX CATALOG GRID)
          ===================================================================== -->
     <section class="archive-section" id="lookbookSection">
       <div class="editorial-wrap">
         <div class="section-header-bar">
           <div>
-            <span class="index-num">03 / ARCHIVE</span>
+            <span class="index-num">04 / ARCHIVE</span>
             <h2 class="section-heading">100 SPECIMEN INDEX</h2>
           </div>
 
@@ -405,13 +353,13 @@
     </section>
 
     <!-- =====================================================================
-         04. CONVICTION DOSSIER & LIVE DEXSCREENER TERMINAL
+         05. CONVICTION DOSSIER & LIVE DEXSCREENER TERMINAL
          ===================================================================== -->
     <section class="terminal-section" id="rankSection">
       <div class="editorial-wrap">
         <div class="section-header-bar">
           <div>
-            <span class="index-num">04 / TELEMETRY &amp; DOSSIER</span>
+            <span class="index-num">05 / TELEMETRY &amp; DOSSIER</span>
             <h2 class="section-heading">MWO RANK &amp; LIVE MARKET</h2>
           </div>
         </div>
@@ -526,6 +474,118 @@
   </main>
 
   <!-- =======================================================================
+       GLOBAL FIXED "YOU CAUGHT A MAXI" 3D COLLECTOR CARD & 1:1 PFP SAVE MODAL
+       (Works seamlessly from BOTH the 3D Claw Machine and the 3D Council Table)
+       ======================================================================= -->
+  <div class="pull-reveal-overlay hidden" id="pullRevealOverlay">
+    <div class="caught-modal-shell">
+      <div class="caught-top-banner">
+        <div class="caught-banner-left">
+          <span class="caught-flash-dot"></span>
+          <span class="caught-headline-tag" id="caughtHeadlineBanner">SPECIMEN CAUGHT // VERIFIED EXTRACTION</span>
+        </div>
+        <button type="button" class="pull-close-btn" id="closePullRevealBtn">CLOSE [ESC]</button>
+      </div>
+
+      <div class="caught-modal-grid">
+        <!-- Left: Interactive 3D-Tilt Collector Card Canvas (800x1040) & 1:1 PFP Toggle -->
+        <div class="caught-card-showcase">
+          <div class="caught-view-tabs" id="caughtPreviewModeGroup">
+            <button type="button" class="caught-tab active" data-caught-mode="card">COLLECTOR CARD</button>
+            <button type="button" class="caught-tab" data-caught-mode="pfp">1:1 PFP (1000×1000)</button>
+          </div>
+
+          <div class="caught-3d-tilt-wrap" id="caughtTiltStage">
+            <canvas id="caughtCollectorCardCanvas" width="800" height="1040"></canvas>
+            <canvas id="pullPfpCanvas" width="1000" height="1000" class="hidden"></canvas>
+            <div class="caught-holo-glare" id="caughtHoloGlare"></div>
+          </div>
+
+          <div class="pull-pfp-theme-strip" id="pullPfpThemeStrip">
+            <button type="button" class="pull-theme-chip active" data-pull-bg="OBSIDIAN">OBSIDIAN</button>
+            <button type="button" class="pull-theme-chip" data-pull-bg="CANDLE">EMERALD</button>
+            <button type="button" class="pull-theme-chip" data-pull-bg="SOLANA">COBALT</button>
+            <button type="button" class="pull-theme-chip" data-pull-bg="ROYAL">CRIMSON</button>
+          </div>
+        </div>
+
+        <!-- Right: Specimen Dossier, Stats, & 1-Click Save Card / Save PFP Actions -->
+        <div class="caught-details-col">
+          <div class="caught-meta-head">
+            <div class="caught-meta-badges">
+              <span class="pull-tier-badge" id="pullRevealTier">PRIME #001</span>
+              <span class="pull-kicker-inline" id="pullRevealRank">SPECIMEN 001 / 100</span>
+            </div>
+            <h3 class="pull-title" id="pullRevealName">OG MAXI</h3>
+            <div class="pull-subtitle" id="pullRevealTitle">SUPREME SOVEREIGN</div>
+            <p class="pull-lore" id="pullRevealLore">
+              Supreme Sovereign of the Maxi World Order. 240 lbs lean extracted from the Genesis Vault.
+            </p>
+          </div>
+
+          <div class="caught-stats-matrix">
+            <div class="c-stat-cell">
+              <span class="c-stat-k">CLASS</span>
+              <span class="c-stat-v" id="caughtStatClass">SOVEREIGN</span>
+            </div>
+            <div class="c-stat-cell">
+              <span class="c-stat-k">EDITION</span>
+              <span class="c-stat-v" id="caughtStatEdition">1 OF 1</span>
+            </div>
+            <div class="c-stat-cell">
+              <span class="c-stat-k">CONVICTION</span>
+              <span class="c-stat-v" id="caughtStatConviction">100%</span>
+            </div>
+          </div>
+
+          <div class="pull-custom-tag-row">
+            <label for="pullCustomBadgeInput" class="pull-tag-lbl">CUSTOM STAMP</label>
+            <input
+              type="text"
+              id="pullCustomBadgeInput"
+              class="pull-tag-input"
+              value="MAXI WORLD ORDER"
+              maxlength="24"
+              placeholder="MAXI WORLD ORDER"
+            />
+          </div>
+
+          <div class="caught-save-actions">
+            <button type="button" class="pull-save-card-btn" id="pullSaveCardBtn">
+              SAVE COLLECTOR CARD (PNG)
+            </button>
+            <button type="button" class="pull-save-pfp-btn" id="pullSavePfpBtn">
+              SAVE 1:1 PFP (1000×1000 PNG)
+            </button>
+          </div>
+
+          <div class="pull-primary-save-grid">
+            <button type="button" class="pull-copy-pfp-btn" id="pullCopyCardBtn">
+              <span id="pullCopyCardLabel">COPY COLLECTOR CARD</span>
+            </button>
+            <button type="button" class="pull-copy-pfp-btn" id="pullCopyPfpBtn">
+              <span id="pullCopyPfpLabel">COPY 1:1 PFP</span>
+            </button>
+          </div>
+
+          <div class="pull-reveal-actions">
+            <button type="button" class="line-btn" id="pullToStudioBtn">CUSTOMIZE IN PFP STUDIO</button>
+            <a href="maxi Background Removed.png" download="maxi-cutout.png" class="line-btn" id="pullDownloadLink">RAW CUTOUT</a>
+            <a
+              href="https://x.com/intent/tweet?text=Caught%20from%20MAXI%20WORLD%20ORDER%20%24MAXI%20%40maxiworldorder"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="line-btn"
+              id="pullShareXLink"
+            >SHARE ON 𝕏 ↗</a>
+            <button type="button" class="line-btn solid-white" id="pullAgainBtn">CLOSE &amp; CONTINUE</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =======================================================================
        MINIMAL FOOTER
        ======================================================================= -->
   <footer class="editorial-footer" id="bottomCaBar">
@@ -546,6 +606,6 @@
     </div>
   </footer>
 
-  <script src="script.js?v=20261123b"></script>
+  <script src="script.js?v=20261124a"></script>
 </body>
 </html>
