@@ -1751,8 +1751,18 @@ class PlanetMaxiController {
         powerPreference: 'high-performance'
       });
     } catch (err) {
-      console.error('[MAXI] Claw WebGLRenderer failed:', err);
-      return;
+      try {
+        this.clawRenderer = new THREE.WebGLRenderer({
+          canvas: this.clawCanvas,
+          alpha: true,
+          antialias: false
+        });
+      } catch (err2) {
+        console.error('[MAXI] Claw WebGLRenderer failed, enabling 2D fallback:', err2);
+        this.clawFallback2D = true;
+        this.claw2DCtx = this.clawCanvas.getContext('2d');
+        return;
+      }
     }
     this.clawRenderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
     this.clawRenderer.outputEncoding = THREE.sRGBEncoding;
@@ -2636,8 +2646,18 @@ class PlanetMaxiController {
         powerPreference: 'high-performance'
       });
     } catch (err) {
-      console.error('[MAXI] Council WebGLRenderer failed:', err);
-      return;
+      try {
+        this.councilRenderer = new THREE.WebGLRenderer({
+          canvas: this.councilCanvas,
+          alpha: true,
+          antialias: false
+        });
+      } catch (err2) {
+        console.error('[MAXI] Council WebGLRenderer failed, enabling 2D fallback:', err2);
+        this.councilFallback2D = true;
+        this.council2DCtx = this.councilCanvas.getContext('2d');
+        return;
+      }
     }
     this.councilRenderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
     this.councilRenderer.outputEncoding = THREE.sRGBEncoding;
@@ -3216,6 +3236,10 @@ class PlanetMaxiController {
   }
 
   render3DCouncilScene() {
+    if (this.councilFallback2D && this.council2DCtx && this.councilCanvas) {
+      this.render2DCouncilFallback();
+      return;
+    }
     if (!this.councilRenderer || !this.councilScene || !this.councilCamera) return;
 
     const ang = this.councilOrbitAngle;
@@ -3228,6 +3252,60 @@ class PlanetMaxiController {
     this.councilCamera.lookAt(0, -10, 0);
 
     this.councilRenderer.render(this.councilScene, this.councilCamera);
+  }
+
+  render2DCouncilFallback() {
+    const ctx = this.council2DCtx;
+    const w = this.councilCanvas.width || 1100;
+    const h = this.councilCanvas.height || 580;
+    ctx.clearRect(0, 0, w, h);
+
+    const cx = w * 0.5;
+    const cy = h * 0.58;
+    const rx = w * 0.34;
+    const ry = h * 0.24;
+
+    // Obsidian circular table
+    ctx.save();
+    ctx.beginPath();
+    ctx.ellipse(cx, cy, rx, ry, 0, 0, Math.PI * 2);
+    ctx.fillStyle = '#0F121A';
+    ctx.fill();
+    ctx.lineWidth = 3;
+    ctx.strokeStyle = '#F3D285';
+    ctx.stroke();
+
+    // Inner light well
+    ctx.beginPath();
+    ctx.ellipse(cx, cy, rx * 0.42, ry * 0.42, 0, 0, Math.PI * 2);
+    ctx.fillStyle = '#040507';
+    ctx.fill();
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = '#10B981';
+    ctx.stroke();
+
+    // Draw 12 seats around the ellipse sorted back-to-front
+    const seats = (this.councilSeats || []).map((s, idx) => {
+      const a = s.angle - this.councilOrbitAngle + Math.PI;
+      return {
+        idx,
+        cit: s.cit,
+        x: cx + Math.sin(a) * rx * 1.18,
+        y: cy + Math.cos(a) * ry * 1.18,
+        depth: Math.cos(a)
+      };
+    });
+    seats.sort((a, b) => a.depth - b.depth);
+
+    seats.forEach((s) => {
+      const img = this.getSprite(s.cit.src);
+      const scale = 0.72 + (s.depth + 1) * 0.25;
+      const sz = 110 * scale;
+      if (img && img.complete && img.naturalWidth > 0) {
+        ctx.drawImage(img, s.x - sz * 0.5, s.y - sz * 0.78, sz, sz);
+      }
+    });
+    ctx.restore();
   }
 
   joltClawTank() {
@@ -4527,13 +4605,6 @@ document.addEventListener('DOMContentLoaded', () => {
     console.error('[MAXI] PlanetMaxiController init error:', err);
   }
 
-  // Always initialize Community Suite (PFP Studio, 100 Specimen Index, Rank Dossier, Market Poller)
-  try {
-    window.__communitySuite = new CommunitySuiteController(controller || { activeCitizenIndex: 0 });
-  } catch (err) {
-    console.error('[MAXI] CommunitySuiteController init error:', err);
-  }
-
   const logoStage = document.getElementById('logo-stage');
   const hudTelemetry = document.getElementById('hud-telemetry');
   const hudStatusText = document.getElementById('hud-status-text');
@@ -5692,3 +5763,23 @@ class CommunitySuiteController {
     ctx.fillText('𝕏 @MAXIWORLDORDER · T.ME/MAXICOLLECTIVE', w - 56, h - 48);
   }
 }
+
+// Always initialize CommunitySuiteController cleanly AFTER class declaration
+(function bootCommunitySuite() {
+  const start = () => {
+    try {
+      if (!window.__communitySuite) {
+        window.__communitySuite = new CommunitySuiteController(
+          window.__planetMaxiController || { activeCitizenIndex: 0 }
+        );
+      }
+    } catch (err) {
+      console.error('[MAXI] CommunitySuiteController init error:', err);
+    }
+  };
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', start);
+  } else {
+    start();
+  }
+})();
