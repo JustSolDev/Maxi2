@@ -1447,8 +1447,8 @@ class PlanetMaxiController {
     this.isOverdrive = false;
 
     // Live Pull PFP Forger state
-    this.pullPfpTheme = 'OBSIDIAN';
-    this.pullPfpBadgeText = 'MAXI WORLD ORDER';
+    this.pullPfpTheme = 'GOLDDUST';
+    this.pullPfpBadgeText = 'we will multiply.';
 
     // 3D Planet Rotation
     this.planetRotY = -1.8;
@@ -2260,12 +2260,13 @@ class PlanetMaxiController {
     ctx.imageSmoothingQuality = 'high';
 
     const themes = {
+      GOLDDUST: { c0: '#2A210B', c1: '#0A0803', c2: '#000000', accent: '#F3D285', border: '#D4AF37', tagBg: '#F3D285', tagFg: '#000000' },
       OBSIDIAN: { c0: '#161922', c1: '#0A0B0E', c2: '#050507', accent: '#F4F4F6', border: '#323642', tagBg: '#F4F4F6', tagFg: '#08080A' },
       CANDLE:   { c0: '#09241B', c1: '#05110D', c2: '#020705', accent: '#10B981', border: '#10B981', tagBg: '#10B981', tagFg: '#040907' },
       SOLANA:   { c0: '#111C38', c1: '#080C18', c2: '#04060C', accent: '#38BDF8', border: '#38BDF8', tagBg: '#38BDF8', tagFg: '#04080E' },
       ROYAL:    { c0: '#2E0D17', c1: '#120509', c2: '#060204', accent: '#F43F5E', border: '#F43F5E', tagBg: '#F43F5E', tagFg: '#080304' }
     };
-    const th = themes[this.pullPfpTheme] || themes.OBSIDIAN;
+    const th = themes[this.pullPfpTheme] || themes.GOLDDUST;
 
     // 1. Matte Architectural Trading Card Base
     const bgGrad = ctx.createLinearGradient(0, 0, 0, h);
@@ -2449,12 +2450,13 @@ class PlanetMaxiController {
     ctx.imageSmoothingQuality = 'high';
 
     const themes = {
+      GOLDDUST: { c0: '#3B2D0E', c1: '#120D04', c2: '#000000', accent: '#F3D285', sub: '#D4AF37' },
       OBSIDIAN: { c0: '#161922', c1: '#090A0F', c2: '#040406', accent: '#F4F4F6', sub: '#8A8F9E' },
       CANDLE:   { c0: '#0b2e23', c1: '#05140f', c2: '#020806', accent: '#10B981', sub: '#6ee7b7' },
       SOLANA:   { c0: '#121E3A', c1: '#080C18', c2: '#03050a', accent: '#38bdf8', sub: '#94A3B8' },
       ROYAL:    { c0: '#3b0d1e', c1: '#14050b', c2: '#060204', accent: '#f43f5e', sub: '#fbbf24' }
     };
-    const th = themes[this.pullPfpTheme] || themes.OBSIDIAN;
+    const th = themes[this.pullPfpTheme] || themes.GOLDDUST;
 
     const bgGrad = ctx.createRadialGradient(w * 0.5, h * 0.44, 40, w * 0.5, h * 0.5, w * 0.72);
     bgGrad.addColorStop(0, th.c0);
@@ -2462,6 +2464,21 @@ class PlanetMaxiController {
     bgGrad.addColorStop(1, th.c2);
     ctx.fillStyle = bgGrad;
     ctx.fillRect(0, 0, w, h);
+
+    // Subtle shimmering gold dust motes for GOLDDUST theme
+    if (this.pullPfpTheme === 'GOLDDUST' || !this.pullPfpTheme) {
+      ctx.save();
+      for (let d = 0; d < 85; d++) {
+        const dx = ((d * 197.3) % w);
+        const dy = ((d * 311.7) % h);
+        const dr = 1.2 + (d % 4) * 0.9;
+        ctx.fillStyle = d % 3 === 0 ? 'rgba(255, 244, 210, 0.75)' : 'rgba(212, 175, 55, 0.45)';
+        ctx.beginPath();
+        ctx.arc(dx, dy, dr, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.restore();
+    }
 
     ctx.save();
     ctx.strokeStyle = 'rgba(255, 255, 255, 0.04)';
@@ -4859,10 +4876,11 @@ class CommunitySuiteController {
       card.querySelector('.v-card-stage').addEventListener('click', locateFn);
       card.querySelector('.btn-locate').addEventListener('click', locateFn);
 
-      // Load directly into On-Page PFP & Banner Workbench
+      // Open 1:1 Gold Dust PFP & Collector Card modal directly
       card.querySelector('.btn-studio').addEventListener('click', () => {
-        this.selectPfpCitizen(idx);
-        this.openModal('pfpModal');
+        if (this.planetCtrl && typeof this.planetCtrl.openCaughtCardForCitizen === 'function') {
+          this.planetCtrl.openCaughtCardForCitizen(idx, false);
+        }
       });
 
       grid.appendChild(card);
@@ -5781,5 +5799,77 @@ class CommunitySuiteController {
     document.addEventListener('DOMContentLoaded', start);
   } else {
     start();
+  }
+})();
+
+// Ambient Pure Black & Gold Dust Particle Field (#goldDustCanvas)
+(function bootGoldDustField() {
+  const initDust = () => {
+    const canvas = document.getElementById('goldDustCanvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    let w = (canvas.width = window.innerWidth);
+    let h = (canvas.height = window.innerHeight);
+
+    const motes = Array.from({ length: 110 }, () => ({
+      x: Math.random() * w,
+      y: Math.random() * h,
+      r: Math.random() * 1.7 + 0.4,
+      vx: (Math.random() - 0.5) * 0.16,
+      vy: -(Math.random() * 0.24 + 0.05),
+      phase: Math.random() * Math.PI * 2,
+      speed: Math.random() * 0.015 + 0.006,
+      bright: Math.random() > 0.72
+    }));
+
+    window.addEventListener('resize', () => {
+      w = canvas.width = window.innerWidth;
+      h = canvas.height = window.innerHeight;
+    });
+
+    const tick = () => {
+      ctx.clearRect(0, 0, w, h);
+
+      // Subtle warm golden zenith mist matching the reference image
+      const mist = ctx.createRadialGradient(w * 0.5, h * 0.18, 20, w * 0.5, h * 0.35, Math.max(w, h) * 0.65);
+      mist.addColorStop(0, 'rgba(212, 175, 55, 0.08)');
+      mist.addColorStop(0.55, 'rgba(130, 98, 22, 0.025)');
+      mist.addColorStop(1, 'rgba(0, 0, 0, 0)');
+      ctx.fillStyle = mist;
+      ctx.fillRect(0, 0, w, h);
+
+      for (let i = 0; i < motes.length; i++) {
+        const m = motes[i];
+        m.x += m.vx;
+        m.y += m.vy;
+        m.phase += m.speed;
+
+        if (m.y < -8) {
+          m.y = h + 8;
+          m.x = Math.random() * w;
+        }
+        if (m.x < -8) m.x = w + 8;
+        if (m.x > w + 8) m.x = -8;
+
+        const alpha = (0.22 + 0.58 * (0.5 + 0.5 * Math.sin(m.phase))) * (m.bright ? 1.0 : 0.65);
+        ctx.fillStyle = m.bright
+          ? `rgba(255, 240, 194, ${alpha.toFixed(3)})`
+          : `rgba(212, 175, 55, ${alpha.toFixed(3)})`;
+        ctx.beginPath();
+        ctx.arc(m.x, m.y, m.r, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      requestAnimationFrame(tick);
+    };
+
+    requestAnimationFrame(tick);
+  };
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initDust);
+  } else {
+    initDust();
   }
 })();

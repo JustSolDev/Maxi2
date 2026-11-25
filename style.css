@@ -4,16 +4,18 @@
    ========================================================================= */
 
 :root {
-  --bg: #08080A;
-  --surface: #0E0F12;
-  --surface-elevated: #14151A;
-  --text: #F4F4F6;
-  --text-muted: #8A8F9E;
-  --text-dim: #525665;
-  --border: #1F2128;
-  --border-strong: #323642;
-  --accent: #FFFFFF;
-  --emerald: #10B981;
+  --bg: #000000;
+  --surface: #050506;
+  --surface-elevated: #0B0A08;
+  --text: #F8F4EA;
+  --text-muted: #9E947E;
+  --text-dim: #665E4D;
+  --border: rgba(212, 175, 55, 0.22);
+  --border-strong: rgba(243, 210, 133, 0.44);
+  --accent: #F3D285;
+  --gold: #D4AF37;
+  --gold-bright: #F3D285;
+  --emerald: #F3D285;
 
   --font-display: 'Syne', 'Inter', -apple-system, sans-serif;
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -30,17 +32,35 @@
 
 html {
   scroll-behavior: smooth;
-  background: var(--bg);
+  background: #000000;
   color: var(--text);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
 }
 
 body {
-  background: var(--bg);
+  background: #000000;
   color: var(--text);
   overflow-x: hidden;
   min-height: 100vh;
+  position: relative;
+}
+
+/* Ambient Floating Gold Dust Background Layer */
+.gold-dust-bg {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+  display: block;
+}
+
+.editorial-main,
+.editorial-footer {
+  position: relative;
+  z-index: 2;
 }
 
 .hidden,
@@ -55,7 +75,7 @@ body {
 }
 
 /* =========================================================================
-   1. MINIMAL 1PX ARCHITECTURAL HEADER
+   1. MINIMAL 1PX ARCHITECTURAL HEADER (PURE BLACK & GOLD DUST)
    ========================================================================= */
 .navbar {
   position: sticky;
@@ -63,9 +83,9 @@ body {
   z-index: 100;
   width: 100%;
   height: 54px;
-  background: rgba(8, 8, 10, 0.92);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  background: rgba(0, 0, 0, 0.90);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
   border-bottom: 1px solid var(--border);
 }
 
@@ -196,14 +216,15 @@ body {
 }
 
 .hud-btn.pump-cta {
-  background: var(--text);
-  border-color: var(--text);
-  color: var(--bg);
-  font-weight: 700;
+  background: var(--gold-bright);
+  border-color: var(--gold-bright);
+  color: #000000;
+  font-weight: 800;
 }
 
 .hud-btn.pump-cta:hover {
-  background: #D8DAE0;
+  background: #FFE4A3;
+  border-color: #FFE4A3;
 }
 
 /* =========================================================================
@@ -213,9 +234,9 @@ body {
   display: block;
   font-family: var(--font-mono);
   font-size: 0.64rem;
-  font-weight: 500;
+  font-weight: 600;
   letter-spacing: 0.14em;
-  color: var(--text-muted);
+  color: var(--gold);
   margin-bottom: 4px;
 }
 
@@ -225,7 +246,7 @@ body {
   justify-content: center;
   height: 32px;
   padding: 0 14px;
-  background: transparent;
+  background: rgba(0, 0, 0, 0.72);
   border: 1px solid var(--border-strong);
   color: var(--text);
   font-family: var(--font-mono);
@@ -239,15 +260,15 @@ body {
 }
 
 .line-btn:hover {
-  background: var(--text);
-  color: var(--bg);
-  border-color: var(--text);
+  background: var(--gold-bright);
+  color: #000000;
+  border-color: var(--gold-bright);
 }
 
 .line-btn.solid-white {
-  background: var(--text);
-  color: var(--bg);
-  border-color: var(--text);
+  background: var(--gold-bright);
+  color: #000000;
+  border-color: var(--gold-bright);
 }
 
 .solid-action-btn,
@@ -466,9 +487,9 @@ body {
   flex: 1;
   width: 100%;
   min-height: 0;
-  background: radial-gradient(circle at 50% 35%, #11131A 0%, #050507 78%);
+  background: radial-gradient(circle at 50% 42%, rgba(212, 175, 55, 0.14) 0%, rgba(16, 13, 6, 0.82) 48%, #000000 84%);
   overflow: hidden;
-  cursor: grab;
+  cursor: crosshair;
   touch-action: none;
 }
 
@@ -559,26 +580,26 @@ body {
 .c-hud-summon-btn {
   width: 100%;
   height: 32px;
-  background: var(--text);
-  color: var(--bg);
-  border: 1px solid var(--text);
+  background: var(--gold-bright);
+  color: #000000;
+  border: 1px solid var(--gold-bright);
   font-family: var(--font-mono);
   font-size: 0.64rem;
-  font-weight: 700;
+  font-weight: 800;
   letter-spacing: 0.08em;
   cursor: pointer;
   transition: background 0.15s ease;
 }
 
 .c-hud-summon-btn:hover {
-  background: #D8DAE0;
+  background: #FFE4A3;
 }
 
 /* Clean Hardware Control Bar */
 .claw-control-deck {
   height: 58px;
   padding: 0 16px;
-  background: var(--bg);
+  background: #000000;
   border-top: 1px solid var(--border);
   display: flex;
   align-items: center;
@@ -596,7 +617,7 @@ body {
 .claw-deck-btn {
   height: 36px;
   padding: 0 12px;
-  background: var(--surface);
+  background: #060607;
   border: 1px solid var(--border-strong);
   color: var(--text);
   font-family: var(--font-mono);
@@ -612,12 +633,13 @@ body {
 }
 
 .claw-deck-btn:hover {
-  border-color: var(--text);
+  border-color: var(--gold-bright);
+  color: var(--gold-bright);
   background: var(--surface-elevated);
 }
 
 .key-cap {
-  color: var(--text-dim);
+  color: var(--gold);
   font-size: 0.58rem;
 }
 
@@ -625,12 +647,12 @@ body {
   flex: 1;
   max-width: 340px;
   height: 36px;
-  background: var(--text);
-  border: 1px solid var(--text);
-  color: var(--bg);
+  background: var(--gold-bright);
+  border: 1px solid var(--gold-bright);
+  color: #000000;
   font-family: var(--font-mono);
   font-size: 0.7rem;
-  font-weight: 700;
+  font-weight: 800;
   letter-spacing: 0.1em;
   cursor: pointer;
   display: inline-flex;
@@ -642,7 +664,7 @@ body {
 }
 
 .claw-drop-trigger:hover {
-  background: #D8DAE0;
+  background: #FFE4A3;
 }
 
 .drop-hotkey {

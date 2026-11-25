@@ -14,12 +14,15 @@
   <!-- Three.js r128 (Local bundled 3D WebGL Engine — zero external CDN dependency) -->
   <script src="vendor/three.min.js"></script>
 
-  <link rel="stylesheet" href="style.css?v=20261125a" />
+  <link rel="stylesheet" href="style.css?v=20261125g" />
 </head>
 <body>
 
+  <!-- Ambient Floating Gold Dust Particle Field (Pure Black & Gold Dust Aesthetic) -->
+  <canvas id="goldDustCanvas" class="gold-dust-bg" aria-hidden="true"></canvas>
+
   <!-- =======================================================================
-       MINIMAL ARCHITECTURAL HEADER (1PX HAIRLINE GRID)
+       MINIMAL ARCHITECTURAL HEADER (PURE BLACK & GOLD DUST)
        ======================================================================= -->
   <header class="navbar" id="mainNavbar">
     <div class="nav-inner">
@@ -32,9 +35,8 @@
       <nav class="nav-links">
         <a href="#topStage" class="nav-link" id="focusOgBtn">01 / CLAW MACHINE</a>
         <a href="#councilSection" class="nav-link">02 / COUNCIL TABLE</a>
-        <a href="#pfpSection" class="nav-link" id="openPfpModalBtn">03 / PFP STUDIO</a>
-        <a href="#lookbookSection" class="nav-link" id="openVaultModalBtn">04 / INDEX (100)</a>
-        <a href="#rankSection" class="nav-link" id="openRankModalBtn">05 / DOSSIER &amp; CHART</a>
+        <a href="#lookbookSection" class="nav-link" id="openVaultModalBtn">03 / INDEX (100)</a>
+        <a href="#rankSection" class="nav-link" id="openRankModalBtn">04 / DOSSIER &amp; CHART</a>
       </nav>
 
       <div class="nav-actions">
@@ -244,98 +246,13 @@
     </section>
 
     <!-- =====================================================================
-         03. PFP & BANNER STUDIO (CLEAN EDITORIAL WORKBENCH)
-         ===================================================================== -->
-    <section class="studio-section" id="pfpSection">
-      <div class="editorial-wrap">
-        <div class="section-header-bar">
-          <div>
-            <span class="index-num">03 / IDENTITY GENERATOR</span>
-            <h2 class="section-heading">PFP &amp; X-BANNER STUDIO</h2>
-          </div>
-          <span class="section-note">1000×1000 PFP &amp; 1500×500 HEADER EXPORT</span>
-        </div>
-
-        <div class="studio-grid-box" id="pfpModal">
-          <div class="pfp-studio-layout">
-            <!-- Left Preview -->
-            <div class="pfp-preview-col">
-              <div class="pfp-canvas-frame">
-                <canvas id="pfpStudioCanvas" width="1000" height="1000"></canvas>
-              </div>
-              <div class="pfp-export-bar">
-                <button type="button" class="solid-action-btn" id="downloadPfpBtn">
-                  EXPORT PNG
-                </button>
-                <button type="button" class="outline-action-btn" id="copyPfpBtn">
-                  <span id="copyPfpLabel">COPY TO CLIPBOARD</span>
-                </button>
-              </div>
-            </div>
-
-            <!-- Right Controls -->
-            <div class="pfp-controls-col">
-              <div class="control-block">
-                <label class="control-label">FORMAT</label>
-                <div class="segmented-row" id="pfpFormatGroup">
-                  <button type="button" class="seg-btn active" data-format="pfp">1:1 PFP (1000×1000)</button>
-                  <button type="button" class="seg-btn" data-format="banner">3:1 BANNER (1500×500)</button>
-                </div>
-              </div>
-
-              <div class="control-block">
-                <label class="control-label">SPECIMEN (001 — 100)</label>
-                <div class="pfp-citizen-picker" id="pfpCitizenPicker"></div>
-              </div>
-
-              <div class="control-block">
-                <label class="control-label">BACKDROP</label>
-                <div class="segmented-row" id="pfpBgGroup">
-                  <button type="button" class="seg-btn active" data-bg="obsidian">OBSIDIAN</button>
-                  <button type="button" class="seg-btn" data-bg="gold">GOLD</button>
-                  <button type="button" class="seg-btn" data-bg="emerald">EMERALD</button>
-                  <button type="button" class="seg-btn" data-bg="sapphire">COBALT</button>
-                  <button type="button" class="seg-btn" data-bg="crimson">CRIMSON</button>
-                </div>
-              </div>
-
-              <div class="control-block">
-                <label class="control-label">FRAME &amp; TYPOGRAPHY</label>
-                <div class="segmented-row" id="pfpOverlayGroup">
-                  <button type="button" class="seg-btn active" data-overlay="mwo">MWO SEAL</button>
-                  <button type="button" class="seg-btn" data-overlay="halo">HALO</button>
-                  <button type="button" class="seg-btn" data-overlay="grid">GRID</button>
-                  <button type="button" class="seg-btn" data-overlay="clean">MINIMAL</button>
-                </div>
-                <input
-                  type="text"
-                  id="pfpCustomText"
-                  class="suite-input"
-                  placeholder="CUSTOM STAMP"
-                  value="MAXI WORLD ORDER"
-                  maxlength="32"
-                />
-                <div class="preset-chips-row" id="pfpPresetChips">
-                  <button type="button" class="preset-chip" data-text="MAXI WORLD ORDER">MAXI WORLD ORDER</button>
-                  <button type="button" class="preset-chip" data-text="$MAXI · 240 LBS">$MAXI · 240 LBS</button>
-                  <button type="button" class="preset-chip" data-text="MWO SUPREME">MWO SUPREME</button>
-                  <button type="button" class="preset-chip" data-text="SEND IT TO $1B">SEND IT TO $1B</button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- =====================================================================
-         04. ARCHIVE INDEX (100 CUTOUTS IN A RAZOR-CLEAN 1PX CATALOG GRID)
+         03. ARCHIVE INDEX (100 CUTOUTS IN A RAZOR-CLEAN 1PX CATALOG GRID)
          ===================================================================== -->
     <section class="archive-section" id="lookbookSection">
       <div class="editorial-wrap">
         <div class="section-header-bar">
           <div>
-            <span class="index-num">04 / ARCHIVE</span>
+            <span class="index-num">03 / ARCHIVE</span>
             <h2 class="section-heading">100 SPECIMEN INDEX</h2>
           </div>
 
@@ -353,13 +270,13 @@
     </section>
 
     <!-- =====================================================================
-         05. CONVICTION DOSSIER & LIVE DEXSCREENER TERMINAL
+         04. CONVICTION DOSSIER & LIVE DEXSCREENER TERMINAL
          ===================================================================== -->
     <section class="terminal-section" id="rankSection">
       <div class="editorial-wrap">
         <div class="section-header-bar">
           <div>
-            <span class="index-num">05 / TELEMETRY &amp; DOSSIER</span>
+            <span class="index-num">04 / TELEMETRY &amp; DOSSIER</span>
             <h2 class="section-heading">MWO RANK &amp; LIVE MARKET</h2>
           </div>
         </div>
@@ -502,9 +419,9 @@
           </div>
 
           <div class="pull-pfp-theme-strip" id="pullPfpThemeStrip">
-            <button type="button" class="pull-theme-chip active" data-pull-bg="OBSIDIAN">OBSIDIAN</button>
+            <button type="button" class="pull-theme-chip active" data-pull-bg="GOLDDUST">GOLD DUST</button>
+            <button type="button" class="pull-theme-chip" data-pull-bg="OBSIDIAN">OBSIDIAN</button>
             <button type="button" class="pull-theme-chip" data-pull-bg="CANDLE">EMERALD</button>
-            <button type="button" class="pull-theme-chip" data-pull-bg="SOLANA">COBALT</button>
             <button type="button" class="pull-theme-chip" data-pull-bg="ROYAL">CRIMSON</button>
           </div>
         </div>
@@ -544,9 +461,9 @@
               type="text"
               id="pullCustomBadgeInput"
               class="pull-tag-input"
-              value="MAXI WORLD ORDER"
+              value="we will multiply."
               maxlength="24"
-              placeholder="MAXI WORLD ORDER"
+              placeholder="we will multiply."
             />
           </div>
 
@@ -569,7 +486,6 @@
           </div>
 
           <div class="pull-reveal-actions">
-            <button type="button" class="line-btn" id="pullToStudioBtn">CUSTOMIZE IN PFP STUDIO</button>
             <a href="maxi Background Removed.png" download="maxi-cutout.png" class="line-btn" id="pullDownloadLink">RAW CUTOUT</a>
             <a
               href="https://x.com/intent/tweet?text=Caught%20from%20MAXI%20WORLD%20ORDER%20%24MAXI%20%40maxiworldorder"
@@ -606,6 +522,6 @@
     </div>
   </footer>
 
-  <script src="script.js?v=20261125a"></script>
+  <script src="script.js?v=20261125g"></script>
 </body>
 </html>
